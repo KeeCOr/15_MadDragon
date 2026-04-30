@@ -35,17 +35,15 @@ namespace MedievalRTS.Core
         public float TimeElapsed;
     }
 
-    // TODO: Replace object with Units.Unit once Units.Unit is implemented (Task N)
     public readonly struct UnitDiedEvent
     {
-        public readonly object Unit;
-        public UnitDiedEvent(object unit) => Unit = unit;
+        public readonly Units.Unit Unit;
+        public UnitDiedEvent(Units.Unit unit) => Unit = unit;
     }
 
-    // TODO: Replace object with Buildings.Building once Buildings.Building is implemented (Task N)
     public readonly struct BuildingDestroyedEvent
     {
-        public readonly object Building;
-        public BuildingDestroyedEvent(object building) => Building = building;
+        public readonly Buildings.Building Building;
+        public BuildingDestroyedEvent(Buildings.Building building) => Building = building;
     }
 }
