@@ -2,6 +2,7 @@
 using UnityEngine;
 using MedievalRTS.Data;
 using MedievalRTS.Units;
+using MedievalRTS.Progression;
 
 namespace MedievalRTS.Battle
 {
@@ -16,19 +17,15 @@ namespace MedievalRTS.Battle
         public bool TrySpawnPlayerUnit(UnitData data)
         {
             if (!_resources.TrySpend(data.goldCost)) return false;
-            SpawnUnit(data, _playerSpawnZone.GetRandomPosition(), isPlayer: true);
+            var go = Instantiate(data.prefab, _playerSpawnZone.GetRandomPosition(), Quaternion.identity);
+            go.GetComponent<Unit>().Initialize(data, isPlayerUnit: true, save: SaveSystem.Load());
             return true;
         }
 
         public void SpawnEnemyUnit(UnitData data, Vector3 position)
         {
-            SpawnUnit(data, position, isPlayer: false);
-        }
-
-        private void SpawnUnit(UnitData data, Vector3 position, bool isPlayer)
-        {
             var go = Instantiate(data.prefab, position, Quaternion.identity);
-            go.GetComponent<Unit>().Initialize(data, isPlayer);
+            go.GetComponent<Unit>().Initialize(data, isPlayerUnit: false);
         }
     }
 }

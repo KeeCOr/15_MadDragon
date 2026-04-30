@@ -3,6 +3,7 @@ using System;
 using UnityEngine;
 using MedievalRTS.Core;
 using MedievalRTS.Data;
+using MedievalRTS.Progression;
 
 namespace MedievalRTS.Units
 {
@@ -18,12 +19,20 @@ namespace MedievalRTS.Units
 
         public event Action<Unit> OnDied;
 
-        public void Initialize(UnitData data, bool isPlayerUnit, int effectiveDamage = -1)
+        public void Initialize(UnitData data, bool isPlayerUnit, SaveData save = null)
         {
             Data = data;
-            CurrentHp = data.maxHp;
+            if (isPlayerUnit && save != null)
+            {
+                CurrentHp = UnitUpgradeSystem.GetMaxHp(data, save);
+                _effectiveDamage = UnitUpgradeSystem.GetDamage(data, save);
+            }
+            else
+            {
+                CurrentHp = data.maxHp;
+                _effectiveDamage = data.damage;
+            }
             IsPlayerUnit = isPlayerUnit;
-            _effectiveDamage = effectiveDamage < 0 ? data.damage : effectiveDamage;
             gameObject.tag = isPlayerUnit ? "PlayerUnit" : "EnemyUnit";
         }
 
