@@ -20,8 +20,16 @@ namespace MedievalRTS.Progression
         {
             path ??= DefaultPath;
             if (!File.Exists(path)) return new SaveData();
-            return JsonConvert.DeserializeObject<SaveData>(File.ReadAllText(path))
-                   ?? new SaveData();
+            try
+            {
+                return JsonConvert.DeserializeObject<SaveData>(File.ReadAllText(path))
+                       ?? new SaveData();
+            }
+            catch (JsonException ex)
+            {
+                Debug.LogError($"Failed to load save data: {ex.Message}");
+                return new SaveData();
+            }
         }
 
         public static void Delete(string path = null)
