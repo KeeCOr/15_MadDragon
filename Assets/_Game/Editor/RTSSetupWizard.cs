@@ -367,10 +367,18 @@ namespace MedievalRTS.Editor
         }
 
         static GameObject FindOrCreate(string name)
-            => GameObject.Find(name) ?? new GameObject(name);
+        {
+            var go = GameObject.Find(name);
+            if (go == null) go = new GameObject(name);
+            return go;
+        }
 
         static T Ensure<T>(GameObject go) where T : Component
-            => go.GetComponent<T>() ?? go.AddComponent<T>();
+        {
+            var c = go.GetComponent<T>();
+            if (c == null) c = go.AddComponent<T>();
+            return c;
+        }
 
         static void SetRef(Component c, string field, Object val)
         {
