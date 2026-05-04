@@ -1,7 +1,6 @@
 // Assets/_Game/Scripts/UI/BattleHUD.cs
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 using MedievalRTS.Core;
 using MedievalRTS.Data;
 using MedievalRTS.Battle;
@@ -11,8 +10,8 @@ namespace MedievalRTS.UI
 {
     public class BattleHUD : MonoBehaviour
     {
-        [SerializeField] private TMP_Text goldText;
-        [SerializeField] private TMP_Text timerText;
+        [SerializeField] private Text goldText;
+        [SerializeField] private Text timerText;
         [SerializeField] private Transform unitButtonContainer;
         [SerializeField] private GameObject unitButtonPrefab;
         [SerializeField] private UnitData[] availableUnits;
@@ -52,7 +51,7 @@ namespace MedievalRTS.UI
         private void CreateUnitButton(UnitData data)
         {
             var go = Instantiate(unitButtonPrefab, unitButtonContainer);
-            go.GetComponentInChildren<TMP_Text>().text = $"{data.unitName}\n{data.goldCost}G";
+            go.GetComponentInChildren<Text>().text = $"{data.unitName}\n{data.goldCost}G";
             go.GetComponent<Image>().sprite = data.icon;
             go.GetComponent<Button>().onClick.AddListener(() => _spawner.TrySpawnPlayerUnit(data));
         }

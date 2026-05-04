@@ -1,14 +1,13 @@
 // Assets/_Game/Scripts/UI/ResultUI.cs
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 using MedievalRTS.Core;
 
 namespace MedievalRTS.UI
 {
     public class ResultUI : MonoBehaviour
     {
-        [SerializeField] private TMP_Text titleText;
+        [SerializeField] private Text titleText;
         [SerializeField] private GameObject[] starObjects;
         [SerializeField] private Button continueButton;
         [SerializeField] private Button retryButton;

@@ -1,7 +1,6 @@
 // Assets/_Game/Scripts/Base/BaseBuilderUI.cs
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 using MedievalRTS.Core;
 using MedievalRTS.Data;
 
@@ -26,7 +25,7 @@ namespace MedievalRTS.Base
         private void CreateBuildingButton(BuildingData data)
         {
             var go = Instantiate(buildingButtonPrefab, buttonContainer);
-            go.GetComponentInChildren<TMP_Text>().text = data.buildingName;
+            go.GetComponentInChildren<Text>().text = data.buildingName;
             go.GetComponent<Image>().sprite = data.icon;
             go.GetComponent<Button>().onClick.AddListener(() => placer.SelectBuilding(data));
         }
