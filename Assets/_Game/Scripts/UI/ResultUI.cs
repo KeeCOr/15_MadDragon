@@ -16,12 +16,12 @@ namespace MedievalRTS.UI
         {
             EventBus.Subscribe<BattleEndedEvent>(ShowResult);
             continueButton.onClick.AddListener(() =>
-                GameManager.Instance.ChangeState(GameState.MainMenu));
+                GameManager.Instance?.ChangeState(GameState.MainMenu));
             retryButton.onClick.AddListener(() =>
             {
                 var stage = Campaign.CampaignManager.Instance?.SelectedStage;
                 if (stage != null)
-                    Campaign.CampaignManager.Instance.SelectAndStartStage(stage);
+                    Campaign.CampaignManager.Instance?.SelectAndStartStage(stage);
             });
         }
 

@@ -677,6 +677,11 @@ namespace MedievalRTS.Editor
             AddCamera(new Vector3(0, 5, -10), new Vector3(15, 0, 0));
             AddLight();
 
+            Ensure<GameManager>(FindOrCreate("GameManager"));
+            var cm = Ensure<CampaignManager>(FindOrCreate("CampaignManager"));
+            var stageDatas = LoadAll<StageData>(SORoot + "/Stages");
+            SetObjArray(cm, "stages", stageDatas);
+
             var canvas   = GetOrCreateCanvas();
             var resultGO = canvas.transform.Find("ResultUI")?.gameObject ?? new GameObject("ResultUI");
             resultGO.transform.SetParent(canvas.transform, false);
