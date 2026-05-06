@@ -95,7 +95,7 @@ namespace MedievalRTS.Testing
             _ring.transform.SetParent(transform, false);
             _ring.transform.localPosition = Vector3.down * 0.48f;
             _ring.transform.localScale    = new Vector3(1.6f, 0.02f, 1.6f);
-            Destroy(_ring.GetComponent<Collider>());
+            DestroyImmediate(_ring.GetComponent<Collider>());
 
             var shader = Shader.Find("Universal Render Pipeline/Lit")
                       ?? Shader.Find("Standard");

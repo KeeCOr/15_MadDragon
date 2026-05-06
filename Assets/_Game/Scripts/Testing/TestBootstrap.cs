@@ -523,12 +523,26 @@ namespace MedievalRTS.Testing
             if (!lmbDown && !rmb) return;
             if (overUI) return;
 
-            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (!Physics.Raycast(ray, out RaycastHit hit, 200f)) return;
+            var ray  = Camera.main.ScreenPointToRay(Input.mousePosition);
+            var hits = Physics.RaycastAll(ray, 200f);
+            if (hits.Length == 0) return;
 
-            var hitUnit = hit.collider.GetComponent<Unit>();
-            var hitAI   = hit.collider.GetComponent<TestSimpleUnitAI>();
-            var hitBldg = hit.collider.GetComponent<Building>();
+            // 거리순 정렬 후 Unit/Building이 있는 히트를 우선 선택
+            System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+            RaycastHit hit = hits[0];
+            foreach (var h in hits)
+            {
+                if (h.collider.GetComponentInParent<Unit>() != null ||
+                    h.collider.GetComponentInParent<Building>() != null)
+                {
+                    hit = h;
+                    break;
+                }
+            }
+
+            var hitUnit = hit.collider.GetComponentInParent<Unit>();
+            var hitAI   = hit.collider.GetComponentInParent<TestSimpleUnitAI>();
+            var hitBldg = hit.collider.GetComponentInParent<Building>();
 
             if (lmbDown)
             {
@@ -543,7 +557,7 @@ namespace MedievalRTS.Testing
                         DeselectAll();
                         return;
                     }
-                    if (hitAI == null || !hitUnit.IsPlayerUnit)
+                    if (hitAI == null || hitUnit == null || !hitUnit.IsPlayerUnit)
                     {
                         // 빈 지면 → 이동 명령
                         Vector3 dest = hit.point;
