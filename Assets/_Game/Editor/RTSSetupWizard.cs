@@ -58,10 +58,11 @@ namespace MedievalRTS.Editor
             OpenAndSetup(SceneRoot + "/BaseBuilder.unity", () => SetupBaseBuilderScene(buildingDatas, buildBtn));
             OpenAndSetup(SceneRoot + "/Battle.unity",      () => SetupBattleScene(unitDatas, uiBtn));
             OpenAndSetup(SceneRoot + "/Result.unity",      () => SetupResultScene());
+            CreateTestSceneInternal();
 
             AssetDatabase.SaveAssets();
             Debug.Log("✅ All scenes set up!");
-            Debug.Log("⚠️  NavMesh: Battle 씬 열기 → Plane 선택 → Navigation Static 체크 → Window > AI > Navigation > Bake");
+            Debug.Log("⚠️  NavMesh: 03_Battle 씬 열기 → Plane 선택 → Navigation Static 체크 → Window > AI > Navigation > Bake");
         }
 
         [MenuItem("Medieval RTS/Run Full Setup (1+2)", priority = 0)]
@@ -69,6 +70,57 @@ namespace MedievalRTS.Editor
         {
             CreateAssets();
             SetupScenes();
+        }
+
+        [MenuItem("Medieval RTS/Rename Scenes (Add Numbers)", priority = 13)]
+        public static void RenameScenes()
+        {
+            var renames = new[]
+            {
+                (SceneRoot + "/MainMenu.unity",    SceneRoot + "/01_MainMenu.unity"),
+                (SceneRoot + "/BaseBuilder.unity", SceneRoot + "/02_BaseBuilder.unity"),
+                (SceneRoot + "/Battle.unity",      SceneRoot + "/03_Battle.unity"),
+                (SceneRoot + "/Result.unity",      SceneRoot + "/04_Result.unity"),
+                (SceneRoot + "/TestBattle.unity",  SceneRoot + "/05_TestBattle.unity"),
+            };
+
+            foreach (var (from, to) in renames)
+            {
+                if (AssetDatabase.LoadAssetAtPath<Object>(from) != null &&
+                    AssetDatabase.LoadAssetAtPath<Object>(to) == null)
+                {
+                    var err = AssetDatabase.MoveAsset(from, to);
+                    if (string.IsNullOrEmpty(err))
+                        Debug.Log($"  Renamed: {System.IO.Path.GetFileName(from)} → {System.IO.Path.GetFileName(to)}");
+                    else
+                        Debug.LogWarning($"  Failed to rename {from}: {err}");
+                }
+            }
+
+            AssetDatabase.Refresh();
+            Debug.Log("✅ Scene renaming complete!");
+        }
+
+        [MenuItem("Medieval RTS/3. Create Test Scene (Play immediately)", priority = 12)]
+        public static void CreateTestScene()
+        {
+            EnsureFolders();
+            CreateTestSceneInternal();
+            AssetDatabase.Refresh();
+            Debug.Log("✅ 05_TestBattle.unity 생성 완료! Play 버튼을 누르면 바로 플레이됩니다.");
+        }
+
+        static void CreateTestSceneInternal()
+        {
+            if (!AssetDatabase.IsValidFolder(SceneRoot))
+                AssetDatabase.CreateFolder("Assets/_Game", "Scenes");
+
+            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            var bootstrapGo = new GameObject("TestBootstrap");
+            bootstrapGo.AddComponent<MedievalRTS.Testing.TestBootstrap>();
+
+            string scenePath = SceneRoot + "/05_TestBattle.unity";
+            EditorSceneManager.SaveScene(scene, scenePath);
         }
 
         // ═══════════════════════════════════════════════════════
@@ -360,10 +412,13 @@ namespace MedievalRTS.Editor
 
         static void OpenAndSetup(string scenePath, System.Action action)
         {
-            var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+            UnityEngine.SceneManagement.Scene scene;
+            if (System.IO.File.Exists(scenePath))
+                scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+            else
+                scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             action();
-            EditorSceneManager.MarkSceneDirty(scene);
-            EditorSceneManager.SaveScene(scene);
+            EditorSceneManager.SaveScene(scene, scenePath);
         }
 
         static GameObject FindOrCreate(string name)

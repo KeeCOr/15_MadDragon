@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da54fbeaeafd2984f95726e21c5c72eb, type: 3}
+  m_Name: Mage
+  m_EditorClassIdentifier: 
+  unitName: Mage
+  unitType: 4
+  maxHp: 100
+  damage: 40
+  moveSpeed: 2.5
+  goldCost: 100
+  attackRange: 5
+  attackCooldown: 2
+  sightRange: 6
+  prefab: {fileID: 2485854757292300429, guid: 989ffa7e25ae40846b0c71860893b4a0, type: 3}
+  icon: {fileID: 0}

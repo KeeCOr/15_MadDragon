@@ -23,6 +23,12 @@ namespace MedievalRTS.Buildings
             gameObject.tag = isPlayerBuilding ? "PlayerBuilding" : "EnemyBuilding";
         }
 
+        public void Repair(int amount)
+        {
+            if (!IsAlive) return;
+            CurrentHp = Mathf.Min(CurrentHp + amount, Data.maxHp);
+        }
+
         public void TakeDamage(int amount)
         {
             if (!IsAlive) return;
