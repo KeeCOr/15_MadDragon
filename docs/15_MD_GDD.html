@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medieval RTS — 게임 기획서 v0.4</title>
+<style>
+  :root {
+    --bg: #0d0f1a;
+    --surface: #141726;
+    --surface2: #1c2035;
+    --border: #2e3355;
+    --accent: #4a7cdc;
+    --accent2: #e8a020;
+    --green: #2ecc71;
+    --red: #e74c3c;
+    --purple: #9b59b6;
+    --cyan: #1abc9c;
+    --text: #dce3f0;
+    --muted: #7a8aaa;
+    --radius: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 14px;
+  }
+
+  /* ── Layout ── */
+  .wrapper { max-width: 1200px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* ── Header ── */
+  header {
+    background: linear-gradient(135deg, #1a2040 0%, #0d1230 100%);
+    border-bottom: 2px solid var(--accent);
+    padding: 40px 24px 32px;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  header h1 { font-size: 2.4rem; color: var(--accent2); letter-spacing: 2px; }
+  header .subtitle { color: var(--muted); font-size: 1rem; margin-top: 6px; }
+  header .meta { display: flex; gap: 24px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+  header .meta span {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  header .meta span b { color: var(--text); }
+
+  /* ── TOC ── */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 28px;
+    margin-bottom: 40px;
+    columns: 2;
+    column-gap: 32px;
+  }
+  .toc h2 { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; column-span: all; }
+  .toc a { color: var(--accent); text-decoration: none; display: block; padding: 2px 0; font-size: 13px; }
+  .toc a:hover { color: var(--accent2); }
+  .toc a::before { content: '› '; color: var(--muted); }
+
+  /* ── Sections ── */
+  section { margin-bottom: 48px; }
+  h2.sec {
+    font-size: 1.4rem;
+    color: var(--accent2);
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h2.sec .ico { font-size: 1.2rem; }
+  h3.sub {
+    font-size: 1rem;
+    color: var(--cyan);
+    margin: 20px 0 10px;
+    padding-left: 10px;
+    border-left: 3px solid var(--cyan);
+  }
+
+  /* ── Cards ── */
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+  }
+  .card .card-title { font-weight: 700; font-size: 15px; margin-bottom: 6px; }
+  .card p { color: var(--muted); font-size: 13px; }
+  .card .tag {
+    display: inline-block;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 8px;
+  }
+
+  /* ── Tables ── */
+  .tbl-wrap { overflow-x: auto; margin: 12px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    background: var(--surface2);
+    color: var(--accent2);
+    text-align: left;
+    padding: 9px 12px;
+    border-bottom: 2px solid var(--border);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:hover td { background: rgba(255,255,255,0.03); }
+  td .val { color: var(--accent2); font-weight: 600; }
+  td .muted { color: var(--muted); }
+  td .locked { color: var(--red); font-size: 12px; }
+  td .unlock { color: var(--green); font-size: 12px; }
+  td .note { color: var(--cyan); font-size: 11px; }
+
+  /* ── Mode Boxes ── */
+  .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .mode-box {
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    border: 1px solid;
+  }
+  .mode-box.atk { background: rgba(74,124,220,0.08); border-color: var(--accent); }
+  .mode-box.def { background: rgba(231,76,60,0.08); border-color: var(--red); }
+  .mode-box h3 { font-size: 1.1rem; margin-bottom: 12px; }
+  .mode-box.atk h3 { color: var(--accent); }
+  .mode-box.def h3 { color: var(--red); }
+  .mode-box ul { padding-left: 18px; color: var(--muted); font-size: 13px; }
+  .mode-box ul li { padding: 3px 0; }
+  .mode-box ul li b { color: var(--text); }
+
+  /* ── Flow Diagram ── */
+  .flow { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+  .flow-node {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .flow-node.start { border-color: var(--green); color: var(--green); }
+  .flow-node.end-w { border-color: var(--accent2); color: var(--accent2); }
+  .flow-node.end-l { border-color: var(--red); color: var(--red); }
+  .flow-arr { color: var(--muted); font-size: 16px; }
+
+  /* ── Spell Pills ── */
+  .spell-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  .spell {
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    border-left: 4px solid;
+  }
+  .spell .sname { font-weight: 700; font-size: 14px; }
+  .spell .sdesc { color: var(--muted); font-size: 12px; margin-top: 4px; }
+  .spell.fire { background: rgba(255,90,13,0.1); border-color: #ff5a0d; }
+  .spell.lightning { background: rgba(128,153,255,0.1); border-color: #8099ff; }
+  .spell.heal { background: rgba(51,217,102,0.1); border-color: #33d966; }
+  .spell.freeze { background: rgba(77,204,255,0.1); border-color: #4dccff; }
+  .spell.rage { background: rgba(255,51,51,0.1); border-color: #ff3333; }
+
+  /* ── Info Boxes ── */
+  .infobox {
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    font-size: 13px;
+    border-left: 4px solid;
+    margin: 12px 0;
+  }
+  .infobox.warn { background: rgba(232,160,32,0.1); border-color: var(--accent2); color: var(--accent2); }
+  .infobox.info { background: rgba(74,124,220,0.1); border-color: var(--accent); color: #8ab4ff; }
+  .infobox.ok   { background: rgba(46,204,113,0.1); border-color: var(--green); color: var(--green); }
+
+  /* ── Progress Bars ── */
+  .pbar-row { display: flex; align-items: center; gap: 10px; margin: 6px 0; font-size: 13px; }
+  .pbar-label { width: 100px; color: var(--muted); flex-shrink: 0; }
+  .pbar { flex: 1; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+  .pbar-fill { height: 100%; border-radius: 4px; }
+
+  /* ── Misc ── */
+  .chip {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 12px;
+    color: var(--muted);
+    margin: 2px;
+  }
+  .chip.hi { border-color: var(--accent); color: var(--accent); }
+  hr.divider { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+  @media (max-width: 700px) {
+    .mode-grid { grid-template-columns: 1fr; }
+    .toc { columns: 1; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Medieval RTS — 공방전</h1>
+  <div class="subtitle">Mad Rocket: Fog of War 클론 · 중세 판타지 테마</div>
+  <div class="meta">
+    <span>버전 <b>v0.4</b></span>
+    <span>엔진 <b>Unity 2022.3.62f3</b></span>
+    <span>렌더 <b>URP</b></span>
+    <span>플랫폼 <b>Windows Standalone</b></span>
+    <span>최종 업데이트 <b>2026-05-08</b></span>
+  </div>
+</header>
+
+<div class="wrapper">
+
+  <!-- TOC -->
+  <div class="toc">
+    <h2>목차</h2>
+    <a href="#overview">1. 게임 개요</a>
+    <a href="#flow">2. 씬 흐름 및 모드</a>
+    <a href="#units">3. 유닛</a>
+    <a href="#spells">4. 마법</a>
+    <a href="#buildings">5. 특수 건물 (수비)</a>
+    <a href="#combat">6. 전투 시스템</a>
+    <a href="#fow">7. 안개 전쟁 (FOW)</a>
+    <a href="#defense">8. 수비 모드 구조</a>
+    <a href="#attack">9. 공격 모드 구조</a>
+    <a href="#victory">10. 승리 / 패배 조건</a>
+    <a href="#resources">11. 자원 시스템</a>
+    <a href="#ai">12. AI 시스템</a>
+    <a href="#scenes">13. 씬 목록</a>
+    <a href="#tech">14. 기술 스택 & 구조</a>
+  </div>
+
+  <!-- 1. 개요 -->
+  <section id="overview">
+    <h2 class="sec"><span class="ico">⚔</span> 1. 게임 개요</h2>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-title" style="color:var(--accent)">장르</div>
+        <p>실시간 전략 · 기지 방어<br>1인 플레이 / 비동기 PvP (예정)</p>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:var(--accent2)">핵심 루프</div>
+        <p>준비 단계(병력·기지 구성) → 전투 → 결과 → 반복</p>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:var(--cyan)">모드 콘셉트</div>
+        <p>내가 만든 수비 기지를 공격 모드로 직접 공략해볼 수 있는 실험 구조</p>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:var(--green)">참고 작품</div>
+        <p>Mad Rocket: Fog of War<br>← 중세 판타지로 재해석</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. 씬 흐름 -->
+  <section id="flow">
+    <h2 class="sec"><span class="ico">🔀</span> 2. 씬 흐름 및 플레이 모드</h2>
+
+    <h3 class="sub">씬 순서</h3>
+    <div class="flow">
+      <div class="flow-node start">MainMenu (0)</div>
+      <div class="flow-arr">→</div>
+      <div class="flow-node">BaseBuilder (1)</div>
+      <div class="flow-arr">→</div>
+      <div class="flow-node">Battle (2)</div>
+      <div class="flow-arr">→</div>
+      <div class="flow-node">Result (3)</div>
+      <div class="flow-arr">→</div>
+      <div class="flow-node">MainMenu</div>
+    </div>
+    <div class="infobox info" style="margin-top:8px">
+      <b>05_TestBattle (4)</b> — 공격/수비 양 모드를 즉시 플레이할 수 있는 독립 테스트 씬. 아래 설명의 대부분이 이 씬 기준.
+    </div>
+
+    <h3 class="sub">두 가지 플레이 모드</h3>
+    <div class="mode-grid">
+      <div class="mode-box atk">
+        <h3>공격 모드 ▶</h3>
+        <ul>
+          <li>준비 화면: <b>유닛 구매 + 마법 선택</b></li>
+          <li>특수 건물 패널 <b>비표시</b></li>
+          <li>아군은 좌측에서 출발</li>
+          <li>안개(FOW) 적용 — 시야 확보 필요</li>
+          <li>적 기지는 5선 방어 구조</li>
+          <li>시간 제한 <b>180초</b></li>
+        </ul>
+      </div>
+      <div class="mode-box def">
+        <h3>수비 모드 🛡</h3>
+        <ul>
+          <li>준비 화면: <b>유닛 배치 + 특수 건물 업그레이드</b></li>
+          <li>마법 섹션 <b>비표시</b></li>
+          <li>아군 기지는 좌측(-10 성벽 라인)</li>
+          <li>FOW 없음 — 전장 전체 가시</li>
+          <li>5파 웨이브를 방어</li>
+          <li>성벽 클릭으로 <b>문 위치 변경</b> 가능</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. 유닛 -->
+  <section id="units">
+    <h2 class="sec"><span class="ico">🗡</span> 3. 유닛</h2>
+    <div class="infobox info">기본 스탯 (훈련소 Lv0 기준). 훈련소 업그레이드 시 HP·데미지에 배율 적용.</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>이름</th><th>역할</th><th>HP</th><th>데미지</th><th>사거리</th>
+            <th>속도</th><th>쿨다운</th><th>비용</th><th>건물 배율</th><th>해금 조건</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b style="color:#6699ff">기사</b></td>
+            <td>탱커 근접</td>
+            <td><span class="val">150</span></td>
+            <td><span class="val">22</span></td>
+            <td>1.8m</td><td>2.5</td><td>1.0s</td>
+            <td><span class="val">50G</span></td>
+            <td>×1.0</td>
+            <td><span class="unlock">기본</span></td>
+          </tr>
+          <tr>
+            <td><b style="color:#33cccc">궁수</b></td>
+            <td>원거리 딜</td>
+            <td><span class="val">70</span></td>
+            <td><span class="val">30</span></td>
+            <td>7.0m</td><td>3.0</td><td>1.2s</td>
+            <td><span class="val">35G</span></td>
+            <td>×1.0</td>
+            <td><span class="unlock">기본</span></td>
+          </tr>
+          <tr>
+            <td><b style="color:#cc44ee">마법사</b></td>
+            <td>건물 파괴</td>
+            <td><span class="val">90</span></td>
+            <td><span class="val">55</span></td>
+            <td>5.5m</td><td>2.0</td><td>1.5s</td>
+            <td><span class="val">75G</span></td>
+            <td>×1.8</td>
+            <td><span class="unlock">기본</span></td>
+          </tr>
+          <tr>
+            <td><b style="color:#55cc55">정찰병</b></td>
+            <td>저렴·고속</td>
+            <td><span class="val">50</span></td>
+            <td><span class="val">18</span></td>
+            <td>1.5m</td><td>5.5</td><td>0.8s</td>
+            <td><span class="val">25G</span></td>
+            <td>×1.0</td>
+            <td><span class="unlock">기본</span></td>
+          </tr>
+          <tr>
+            <td><b style="color:#ffdd22">기병</b></td>
+            <td>돌격대</td>
+            <td><span class="val">130</span></td>
+            <td><span class="val">32</span></td>
+            <td>1.8m</td><td>6.0</td><td>0.9s</td>
+            <td><span class="val">70G</span></td>
+            <td>×1.0</td>
+            <td><span class="locked">여인숙 Lv1+</span></td>
+          </tr>
+          <tr>
+            <td><b style="color:#ff7722">공성기</b></td>
+            <td>건물 특화</td>
+            <td><span class="val">50</span></td>
+            <td><span class="val">85</span></td>
+            <td>10.0m</td><td>1.2</td><td>2.5s</td>
+            <td><span class="val">110G</span></td>
+            <td>×3.5</td>
+            <td><span class="locked">여인숙 Lv2+</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="infobox warn" style="margin-top:12px">
+      <b>대장간</b> 업그레이드 시 유닛 비용 감소 적용 (Lv1 -10%, Lv2 -20%, Lv3 -30%)
+    </div>
+  </section>
+
+  <!-- 4. 마법 -->
+  <section id="spells">
+    <h2 class="sec"><span class="ico">✨</span> 4. 마법</h2>
+    <div class="infobox ok">공격 모드 전용. 최대 보유 1회 / 비용 무료. 준비 화면에서 선택, 전투 중 클릭 시전.</div>
+    <div class="spell-grid" style="margin-top:16px">
+      <div class="spell fire">
+        <div class="sname">화염구</div>
+        <div class="sdesc">클릭 위치 반경 3m 내 모든 적에게 120 데미지 (유닛 + 건물)</div>
+      </div>
+      <div class="spell lightning">
+        <div class="sname">번개</div>
+        <div class="sdesc">클릭 위치에서 가장 가까운 적 단일 타깃에게 200 데미지</div>
+      </div>
+      <div class="spell heal">
+        <div class="sname">치유</div>
+        <div class="sdesc">클릭 위치에서 가장 가까운 아군 유닛 HP +300 회복</div>
+      </div>
+      <div class="spell freeze">
+        <div class="sname">빙결</div>
+        <div class="sdesc">전체 적 유닛 이동속도 -50%, 지속 5초</div>
+      </div>
+      <div class="spell rage">
+        <div class="sname">분노</div>
+        <div class="sdesc">전체 아군 유닛 공격력 +50%, 지속 8초</div>
+      </div>
+    </div>
+    <h3 class="sub">시전 방법</h3>
+    <div class="flow">
+      <div class="flow-node start">하단 마법 바 버튼 클릭</div>
+      <div class="flow-arr">→</div>
+      <div class="flow-node">커서 황색 대기 상태</div>
+      <div class="flow-arr">→</div>
+      <div class="flow-node">원하는 위치 좌클릭</div>
+      <div class="flow-arr">→</div>
+      <div class="flow-node end-w">즉시 발동</div>
+    </div>
+    <p style="color:var(--muted);font-size:12px;margin-top:6px">우클릭 시 시전 취소. 차지 소모 후 버튼 비활성화.</p>
+  </section>
+
+  <!-- 5. 특수 건물 -->
+  <section id="buildings">
+    <h2 class="sec"><span class="ico">🏗</span> 5. 특수 건물 (수비 모드)</h2>
+    <div class="infobox info">수비 모드 준비 화면 우측 패널에서 골드로 업그레이드. 최대 Lv3.</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>건물</th><th>효과 요약</th>
+            <th>Lv1 비용</th><th>Lv2 비용</th><th>Lv3 비용</th>
+            <th>해금 조건</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>대장간</b></td>
+            <td>유닛 구매 비용 <span class="val">-10 / -20 / -30%</span></td>
+            <td>100G</td><td>200G</td><td>350G</td>
+            <td><span class="unlock">기본</span></td>
+          </tr>
+          <tr>
+            <td><b>여인숙</b></td>
+            <td>기병(Lv1+) · 공성기(Lv2+) 해금</td>
+            <td>150G</td><td>300G</td><td>500G</td>
+            <td><span class="unlock">기본</span></td>
+          </tr>
+          <tr>
+            <td><b>공방</b></td>
+            <td>다른 특수 건물 해금 (아래 참조)</td>
+            <td>200G</td><td>400G</td><td>700G</td>
+            <td><span class="unlock">기본</span></td>
+          </tr>
+          <tr>
+            <td><b>훈련소</b></td>
+            <td>유닛 HP·데미지 <span class="val">+10 / +25 / +45%</span></td>
+            <td>150G</td><td>300G</td><td>500G</td>
+            <td><span class="locked">공방 Lv1+</span></td>
+          </tr>
+          <tr>
+            <td><b>금고</b></td>
+            <td>자원 손실 <span class="val">-30 / -50 / -70%</span> (생존 시)</td>
+            <td>150G</td><td>300G</td><td>500G</td>
+            <td><span class="locked">공방 Lv1+</span></td>
+          </tr>
+          <tr>
+            <td><b>요새</b></td>
+            <td>아군 건물 HP <span class="val">+20 / +40 / +70%</span></td>
+            <td>200G</td><td>400G</td><td>700G</td>
+            <td><span class="locked">공방 Lv2+</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub">공방 해금 트리</h3>
+    <div class="flow">
+      <div class="flow-node start">공방 Lv0</div>
+      <div class="flow-arr">→ Lv1 →</div>
+      <div class="flow-node" style="border-color:var(--cyan);color:var(--cyan)">훈련소 · 금고 해금</div>
+      <div class="flow-arr">→ Lv2 →</div>
+      <div class="flow-node" style="border-color:var(--purple);color:var(--purple)">요새 해금</div>
+    </div>
+  </section>
+
+  <!-- 6. 전투 시스템 -->
+  <section id="combat">
+    <h2 class="sec"><span class="ico">⚡</span> 6. 전투 시스템</h2>
+
+    <h3 class="sub">유닛 조작 (전투 중)</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>입력</th><th>동작</th></tr></thead>
+        <tbody>
+          <tr><td>좌클릭 (빈 화면)</td><td>선택 해제</td></tr>
+          <tr><td>좌클릭 (대기 중 아군 유닛)</td><td>단일 선택 (황색 링 → 녹색 링)</td></tr>
+          <tr><td>Shift + 좌클릭</td><td>추가 선택</td></tr>
+          <tr><td>드래그</td><td>범위 다중 선택</td></tr>
+          <tr><td>선택 후 좌클릭 (적 유닛/건물)</td><td>공격 명령 발령 (잠금)</td></tr>
+          <tr><td>선택 후 좌클릭 (지면)</td><td>이동 명령 발령 (잠금)</td></tr>
+          <tr><td>우클릭 (적)</td><td>공격 명령 발령 (잠금)</td></tr>
+          <tr><td>우클릭 (지면)</td><td>이동 명령 발령 (잠금)</td></tr>
+          <tr><td>하단 방향 버튼 7종</td><td>대기 유닛 일괄 파견</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub">방향 버튼 (하단 HUD)</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
+      <span class="chip hi">전군 선택</span>
+      <span class="chip" style="border-color:var(--red);color:var(--red)">전군 돌격</span>
+      <span class="chip">좌측 공격</span>
+      <span class="chip">중앙 돌파</span>
+      <span class="chip">우측 공격</span>
+      <span class="chip">선택→목표</span>
+      <span class="chip">전군 자동</span>
+    </div>
+
+    <h3 class="sub">명령 잠금 시스템</h3>
+    <div class="card-grid" style="margin-top:10px">
+      <div class="card">
+        <div class="card-title" style="color:var(--accent2)">AwaitingOrders (황색 링)</div>
+        <p>생산 직후 또는 임무 완료 후 상태.<br>플레이어가 명령 가능.</p>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:var(--green)">IsSelected (녹색 링)</div>
+        <p>선택된 상태. 다음 클릭이 명령으로 전환됨.</p>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:var(--red)">CommandLocked</div>
+        <p>명령 수행 중. 추가 명령 불가.<br>목표 소멸 + 주변 위협 없음 시 자동 해제.</p>
+      </div>
+    </div>
+
+    <h3 class="sub">성벽 슬라이드 이동</h3>
+    <p style="color:var(--muted);font-size:13px">유닛은 물리 기반이 아닌 <code>transform.position</code> 직접 이동. SphereCast로 수직 장애물 감지 → 법선 벡터에 투영해 슬라이드. 문(Gate) 구간은 콜라이더 없음 → 자유 통과.</p>
+  </section>
+
+  <!-- 7. FOW -->
+  <section id="fow">
+    <h2 class="sec"><span class="ico">🌫</span> 7. 안개 전쟁 (FOW)</h2>
+    <div class="infobox warn">공격 모드에서만 적용. 수비 모드는 전장 전체 가시.</div>
+    <div class="tbl-wrap" style="margin-top:12px">
+      <table>
+        <thead><tr><th>대상</th><th>시야 반경</th><th>은폐 해제 조건</th><th>재은폐</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>적 유닛</td>
+            <td><span class="val">10m</span></td>
+            <td>아군 유닛 시야 내</td>
+            <td>시야 밖 시 즉시 은폐</td>
+          </tr>
+          <tr>
+            <td>적 건물</td>
+            <td><span class="val">14m</span></td>
+            <td>아군 시야 내 (첫 발견)</td>
+            <td>영구 표시 (발견 후 삭제 전까지)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="color:var(--muted);font-size:13px;margin-top:10px">시야 출처: 살아있는 플레이어 유닛 전체. 0.12초 간격 갱신. 은폐 시 Renderer + Collider 동시 비활성화 (클릭 불가).</p>
+  </section>
+
+  <!-- 8. 수비 모드 -->
+  <section id="defense">
+    <h2 class="sec"><span class="ico">🛡</span> 8. 수비 모드 구조</h2>
+
+    <h3 class="sub">기지 레이아웃 (X축 기준)</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>X 위치</th><th>시설</th><th>설명</th></tr></thead>
+        <tbody>
+          <tr><td><span class="val">-21</span></td><td>플레이어 성 (Castle)</td><td>HP 900, 파괴 시 즉시 패배</td></tr>
+          <tr><td><span class="val">-16</span></td><td>후방 타워 3개 (L/C/R)</td><td>사거리 9m, 데미지 18, 쿨다운 1.2s</td></tr>
+          <tr><td><span class="val">-13</span></td><td>전방 타워 2개 (F1/F2)</td><td>동일 스탯</td></tr>
+          <tr><td><span class="val">-12 ~</span></td><td>플레이어 유닛 배치 구역</td><td>준비 화면에서 구매한 유닛 도열</td></tr>
+          <tr><td><span class="val">-10</span></td><td>자동 성벽 라인 (Z -8 ~ +8)</td><td>클릭으로 문 위치 변경 (노란색 칸)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub">적 웨이브</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>파수</th><th>대기 시간</th><th>유닛 수</th><th>유닛 범위</th></tr></thead>
+        <tbody>
+          <tr><td>1파</td><td>5초</td><td>5기</td><td>인덱스 0~0 (기사)</td></tr>
+          <tr><td>2파</td><td>25초</td><td>7기</td><td>인덱스 0~1</td></tr>
+          <tr><td>3파</td><td>25초</td><td>9기</td><td>인덱스 0~2</td></tr>
+          <tr><td>4파</td><td>25초</td><td>11기</td><td>인덱스 0~3</td></tr>
+          <tr><td>5파 (최종)</td><td>25초</td><td>13기</td><td>인덱스 0~4</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="infobox ok" style="margin-top:8px">5파 전부 격퇴 후 22초 생존 시 <b>승리</b>.</div>
+  </section>
+
+  <!-- 9. 공격 모드 -->
+  <section id="attack">
+    <h2 class="sec"><span class="ico">⚔</span> 9. 공격 모드 구조</h2>
+
+    <h3 class="sub">적 기지 레이아웃</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>X 위치</th><th>시설</th><th>HP</th><th>특징</th></tr></thead>
+        <tbody>
+          <tr><td><span class="val">2</span></td><td>성벽 3개 (L/C/R)</td><td>600</td><td>물리 장벽, 공격 불가</td></tr>
+          <tr><td><span class="val">5</span></td><td>망루 2개 (F1/F2)</td><td>220</td><td>사거리 9m 자동 공격</td></tr>
+          <tr><td><span class="val">9</span></td><td>병영 2개 + 신전 1개</td><td>300 / 150</td><td>신전: 주변 아군 버프</td></tr>
+          <tr><td><span class="val">13</span></td><td>마법사탑 2개</td><td>180</td><td>사거리 14m 마법 공격 (2발)</td></tr>
+          <tr><td><span class="val">16</span></td><td>후방 망루 3개 (B1/BC/B2)</td><td>220</td><td>사거리 9m 자동 공격</td></tr>
+          <tr><td><span class="val">21</span></td><td>적 성 (EnemyCastle)</td><td>900</td><td>파괴 시 즉시 승리</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub">초기 적 유닛 배치 (고정, 재생산 없음)</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>선</th><th>X</th><th>수</th><th>종류</th></tr></thead>
+        <tbody>
+          <tr><td>1선</td><td>4~5</td><td>5기</td><td>기사/궁수 랜덤</td></tr>
+          <tr><td>2선</td><td>8</td><td>3기</td><td>궁수/마법사/정찰병 랜덤</td></tr>
+          <tr><td>3선</td><td>17~19</td><td>3기</td><td>정찰병~공성기 랜덤</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 10. 승리/패배 -->
+  <section id="victory">
+    <h2 class="sec"><span class="ico">🏆</span> 10. 승리 / 패배 조건</h2>
+    <div class="mode-grid">
+      <div class="mode-box atk">
+        <h3>공격 모드</h3>
+        <ul>
+          <li><b style="color:var(--green)">승리:</b> 적 성 파괴</li>
+          <li><b style="color:var(--green)">승리:</b> 전 적 건물 파괴</li>
+          <li><b style="color:var(--red)">패배:</b> 전군 전멸</li>
+          <li><b style="color:var(--red)">패배:</b> 시간 초과 (180초)</li>
+        </ul>
+      </div>
+      <div class="mode-box def">
+        <h3>수비 모드</h3>
+        <ul>
+          <li><b style="color:var(--green)">승리:</b> 5파 전 격퇴 후 22초 생존</li>
+          <li><b style="color:var(--red)">패배:</b> 아군 성 파괴</li>
+          <li><b style="color:var(--red)">패배:</b> 시간 초과 (180초)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="infobox info" style="margin-top:12px">
+      게임 종료 시 <b>Time.timeScale = 0.25</b> 슬로우모션 연출 → 결과 패널 표시 (파괴 건물 수 / 획득 골드 / 획득 무공).
+    </div>
+  </section>
+
+  <!-- 11. 자원 -->
+  <section id="resources">
+    <h2 class="sec"><span class="ico">💰</span> 11. 자원 시스템</h2>
+
+    <h3 class="sub">골드</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>구분</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td>초기 지급</td><td><span class="val">999,999G</span> <span class="note">(테스트 모드)</span></td></tr>
+          <tr><td>건물 파괴 보상</td><td>해당 건물 <span class="val">maxHp ÷ 5</span></td></tr>
+          <tr><td>사용처</td><td>유닛 구매 · 특수 건물 업그레이드 · 마법 구매(0G)</td></tr>
+          <tr><td>금고 효과</td><td>생존 시 건물 파괴로 인한 손실 <span class="val">-30/50/70%</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub">무공 (Valor)</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>획득</th><th>소모 (전투 중 업그레이드)</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>
+              일반 건물 파괴: +1<br>
+              적 성 파괴: +3
+            </td>
+            <td>
+              기병 해금: -1<br>
+              공성기 해금: -2<br>
+              전술 훈련 (공격력 +30%): -1<br>
+              방어 강화: -2
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 12. AI -->
+  <section id="ai">
+    <h2 class="sec"><span class="ico">🤖</span> 12. AI 시스템</h2>
+
+    <h3 class="sub">TestSimpleUnitAI (유닛 AI)</h3>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-title">타깃 우선순위</div>
+        <p>1. 명령 타깃 (CommandAttack)<br>2. 위협 범위 내 적 유닛 (nearest)<br>3. 가장 가까운 적 건물</p>
+      </div>
+      <div class="card">
+        <div class="card-title">이동</div>
+        <p>transform.position 직접 이동<br>SphereCast → 수직 장애물 슬라이드<br>0.5초마다 타깃 재탐색</p>
+      </div>
+      <div class="card">
+        <div class="card-title">버프 슬롯</div>
+        <p><b>DamageMultiplier</b>: 기본 1.0 (분노 마법으로 일시 증가)<br><b>SpeedMultiplier</b>: 기본 1.0 (빙결 마법으로 일시 감소)</p>
+      </div>
+    </div>
+
+    <h3 class="sub">건물 AI (수비 자동)</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>컴포넌트</th><th>동작</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>TestTowerAI</b></td>
+            <td>사거리 내 적 유닛 자동 조준 · 공격. isPlayerSide 플래그로 아군/적 구분.</td>
+          </tr>
+          <tr>
+            <td><b>TestMageTowerAI</b></td>
+            <td>사거리 14m, 데미지 35, 쿨다운 2.5s. 발사체 2개 동시 발사.</td>
+          </tr>
+          <tr>
+            <td><b>TestBuffBuildingAI</b></td>
+            <td>주변 아군 유닛에게 주기적으로 DamageMultiplier / SpeedMultiplier 버프 적용.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="infobox info" style="margin-top:10px">
+      건물 AI는 항상 자동으로 동작. 공격 모드에서 플레이어가 건물을 직접 조작할 필요 없음.
+    </div>
+  </section>
+
+  <!-- 13. 씬 -->
+  <section id="scenes">
+    <h2 class="sec"><span class="ico">🎬</span> 13. 씬 목록</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>인덱스</th><th>씬 이름</th><th>핵심 스크립트</th><th>역할</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>0</td><td>MainMenu</td>
+            <td><span class="chip">GameManager</span></td>
+            <td>게임 시작 / 계속 메뉴</td>
+          </tr>
+          <tr>
+            <td>1</td><td>BaseBuilder</td>
+            <td><span class="chip">BaseBuilderManager</span> <span class="chip">GridSystem</span></td>
+            <td>기지 레이아웃 편집 (그리드 배치)</td>
+          </tr>
+          <tr>
+            <td>2</td><td>Battle</td>
+            <td><span class="chip">BattleManager</span> <span class="chip">AIWaveSpawner</span></td>
+            <td>메인 전투 씬</td>
+          </tr>
+          <tr>
+            <td>3</td><td>Result</td>
+            <td><span class="chip">ResultUI</span></td>
+            <td>전투 결과 표시 · 스타 평가</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td><b style="color:var(--accent2)">05_TestBattle</b></td>
+            <td><span class="chip hi">TestBootstrap</span></td>
+            <td>공격/수비 통합 테스트 씬 (현재 개발 중심)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 14. 기술 -->
+  <section id="tech">
+    <h2 class="sec"><span class="ico">⚙</span> 14. 기술 스택 & 코드 구조</h2>
+
+    <h3 class="sub">환경</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
+      <span class="chip hi">Unity 2022.3.62f3 LTS</span>
+      <span class="chip hi">URP (Universal Render Pipeline)</span>
+      <span class="chip hi">C# / MonoBehaviour</span>
+      <span class="chip hi">Windows Standalone</span>
+      <span class="chip">NUnit (편집 모드 테스트)</span>
+    </div>
+
+    <h3 class="sub">핵심 정적 시스템</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>클래스</th><th>네임스페이스</th><th>역할</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>SpellSystem</b></td>
+            <td>MedievalRTS.Battle</td>
+            <td>5종 마법 정의 · 차지 관리 (TryBuy / UseCharge / Reset)</td>
+          </tr>
+          <tr>
+            <td><b>BuildingEffectSystem</b></td>
+            <td>MedievalRTS.Buildings</td>
+            <td>6종 특수 건물 레벨 · 효과 배율 계산 · 해금 조건</td>
+          </tr>
+          <tr>
+            <td><b>EventBus</b></td>
+            <td>MedievalRTS.Core</td>
+            <td>BuildingDestroyedEvent · UnitDiedEvent 발행/구독</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub">주요 컴포넌트</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>컴포넌트</th><th>역할</th></tr></thead>
+        <tbody>
+          <tr><td><b>Unit</b></td><td>HP 관리, 태그 설정, Heal/TakeDamage, UnitUpgradeSystem 연동</td></tr>
+          <tr><td><b>Building</b></td><td>HP 관리, Repair/TakeDamage, 요새 HP 배율 적용</td></tr>
+          <tr><td><b>TestSimpleUnitAI</b></td><td>유닛 이동·공격 AI, 명령 잠금, 성벽 슬라이드</td></tr>
+          <tr><td><b>TestBootstrap</b></td><td>테스트 씬 전체 관리 (월드 생성·UI·페이즈·이벤트)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub">에디터 도구</h3>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-title" style="color:var(--accent2)">RTSSetupWizard</div>
+        <p>메뉴: <code>Medieval RTS / Setup Wizard</code><br>씬·ScriptableObject 자동 설정</p>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:var(--cyan)">Quick Refresh</div>
+        <p>메뉴: <code>Medieval RTS / Refresh</code><br>단축키: <b>Ctrl+Alt+R</b><br>AssetDatabase.Refresh() 즉시 실행</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+    <div class="infobox warn">
+      <b>빌드 시 주의:</b> Unity 에디터 열린 상태에서는 커맨드라인 빌드 불가 (동일 프로젝트 중복 실행 제한).
+      에디터 종료 후 <code>File → Build Settings → Build</code> 또는 커맨드라인으로 빌드할 것.
+      출력 경로: <code>C:/Development/15_MD/Build/Win/MedievalRTS.exe</code>
+    </div>
+  </section>
+
+</div><!-- /wrapper -->
+
+<script>
+  // 스크롤 앵커 부드럽게
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const el = document.querySelector(a.getAttribute('href'));
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+</body>
+</html>

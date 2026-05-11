@@ -72,6 +72,14 @@ namespace MedievalRTS.Editor
             SetupScenes();
         }
 
+        // ── 빠른 새로고침 (Ctrl+Alt+R) ────────────────────────
+        [MenuItem("Medieval RTS/🔄 Refresh (Recompile + Reimport) %&r", priority = 1)]
+        public static void QuickRefresh()
+        {
+            AssetDatabase.Refresh();
+            Debug.Log("🔄 Refresh complete — scripts recompiled, assets reimported.");
+        }
+
         [MenuItem("Medieval RTS/Rename Scenes (Add Numbers)", priority = 13)]
         public static void RenameScenes()
         {

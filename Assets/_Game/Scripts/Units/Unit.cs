@@ -43,6 +43,12 @@ namespace MedievalRTS.Units
             if (CurrentHp == 0) Die();
         }
 
+        public void Heal(int amount)
+        {
+            if (!IsAlive) return;
+            CurrentHp = Mathf.Min(CurrentHp + amount, Data.maxHp);
+        }
+
         private void Die()
         {
             OnDied?.Invoke(this);

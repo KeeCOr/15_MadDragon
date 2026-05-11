@@ -10,6 +10,7 @@ namespace MedievalRTS.Buildings
     {
         public BuildingData Data { get; private set; }
         public int CurrentHp { get; private set; }
+        public int MaxHp     { get; private set; }
         public bool IsAlive => CurrentHp > 0;
         public bool IsPlayerBuilding { get; private set; }
 
@@ -18,7 +19,10 @@ namespace MedievalRTS.Buildings
         public void Initialize(BuildingData data, bool isPlayerBuilding)
         {
             Data = data;
-            CurrentHp = data.maxHp;
+            MaxHp = isPlayerBuilding
+                ? Mathf.RoundToInt(data.maxHp * BuildingEffectSystem.GetBuildingHPMultiplier())
+                : data.maxHp;
+            CurrentHp = MaxHp;
             IsPlayerBuilding = isPlayerBuilding;
             gameObject.tag = isPlayerBuilding ? "PlayerBuilding" : "EnemyBuilding";
         }
@@ -26,7 +30,7 @@ namespace MedievalRTS.Buildings
         public void Repair(int amount)
         {
             if (!IsAlive) return;
-            CurrentHp = Mathf.Min(CurrentHp + amount, Data.maxHp);
+            CurrentHp = Mathf.Min(CurrentHp + amount, MaxHp);
         }
 
         public void TakeDamage(int amount)

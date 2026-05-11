@@ -147,7 +147,17 @@ namespace MedievalRTS.Testing
             }
 
             var target = ResolveTarget();
-            if (target == null) return;
+            // 임무 완료 & 위협 없음 → 플레이어 유닛 재조작 허용
+            if (target == null)
+            {
+                if (CommandLocked && _unit != null && _unit.IsPlayerUnit)
+                {
+                    CommandLocked  = false;
+                    AwaitingOrders = true;
+                    if (_ring != null) { _ring.SetActive(true); _ringMat.color = ColorAwaiting; }
+                }
+                return;
+            }
 
             float dist = Vector3.Distance(transform.position, target.position);
             if (dist > _attackRange)
@@ -203,7 +213,25 @@ namespace MedievalRTS.Testing
         private void MoveToward(Vector3 dest)
         {
             Vector3 dir = (dest - transform.position).normalized;
-            transform.position += dir * _moveSpeed * SpeedMultiplier * Time.deltaTime;
+            float step = _moveSpeed * SpeedMultiplier * Time.deltaTime;
+
+            // 성벽 같은 수직 장애물 충돌 시 슬라이드 이동
+            Vector3 origin = transform.position + Vector3.up * 0.6f;
+            if (Physics.SphereCast(origin, 0.3f, dir, out RaycastHit hit, step + 0.25f))
+            {
+                bool isObstacle = hit.collider.GetComponent<Unit>() == null
+                               && hit.collider.GetComponentInParent<Unit>() == null
+                               && hit.collider.GetComponentInParent<Building>() == null;
+                float verticalDot = Vector3.Dot(hit.normal, Vector3.up);
+                if (isObstacle && verticalDot < 0.4f) // 수직면 장애물
+                {
+                    Vector3 slid = Vector3.ProjectOnPlane(dir, hit.normal);
+                    slid.y = 0;
+                    if (slid.sqrMagnitude > 0.01f) dir = slid.normalized;
+                    else return; // 막힌 경우 정지
+                }
+            }
+            transform.position += dir * step;
         }
 
         private void Attack(Transform target)

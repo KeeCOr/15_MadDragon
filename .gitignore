@@ -23,3 +23,6 @@ sysinfo.txt
 *.unitypackage
 *.app
 .DS_Store
+
+# Claude Code local settings
+.claude/

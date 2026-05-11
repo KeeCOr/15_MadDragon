@@ -21,5 +21,5 @@ MonoBehaviour:
   attackRange: 1.5
   attackCooldown: 1
   sightRange: 5
-  prefab: {fileID: 1282007872345143122, guid: f0a2fafbb2ec50c4fa1882300acec173, type: 3}
+  prefab: {fileID: 121574, guid: fe2a5bf9b4c2d4a4b9853a8506f18c40, type: 3}
   icon: {fileID: 0}
