@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MadDragon 기획서 v0.5</title>
+<style>
+  :root {
+    --bg: #101318;
+    --panel: #181d24;
+    --panel2: #202733;
+    --text: #edf1f7;
+    --muted: #9aa7b7;
+    --line: #33404f;
+    --gold: #e8b84e;
+    --red: #d96459;
+    --blue: #65a7d8;
+    --green: #7bc987;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Malgun Gothic", "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+  }
+  header {
+    padding: 36px 24px 28px;
+    border-bottom: 1px solid var(--line);
+    background: #151a21;
+  }
+  main { max-width: 1040px; margin: 0 auto; padding: 28px 22px 72px; }
+  h1 { margin: 0 0 8px; font-size: 32px; color: var(--gold); }
+  h2 { margin: 36px 0 14px; font-size: 22px; color: var(--gold); border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+  h3 { margin: 24px 0 8px; color: var(--blue); }
+  p, li { color: var(--text); }
+  .meta, .muted { color: var(--muted); }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin: 14px 0;
+  }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+  code, pre {
+    font-family: Consolas, "Courier New", monospace;
+    background: var(--panel2);
+    color: #f3d98b;
+  }
+  pre {
+    overflow-x: auto;
+    padding: 14px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+  }
+  ul { padding-left: 22px; }
+  .tag {
+    display: inline-block;
+    margin: 4px 6px 4px 0;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--panel2);
+    border: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .risk { color: var(--red); font-weight: 700; }
+  .ok { color: var(--green); font-weight: 700; }
+</style>
+</head>
+<body>
+<header>
+  <h1>MadDragon 기획서</h1>
+  <div class="meta">v0.5 draft · 2026-05-15 · 모바일 우선 공방 순환 RTS</div>
+</header>
+<main>
+  <section class="card">
+    <h2>핵심 콘셉트</h2>
+    <p>MadDragon은 공격과 방어가 번갈아 성장하는 모바일 RTS 캠페인이다. 플레이어는 적 요새를 공격해 자원을 벌고, 본부와 방어 시설을 강화하며, 자동 생산되는 자원을 수거하고, 침공 방어에 실패하면 자원을 약탈당한다.</p>
+  </section>
+
+  <h2>핵심 루프</h2>
+  <pre>캠페인 허브
+-> 공격 준비
+-> 요새 공격
+-> 보상 정산
+-> 기지 정비
+-> 침공 방어 또는 다음 공격</pre>
+
+  <div class="grid">
+    <section class="card">
+      <h3>공격</h3>
+      <p>정찰로 약점을 확인하고, 제한된 병력 슬롯과 장착 마법으로 적 요새를 뚫는 퍼즐이다.</p>
+    </section>
+    <section class="card">
+      <h3>방어</h3>
+      <p>본부와 생산 자원을 지키는 경제 압박이다. 실패하면 미수거 자원과 보유 자원의 일부를 약탈당한다.</p>
+    </section>
+  </div>
+
+  <h2>자원 생산과 약탈</h2>
+  <p>대부분의 생산 건물은 시간이 지나며 자원을 만든다. 본부는 생산된 자원을 저장하고, 본부 레벨은 저장량과 보호율을 높인다.</p>
+  <p><span class="tag">미수거/저장 자원</span><span class="tag">보유 자원</span><span class="tag">본부 보호율</span><span class="tag">예상 약탈량</span></p>
+  <pre>방어 성공: 손실 없음, 방어 보상 획득
+아슬아슬한 실패: 미수거 자원 30%, 보유 자원 5% 손실
+완전 패배: 미수거 자원 70%, 보유 자원 15% 손실
+본부 파괴: 미수거 자원 100%, 보유 자원 20% 손실</pre>
+  <p class="risk">UI에는 항상 예상 약탈량과 보호율을 표시한다.</p>
+  <pre>예상 약탈: 저장 골드 1,200 중 840 / 보유 골드 8,000 중 400
+보호율: 35%
+위험도: 높음</pre>
+
+  <h2>자원 역할</h2>
+  <ul>
+    <li><strong>골드:</strong> 병력, 마법, 건물 배치, 수리 등 즉시 소비.</li>
+    <li><strong>명예:</strong> 유닛 해금, 특수 건물 업그레이드, 패시브 성장.</li>
+    <li><strong>별:</strong> 캠페인 진행도와 보상 해금 조건.</li>
+  </ul>
+
+  <h2>모바일 레이아웃 원칙</h2>
+  <ul>
+    <li>전장은 최대한 넓게 보여주고, UI는 필요한 순간에만 하단 시트로 연다.</li>
+    <li>상단 바는 시간, 목표 HP, 자원, 위험도처럼 핵심 상태만 표시한다.</li>
+    <li>하단 탭은 병력, 마법, 정보, 건설, 주둔, 강화처럼 화면별 작업 전환에 사용한다.</li>
+    <li>전투 퀵바는 선택 병력, 집결, 공격, 후퇴/대기, 장착 마법으로 압축한다.</li>
+    <li>한 화면에는 하나의 주요 행동만 크게 표시한다.</li>
+  </ul>
+
+  <h2>화면 구성</h2>
+  <div class="grid">
+    <section class="card"><h3>캠페인 허브</h3><p>챕터, 골드, 명예, 별, 저장 자원, 침공 위험도를 표시하고 다음 공격 또는 기지 정비로 안내한다.</p></section>
+    <section class="card"><h3>공격 준비</h3><p>병력, 마법, 정보 탭으로 구성한다. 병력은 출전 슬롯, 마법은 2~3개 장착 중심이다.</p></section>
+    <section class="card"><h3>요새 공격</h3><p>상단 상태와 하단 퀵바만 유지하고, 라인 선택은 전장 터치로 해결한다.</p></section>
+    <section class="card"><h3>기지 정비</h3><p>저장 자원, 보유 자원, 저장 한도, 예상 약탈량을 보여주고 수거/건설/주둔/강화 탭을 제공한다.</p></section>
+    <section class="card"><h3>침공 방어</h3><p>본부 HP, 침공 타이머, 보호 자원을 표시하고 방어 결과에서 지킨 자원과 잃은 자원을 명확히 보여준다.</p></section>
+    <section class="card"><h3>결과</h3><p>승패, 별, 획득/약탈 자원, 해금을 보여주며 다음 행동은 기지 정비 또는 수리/보강으로 유도한다.</p></section>
+  </div>
+
+  <h2>구현 방향</h2>
+  <p>1차 구현은 현재 프로토타입 기능을 살리되 모바일 UI 구조로 재배치한다. 이후 자원 저장/약탈 계산과 UI 화면 생성은 별도 클래스로 분리한다.</p>
+  <p><span class="tag">CampaignHubScreen</span><span class="tag">AttackPrepScreen</span><span class="tag">BattleHud</span><span class="tag">BaseManagementScreen</span><span class="tag">DefenseSetupHud</span><span class="tag">ResultScreen</span><span class="tag">ResourceStorageSystem</span><span class="tag">RaidLossCalculator</span></p>
+
+  <h2>검증</h2>
+  <ul>
+    <li>자원 생산 누적, 모두 수거, 본부 저장 한도, 약탈 손실 계산, 보호율 보정은 EditMode 테스트로 검증한다.</li>
+    <li>모바일 비율, 터치 영역, 텍스트 겹침, 하단 시트와 전장 가시성은 Unity 실행 화면으로 검증한다.</li>
+  </ul>
+</main>
+</body>
+</html>
