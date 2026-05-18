@@ -172,6 +172,15 @@
       <li><code>MobileUiFactory</code>로 UGUI 패널, 라벨, 버튼 생성과 <code>RectTransform</code> 배치를 재사용할 수 있게 분리했다.</li>
     </ul>
   </section>
+  <section class="card">
+    <h3>v0.5 Task 5 - 캠페인 허브/기지 정비 프로토타입</h3>
+    <ul>
+      <li><code>CampaignHubScreen</code>으로 보유 자원, 저장 자원, 예상 약탈 손실을 첫 화면에서 확인하고 공격 준비 또는 기지 정비로 이동할 수 있게 했다.</li>
+      <li><code>BaseManagementScreen</code>으로 본부 레벨, 저장 한도, 저장 골드, 예상 손실을 표시하고 <code>Collect</code> 버튼으로 미수거 자원을 보유 자원으로 옮길 수 있게 했다.</li>
+      <li><code>TestBootstrap</code>에 자원 생산 틱, 현재 약탈 예측, 허브/기지/기존 공격 준비 화면 전환을 연결해 자동 생산 자원을 자주 챙기는 루프를 프로토타입 화면에 반영했다.</li>
+      <li>기존 공격 준비 화면에서도 <code>Hub</code>/<code>Base</code> 버튼으로 돌아갈 수 있어, 병력 구매 전후에 저장 자원 수거와 약탈 위험 확인을 다시 할 수 있다.</li>
+    </ul>
+  </section>
 
   <h2>구현 방향</h2>
   <p>1차 구현은 현재 프로토타입 기능을 살리되 모바일 UI 구조로 재배치한다. 이후 자원 저장/약탈 계산과 UI 화면 생성은 별도 클래스로 분리한다.</p>

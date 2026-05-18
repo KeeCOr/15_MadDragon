@@ -15,6 +15,8 @@ using MedievalRTS.Data;
 using MedievalRTS.Units;
 using MedievalRTS.Buildings;
 using MedievalRTS.Battle;
+using MedievalRTS.Economy;
+using MedievalRTS.UI;
 
 namespace MedievalRTS.Testing
 {
@@ -143,6 +145,10 @@ namespace MedievalRTS.Testing
         private int _pendingSpell = -1;
         private readonly Button[] _spellBattleBtns      = new Button[5];
         private readonly Text[]   _spellBattleChargeLbls = new Text[5];
+        private ResourceWallet _ownedResources;
+        private ResourceStorageSystem _resourceStorage;
+        private CampaignHubScreen _campaignHubScreen;
+        private BaseManagementScreen _baseManagementScreen;
 
         // ═══════════════════════════════════════════════════════
         //  라이프사이클
@@ -151,8 +157,15 @@ namespace MedievalRTS.Testing
         {
             BuildingEffectSystem.Reset();
             SpellSystem.Reset();
+            _ownedResources = new ResourceWallet();
+            _ownedResources.Add(ResourceType.Gold, _gold);
+            _resourceStorage = new ResourceStorageSystem(1);
+            _resourceStorage.AddProducer(new ResourceProductionBuilding("GoldMine", ResourceType.Gold, 8f, 1200));
             BuildWorld();
             BuildUI();
+            BuildMobileLoopScreens();
+            ShowCampaignHub();
+            RefreshMobileLoopScreens();
             EventBus.Subscribe<BuildingDestroyedEvent>(OnBuildingDestroyed);
         }
 
@@ -163,6 +176,12 @@ namespace MedievalRTS.Testing
 
         private void Update()
         {
+            if (_resourceStorage != null)
+            {
+                _resourceStorage.TickProduction(Time.deltaTime);
+                RefreshMobileLoopScreens();
+            }
+
             // 수비 진형 구성 중: 유닛 선택·명령 + 건물 배치
             if (_phase == Phase.Prep && _defenseSetupActive)
             {
@@ -372,6 +391,8 @@ namespace MedievalRTS.Testing
 
             _prepPanel.SetActive(false);
             if (_dsHud != null) _dsHud.SetActive(false);
+            _campaignHubScreen?.SetVisible(false);
+            _baseManagementScreen?.SetVisible(false);
             _battleHud.SetActive(true);
             _upgradePanel.SetActive(true);
             _phase = Phase.Battle;
@@ -1112,6 +1133,7 @@ namespace MedievalRTS.Testing
             int valor = b == _enemyCastle ? 3 : 1;
             _gold         += gold;
             _valor        += valor;
+            SyncOwnedResources();
             _earnedGold   += gold;
             _earnedValor  += valor;
             _destroyedBuildings++;
@@ -1202,6 +1224,81 @@ namespace MedievalRTS.Testing
             _resultPanel.SetActive(false);
         }
 
+        private void BuildMobileLoopScreens()
+        {
+            _campaignHubScreen = new CampaignHubScreen(_canvas, _font, ShowAttackPrep, ShowBaseManagement);
+            _baseManagementScreen = new BaseManagementScreen(_canvas, _font, CollectStoredResources, ShowCampaignHub);
+            _campaignHubScreen.SetVisible(false);
+            _baseManagementScreen.SetVisible(false);
+        }
+
+        private void ShowCampaignHub()
+        {
+            if (_phase != Phase.Prep) return;
+            _prepPanel.SetActive(false);
+            if (_dsHud != null) _dsHud.SetActive(false);
+            _campaignHubScreen?.SetVisible(true);
+            _baseManagementScreen?.SetVisible(false);
+            RefreshMobileLoopScreens();
+        }
+
+        private void ShowAttackPrep()
+        {
+            if (_phase != Phase.Prep) return;
+            _campaignHubScreen?.SetVisible(false);
+            _baseManagementScreen?.SetVisible(false);
+            _prepPanel.SetActive(true);
+            RefreshPrepGold();
+        }
+
+        private void ShowBaseManagement()
+        {
+            if (_phase != Phase.Prep) return;
+            _prepPanel.SetActive(false);
+            if (_dsHud != null) _dsHud.SetActive(false);
+            _campaignHubScreen?.SetVisible(false);
+            _baseManagementScreen?.SetVisible(true);
+            RefreshMobileLoopScreens();
+        }
+
+        private RaidForecast BuildCurrentRaidForecast()
+        {
+            if (_resourceStorage == null || _ownedResources == null) return null;
+            return RaidLossCalculator.Calculate(
+                _resourceStorage.Stored,
+                _ownedResources,
+                RaidOutcome.ClearFailure,
+                _resourceStorage.ProtectionRate);
+        }
+
+        private void RefreshMobileLoopScreens()
+        {
+            if (_ownedResources == null || _resourceStorage == null) return;
+
+            SyncOwnedResources();
+            var forecast = BuildCurrentRaidForecast();
+            _campaignHubScreen?.Refresh(_ownedResources, _resourceStorage.Stored, forecast);
+            _baseManagementScreen?.Refresh(
+                _ownedResources,
+                _resourceStorage.Stored,
+                forecast,
+                _resourceStorage.HeadquartersLevel,
+                _resourceStorage.GetHeadquartersCapacity(ResourceType.Gold));
+        }
+
+        private void CollectStoredResources()
+        {
+            if (_resourceStorage == null || _ownedResources == null) return;
+
+            _resourceStorage.CollectAll(_ownedResources);
+            _gold = _ownedResources.Get(ResourceType.Gold);
+            RefreshPrepGold();
+            RefreshBuyBtns();
+            RefreshSpecialBldgUI();
+            RefreshSpellBuyUI();
+            RefreshMobileLoopScreens();
+        }
+
         // ── 준비 화면 ─────────────────────────────────────────
         // 모든 요소: anchor=(0.5,1), pivot=(0.5,1) — 패널 상단 중앙 기준 Y 누적
         private void BuildPrepPanel()
@@ -1264,6 +1361,11 @@ namespace MedievalRTS.Testing
                 new Vector2(720, 36), "병력 없음", 20, new Color(0.9f, 0.9f, 0.8f));
             if (_rosterText != null) _rosterText.alignment = TextAnchor.UpperCenter;
 
+            Btn(_prepPanel, "HubBtn", new Vector2(0f, 1f), new Vector2(70f, -34f),
+                new Vector2(120f, 44f), "Hub", MobileHudTheme.SecondaryButton, ShowCampaignHub);
+            Btn(_prepPanel, "BaseBtn", new Vector2(0f, 1f), new Vector2(200f, -34f),
+                new Vector2(120f, 44f), "Base", MobileHudTheme.PrimaryButton, ShowBaseManagement);
+
             _startBattleBtn = Btn(_prepPanel, "StartBtn", a, new Vector2(0, -681),
                 new Vector2(250, 66), "출전! ▶", new Color(0.1f, 0.55f, 0.15f), EnterBattle);
             _enterSetupBtn = Btn(_prepPanel, "SetupBtn", a, new Vector2(0, -681),
@@ -1314,7 +1416,16 @@ namespace MedievalRTS.Testing
 
         private void RefreshPrepGold()
         {
+            SyncOwnedResources();
             if (_prepGoldText != null) _prepGoldText.text = $"골드: {_gold}";
+            RefreshMobileLoopScreens();
+        }
+
+        private void SyncOwnedResources()
+        {
+            if (_ownedResources == null) return;
+            _ownedResources.Set(ResourceType.Gold, _gold);
+            _ownedResources.Set(ResourceType.Honor, _valor);
         }
 
         private void RefreshBuyBtns()
