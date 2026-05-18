@@ -26,11 +26,7 @@ namespace MedievalRTS.Progression
             {
                 var data = JsonConvert.DeserializeObject<SaveData>(File.ReadAllText(path))
                            ?? new SaveData();
-                data.StageStars ??= new Dictionary<int, int>();
-                data.UnitLevels ??= new Dictionary<string, int>();
-                data.OwnedResources ??= new ResourceWallet();
-                data.StoredResources ??= new ResourceWallet();
-                if (data.HeadquartersLevel <= 0) data.HeadquartersLevel = 1;
+                Normalize(data);
                 return data;
             }
             catch (JsonException ex)
@@ -44,6 +40,22 @@ namespace MedievalRTS.Progression
         {
             path ??= DefaultPath;
             if (File.Exists(path)) File.Delete(path);
+        }
+
+        private static void Normalize(SaveData data)
+        {
+            data.StageStars ??= new Dictionary<int, int>();
+            data.UnitLevels ??= new Dictionary<string, int>();
+            data.OwnedResources ??= new ResourceWallet();
+            data.StoredResources ??= new ResourceWallet();
+            NormalizeWallet(data.OwnedResources);
+            NormalizeWallet(data.StoredResources);
+            if (data.HeadquartersLevel <= 0) data.HeadquartersLevel = 1;
+        }
+
+        private static void NormalizeWallet(ResourceWallet wallet)
+        {
+            wallet.Amounts ??= new Dictionary<ResourceType, int>();
         }
     }
 }

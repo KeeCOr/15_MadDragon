@@ -1,6 +1,7 @@
 // Assets/_Game/Tests/EditMode/SaveSystemTests.cs
 using NUnit.Framework;
 using System.IO;
+using MedievalRTS.Economy;
 using MedievalRTS.Progression;
 using MedievalRTS.Base;
 
@@ -82,18 +83,55 @@ public class SaveSystemTests
     public void Save_Then_Load_PreservesEconomyState()
     {
         var data = new SaveData();
-        data.OwnedResources.Add(MedievalRTS.Economy.ResourceType.Gold, 8000);
-        data.StoredResources.Add(MedievalRTS.Economy.ResourceType.Gold, 1200);
+        data.OwnedResources.Add(ResourceType.Gold, 8000);
+        data.OwnedResources.Add(ResourceType.Honor, 75);
+        data.OwnedResources.Add(ResourceType.Stars, 9);
+        data.StoredResources.Add(ResourceType.Gold, 1200);
+        data.StoredResources.Add(ResourceType.Honor, 25);
+        data.StoredResources.Add(ResourceType.Stars, 3);
         data.HeadquartersLevel = 3;
         data.LastCollectionUnixSeconds = 1778780000;
 
         SaveSystem.Save(data, _testPath);
         var loaded = SaveSystem.Load(_testPath);
 
-        Assert.AreEqual(8000, loaded.OwnedResources.Get(MedievalRTS.Economy.ResourceType.Gold));
-        Assert.AreEqual(1200, loaded.StoredResources.Get(MedievalRTS.Economy.ResourceType.Gold));
+        Assert.AreEqual(8000, loaded.OwnedResources.Get(ResourceType.Gold));
+        Assert.AreEqual(75, loaded.OwnedResources.Get(ResourceType.Honor));
+        Assert.AreEqual(9, loaded.OwnedResources.Get(ResourceType.Stars));
+        Assert.AreEqual(1200, loaded.StoredResources.Get(ResourceType.Gold));
+        Assert.AreEqual(25, loaded.StoredResources.Get(ResourceType.Honor));
+        Assert.AreEqual(3, loaded.StoredResources.Get(ResourceType.Stars));
         Assert.AreEqual(3, loaded.HeadquartersLevel);
         Assert.AreEqual(1778780000, loaded.LastCollectionUnixSeconds);
+    }
+
+    [Test]
+    public void Load_LegacySaveWithoutEconomyFields_NormalizesEconomyDefaults()
+    {
+        File.WriteAllText(_testPath, "{\"StageStars\":{\"1\":3},\"UnitLevels\":{\"Knight\":2}}");
+
+        var loaded = SaveSystem.Load(_testPath);
+
+        Assert.IsNotNull(loaded.OwnedResources);
+        Assert.IsNotNull(loaded.StoredResources);
+        Assert.AreEqual(0, loaded.OwnedResources.Get(ResourceType.Gold));
+        Assert.AreEqual(0, loaded.StoredResources.Get(ResourceType.Gold));
+        Assert.AreEqual(1, loaded.HeadquartersLevel);
+    }
+
+    [Test]
+    public void Load_SaveWithNullWalletAmounts_NormalizesNestedDictionaries()
+    {
+        File.WriteAllText(_testPath,
+            "{\"StageStars\":{},\"UnitLevels\":{},\"OwnedResources\":{\"Amounts\":null},\"StoredResources\":{\"Amounts\":null}}");
+
+        var loaded = SaveSystem.Load(_testPath);
+
+        Assert.IsNotNull(loaded.OwnedResources);
+        Assert.IsNotNull(loaded.StoredResources);
+        Assert.AreEqual(0, loaded.OwnedResources.Get(ResourceType.Gold));
+        Assert.AreEqual(0, loaded.StoredResources.Get(ResourceType.Gold));
+        Assert.AreEqual(1, loaded.HeadquartersLevel);
     }
 
     [Test]
