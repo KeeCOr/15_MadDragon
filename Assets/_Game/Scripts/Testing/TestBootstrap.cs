@@ -150,6 +150,7 @@ namespace MedievalRTS.Testing
         private CampaignHubScreen _campaignHubScreen;
         private BaseManagementScreen _baseManagementScreen;
         private AttackPrepScreen _attackPrepScreen;
+        private MobileBattleHud _mobileBattleHud;
 
         // ═══════════════════════════════════════════════════════
         //  라이프사이클
@@ -205,6 +206,11 @@ namespace MedievalRTS.Testing
                 _enemyHpText.text = $"아군 성: {(_playerCastle != null ? _playerCastle.CurrentHp : 0)}";
             else
                 _enemyHpText.text = $"적성: {(_enemyCastle != null ? _enemyCastle.CurrentHp : 0)}";
+            _mobileBattleHud?.Refresh(
+                remSec,
+                _defenseMode ? (_playerCastle != null ? _playerCastle.CurrentHp : 0) : (_enemyCastle != null ? _enemyCastle.CurrentHp : 0),
+                _earnedGold,
+                _earnedValor);
 
             HandleInput();
             _playerUnits.RemoveAll(u => u == null || !u.GetComponent<Unit>().IsAlive);
@@ -395,6 +401,7 @@ namespace MedievalRTS.Testing
             _campaignHubScreen?.SetVisible(false);
             _baseManagementScreen?.SetVisible(false);
             _attackPrepScreen?.SetVisible(false);
+            _mobileBattleHud?.SetVisible(true);
             _battleHud.SetActive(true);
             _upgradePanel.SetActive(true);
             _phase = Phase.Battle;
@@ -1231,9 +1238,11 @@ namespace MedievalRTS.Testing
             _campaignHubScreen = new CampaignHubScreen(_canvas, _font, ShowAttackPrep, ShowBaseManagement);
             _baseManagementScreen = new BaseManagementScreen(_canvas, _font, CollectStoredResources, ShowCampaignHub);
             _attackPrepScreen = new AttackPrepScreen(_canvas, _font, EnterBattle, ShowArmyEditor, ShowBaseManagement, ShowCampaignHub);
+            _mobileBattleHud = new MobileBattleHud(_canvas, _font);
             _campaignHubScreen.SetVisible(false);
             _baseManagementScreen.SetVisible(false);
             _attackPrepScreen.SetVisible(false);
+            _mobileBattleHud.SetVisible(false);
         }
 
         private void ShowCampaignHub()
