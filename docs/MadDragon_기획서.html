@@ -138,6 +138,18 @@
     <section class="card"><h3>결과</h3><p>승패, 별, 획득/약탈 자원, 해금을 보여주며 다음 행동은 기지 정비 또는 수리/보강으로 유도한다.</p></section>
   </div>
 
+  <h2>구현 상태</h2>
+  <section class="card">
+    <h3>v0.5 Task 1 - 자원 생산/저장 로직</h3>
+    <ul>
+      <li><code>ResourceWallet</code>로 골드, 명예, 별 같은 자원을 보관하고 추가/소비/제거/복사할 수 있게 했다.</li>
+      <li><code>ResourceProductionBuilding</code>으로 생산 건물의 초당 생산량과 개별 저장 한도를 표현한다.</li>
+      <li><code>ResourceStorageSystem</code>으로 본부 레벨, 저장 자원, 생산 누적, 모두 수거, 본부 저장 한도, 보호율을 계산한다.</li>
+      <li>같은 자원을 생산하는 건물이 여러 개 있을 때 자원별 총 생산 한도와 본부 저장 한도를 함께 적용한다.</li>
+      <li>EditMode 테스트에 생산 누적, 생산 건물 한도, 다중 생산 건물 총량, 본부 저장 한도, 모두 수거, 보호율 상한, 본부 레벨 최소값, null 생산 건물 방어 케이스를 추가했다.</li>
+    </ul>
+  </section>
+
   <h2>구현 방향</h2>
   <p>1차 구현은 현재 프로토타입 기능을 살리되 모바일 UI 구조로 재배치한다. 이후 자원 저장/약탈 계산과 UI 화면 생성은 별도 클래스로 분리한다.</p>
   <p><span class="tag">CampaignHubScreen</span><span class="tag">AttackPrepScreen</span><span class="tag">BattleHud</span><span class="tag">BaseManagementScreen</span><span class="tag">DefenseSetupHud</span><span class="tag">ResultScreen</span><span class="tag">ResourceStorageSystem</span><span class="tag">RaidLossCalculator</span></p>
