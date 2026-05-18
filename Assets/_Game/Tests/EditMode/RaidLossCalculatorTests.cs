@@ -32,6 +32,28 @@ public class RaidLossCalculatorTests
     }
 
     [Test]
+    public void ClearFailure_CalculatesLossesForEveryResourceType()
+    {
+        var stored = new ResourceWallet();
+        var owned = new ResourceWallet();
+        stored.Add(ResourceType.Gold, 1200);
+        stored.Add(ResourceType.Honor, 300);
+        stored.Add(ResourceType.Stars, 10);
+        owned.Add(ResourceType.Gold, 8000);
+        owned.Add(ResourceType.Honor, 400);
+        owned.Add(ResourceType.Stars, 16);
+
+        var forecast = RaidLossCalculator.Calculate(stored, owned, RaidOutcome.ClearFailure, 0.25f);
+
+        Assert.AreEqual(630, forecast.StoredLoss.Get(ResourceType.Gold));
+        Assert.AreEqual(158, forecast.StoredLoss.Get(ResourceType.Honor));
+        Assert.AreEqual(5, forecast.StoredLoss.Get(ResourceType.Stars));
+        Assert.AreEqual(900, forecast.OwnedLoss.Get(ResourceType.Gold));
+        Assert.AreEqual(45, forecast.OwnedLoss.Get(ResourceType.Honor));
+        Assert.AreEqual(2, forecast.OwnedLoss.Get(ResourceType.Stars));
+    }
+
+    [Test]
     public void HeadquartersDestroyed_CanStealFromStoredAndOwned()
     {
         var stored = new ResourceWallet();
@@ -43,6 +65,36 @@ public class RaidLossCalculatorTests
 
         Assert.AreEqual(1200, forecast.StoredLoss.Get(ResourceType.Gold));
         Assert.AreEqual(1600, forecast.OwnedLoss.Get(ResourceType.Gold));
+    }
+
+    [Test]
+    public void Calculate_ClampsNegativeProtectionToZero()
+    {
+        var stored = new ResourceWallet();
+        var owned = new ResourceWallet();
+        stored.Add(ResourceType.Gold, 1200);
+        owned.Add(ResourceType.Gold, 8000);
+
+        var forecast = RaidLossCalculator.Calculate(stored, owned, RaidOutcome.NarrowFailure, -0.25f);
+
+        Assert.AreEqual(0f, forecast.ProtectionRate, 0.0001f);
+        Assert.AreEqual(360, forecast.StoredLoss.Get(ResourceType.Gold));
+        Assert.AreEqual(400, forecast.OwnedLoss.Get(ResourceType.Gold));
+    }
+
+    [Test]
+    public void Calculate_ClampsProtectionAboveMaximum()
+    {
+        var stored = new ResourceWallet();
+        var owned = new ResourceWallet();
+        stored.Add(ResourceType.Gold, 1200);
+        owned.Add(ResourceType.Gold, 8000);
+
+        var forecast = RaidLossCalculator.Calculate(stored, owned, RaidOutcome.HeadquartersDestroyed, 0.95f);
+
+        Assert.AreEqual(0.75f, forecast.ProtectionRate, 0.0001f);
+        Assert.AreEqual(300, forecast.StoredLoss.Get(ResourceType.Gold));
+        Assert.AreEqual(400, forecast.OwnedLoss.Get(ResourceType.Gold));
     }
 
     [Test]

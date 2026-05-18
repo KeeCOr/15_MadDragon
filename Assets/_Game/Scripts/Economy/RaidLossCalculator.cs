@@ -12,7 +12,8 @@ namespace MedievalRTS.Economy
             var storedLoss = new ResourceWallet();
             var ownedLoss = new ResourceWallet();
             var rates = GetRates(outcome);
-            float lossMultiplier = 1f - Math.Clamp(protectionRate, 0f, 0.75f);
+            float clampedProtectionRate = Math.Clamp(protectionRate, 0f, 0.75f);
+            float lossMultiplier = 1f - clampedProtectionRate;
 
             foreach (ResourceType type in Enum.GetValues(typeof(ResourceType)))
             {
@@ -20,7 +21,7 @@ namespace MedievalRTS.Economy
                 ownedLoss.Set(type, CalculateLoss(owned.Get(type), rates.ownedRate, lossMultiplier));
             }
 
-            return new RaidForecast(outcome, protectionRate, storedLoss, ownedLoss);
+            return new RaidForecast(outcome, clampedProtectionRate, storedLoss, ownedLoss);
         }
 
         public static void ApplyLoss(ResourceWallet stored, ResourceWallet owned, RaidForecast forecast)
