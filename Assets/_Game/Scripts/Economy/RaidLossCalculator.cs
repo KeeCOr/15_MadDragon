@@ -13,7 +13,7 @@ namespace MedievalRTS.Economy
             var ownedLoss = new ResourceWallet();
             var rates = GetRates(outcome);
             float clampedProtectionRate = Math.Clamp(protectionRate, 0f, 0.75f);
-            float lossMultiplier = 1f - clampedProtectionRate;
+            double lossMultiplier = 1d - clampedProtectionRate;
 
             foreach (ResourceType type in Enum.GetValues(typeof(ResourceType)))
             {
@@ -37,19 +37,19 @@ namespace MedievalRTS.Economy
             }
         }
 
-        private static (float storedRate, float ownedRate) GetRates(RaidOutcome outcome)
+        private static (double storedRate, double ownedRate) GetRates(RaidOutcome outcome)
         {
             return outcome switch
             {
-                RaidOutcome.DefenseSuccess => (0f, 0f),
-                RaidOutcome.NarrowFailure => (0.30f, 0.05f),
-                RaidOutcome.ClearFailure => (0.70f, 0.15f),
-                RaidOutcome.HeadquartersDestroyed => (1.00f, 0.20f),
-                _ => (0f, 0f)
+                RaidOutcome.DefenseSuccess => (0d, 0d),
+                RaidOutcome.NarrowFailure => (0.30d, 0.05d),
+                RaidOutcome.ClearFailure => (0.70d, 0.15d),
+                RaidOutcome.HeadquartersDestroyed => (1.00d, 0.20d),
+                _ => (0d, 0d)
             };
         }
 
-        private static int CalculateLoss(int amount, float rate, float lossMultiplier)
+        private static int CalculateLoss(int amount, double rate, double lossMultiplier)
         {
             return Math.Max(0, (int)Math.Round(amount * rate * lossMultiplier));
         }
