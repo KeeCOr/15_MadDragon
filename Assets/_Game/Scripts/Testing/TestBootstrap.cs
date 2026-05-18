@@ -17,6 +17,7 @@ using MedievalRTS.Buildings;
 using MedievalRTS.Battle;
 using MedievalRTS.Economy;
 using MedievalRTS.UI;
+using MedievalRTS.Visuals;
 
 namespace MedievalRTS.Testing
 {
@@ -255,7 +256,7 @@ namespace MedievalRTS.Testing
 
             // 적 성 (x=21)
             _enemyCastle = MakeBuilding("EnemyCastle", new Vector3(21, 1.5f, 0), 900, false,
-                new Color(0.75f, 0.1f, 0.1f), new Vector3(4, 3, 4));
+                MobileVisualStyle.EnemyRed, new Vector3(4, 3, 4));
         }
 
         private void MakeWall(string n, Vector3 pos)
@@ -263,7 +264,7 @@ namespace MedievalRTS.Testing
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
             go.name = n; go.transform.position = pos;
             go.transform.localScale = new Vector3(0.8f, 2f, 3.5f);
-            Paint(go, new Color(0.35f, 0.35f, 0.38f));
+            Paint(go, MobileVisualStyle.StoneWarm);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 600;
             var b = go.AddComponent<Building>();
@@ -276,7 +277,7 @@ namespace MedievalRTS.Testing
             var go = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             go.name = n; go.transform.position = pos;
             go.transform.localScale = new Vector3(1.2f, 1.4f, 1.2f);
-            Paint(go, new Color(0.45f, 0.1f, 0.75f));
+            Paint(go, MobileVisualStyle.MageViolet);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 180;
             var b = go.AddComponent<Building>();
@@ -290,7 +291,7 @@ namespace MedievalRTS.Testing
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
             go.name = n; go.transform.position = pos;
             go.transform.localScale = new Vector3(1.8f, 1.5f, 1.8f);
-            Paint(go, new Color(0.85f, 0.72f, 0.1f));
+            Paint(go, MobileVisualStyle.GoldAccent);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 150;
             var b = go.AddComponent<Building>();
@@ -307,24 +308,21 @@ namespace MedievalRTS.Testing
                 var g = new GameObject("Main Camera") { tag = "MainCamera" };
                 cam = g.AddComponent<Camera>(); g.AddComponent<AudioListener>();
             }
-            cam.transform.SetPositionAndRotation(new Vector3(4, 28, -22), Quaternion.Euler(50, 0, 0));
-            cam.backgroundColor = new Color(0.36f, 0.55f, 0.85f);
-            cam.clearFlags = CameraClearFlags.SolidColor;
+            MobileVisualStyle.ApplyCamera(cam, _defenseMode);
         }
 
         private void SetupLight()
         {
             var l = FindObjectOfType<Light>();
             if (l == null) { var g = new GameObject("Sun"); l = g.AddComponent<Light>(); l.type = LightType.Directional; }
-            l.transform.rotation = Quaternion.Euler(50, -30, 0);
-            l.intensity = 1.2f;
+            MobileVisualStyle.ApplyLight(l);
         }
 
         private void SetupGround()
         {
             var g = GameObject.CreatePrimitive(PrimitiveType.Plane);
             g.name = "Ground"; g.transform.localScale = new Vector3(6, 1, 3);
-            Paint(g, new Color(0.28f, 0.48f, 0.18f));
+            Paint(g, MobileVisualStyle.GrassBase);
         }
 
         private Building MakeBuilding(string n, Vector3 pos, int hp,
@@ -345,7 +343,7 @@ namespace MedievalRTS.Testing
         private Building MakeBarracks(string n, Vector3 pos)
         {
             return MakeBuilding(n, pos, 300, false,
-                new Color(0.45f, 0.08f, 0.08f), new Vector3(2.5f, 1.2f, 2.5f));
+                MobileVisualStyle.EnemyRed, new Vector3(2.5f, 1.2f, 2.5f));
         }
 
         private void MakeTower(string n, Vector3 pos)
@@ -353,7 +351,7 @@ namespace MedievalRTS.Testing
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
             go.name = n; go.transform.position = pos;
             go.transform.localScale = new Vector3(1.5f, 2f, 1.5f);
-            Paint(go, new Color(0.55f, 0.08f, 0.08f));
+            Paint(go, MobileVisualStyle.EnemyRed);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 220;
             var tb = go.AddComponent<Building>();
@@ -580,7 +578,7 @@ namespace MedievalRTS.Testing
         {
             // 플레이어 성 (왼쪽 끝)
             _playerCastle = MakePlayerBuilding("PlayerCastle", new Vector3(-21, 1.5f, 0), 900,
-                new Color(0.2f, 0.35f, 0.75f), new Vector3(4, 3, 4));
+                MobileVisualStyle.FriendlyBlue, new Vector3(4, 3, 4));
 
             // 플레이어 타워 (성 앞)
             MakePlayerTower("PTower_L",  new Vector3(-16, 1f,  6));
@@ -615,7 +613,7 @@ namespace MedievalRTS.Testing
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
             go.name = n; go.transform.position = pos;
             go.transform.localScale = new Vector3(1.5f, 2f, 1.5f);
-            Paint(go, new Color(0.2f, 0.35f, 0.75f));
+            Paint(go, MobileVisualStyle.FriendlyBlue);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 220;
             var b = go.AddComponent<Building>();
@@ -639,7 +637,7 @@ namespace MedievalRTS.Testing
                 go.name = $"Wall_{i}";
                 go.transform.position = new Vector3(wallX, segH * 0.5f, z);
                 go.transform.localScale = new Vector3(segW, segH, 2.3f);
-                Paint(go, isGate ? new Color(0.6f, 0.5f, 0.1f) : new Color(0.35f, 0.35f, 0.38f));
+                Paint(go, isGate ? MobileVisualStyle.GoldAccent : MobileVisualStyle.StoneWarm);
                 // 문(gate)은 통과 가능 (콜라이더 없앰)
                 if (isGate) { Destroy(go.GetComponent<Collider>()); }
                 _wallSegments.Add(go);
@@ -656,7 +654,7 @@ namespace MedievalRTS.Testing
             var old = _wallSegments[_gateIndex];
             if (old != null)
             {
-                Paint(old, new Color(0.35f, 0.35f, 0.38f));
+                Paint(old, MobileVisualStyle.StoneWarm);
                 if (old.GetComponent<Collider>() == null) old.AddComponent<BoxCollider>();
                 old.name = $"Wall_{_gateIndex}";
             }
@@ -664,7 +662,7 @@ namespace MedievalRTS.Testing
             var gateGo = _wallSegments[_gateIndex];
             if (gateGo != null)
             {
-                Paint(gateGo, new Color(0.6f, 0.5f, 0.1f));
+                Paint(gateGo, MobileVisualStyle.GoldAccent);
                 Destroy(gateGo.GetComponent<Collider>());
                 gateGo.name = "Gate";
             }
@@ -1992,7 +1990,7 @@ namespace MedievalRTS.Testing
             // 기본 기지: 성 + 자동 성벽
             _playerCastle = MakePlayerBuilding("PlayerCastle",
                 new Vector3(-21f, 1.5f, 0f), 900,
-                new Color(0.2f, 0.35f, 0.75f), new Vector3(4f, 3f, 4f));
+                MobileVisualStyle.FriendlyBlue, new Vector3(4f, 3f, 4f));
             GenerateAutoWall(-10f, -8f, 8f);
 
             // 카메라를 플레이어 구역 중심으로 이동
@@ -2145,7 +2143,7 @@ namespace MedievalRTS.Testing
             go.name = "PTower_Custom";
             go.transform.position = hitPos;
             go.transform.localScale = new Vector3(1.5f, 2f, 1.5f);
-            Paint(go, new Color(0.2f, 0.35f, 0.75f));
+            Paint(go, MobileVisualStyle.FriendlyBlue);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = "방어탑"; data.maxHp = 220;
             var b = go.AddComponent<Building>();
@@ -2162,7 +2160,7 @@ namespace MedievalRTS.Testing
             go.name = "PCustomWall";
             go.transform.position = hitPos;
             go.transform.localScale = new Vector3(0.8f, 2f, 2.3f);
-            Paint(go, new Color(0.32f, 0.32f, 0.36f));
+            Paint(go, MobileVisualStyle.StoneWarm);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = "성벽"; data.maxHp = 400;
             var b = go.AddComponent<Building>();
