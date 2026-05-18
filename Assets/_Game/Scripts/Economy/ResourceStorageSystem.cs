@@ -41,11 +41,25 @@ namespace MedievalRTS.Economy
 
         public void TickProduction(float deltaSeconds)
         {
+            var producerCapacityByResource = new Dictionary<ResourceType, int>();
+            foreach (var producer in _producers)
+            {
+                int currentCapacity = producerCapacityByResource.TryGetValue(producer.ResourceType, out var capacity)
+                    ? capacity
+                    : 0;
+                long aggregateCapacity = (long)currentCapacity + producer.Capacity;
+                producerCapacityByResource[producer.ResourceType] = (int)Math.Min(
+                    int.MaxValue,
+                    aggregateCapacity);
+            }
+
             foreach (var producer in _producers)
             {
                 int currentStored = Stored.Get(producer.ResourceType);
-                int generated = producer.Produce(deltaSeconds, currentStored);
-                int capacity = Math.Min(producer.Capacity, GetHeadquartersCapacity(producer.ResourceType));
+                int generated = producer.Produce(deltaSeconds, 0);
+                int capacity = Math.Min(
+                    producerCapacityByResource[producer.ResourceType],
+                    GetHeadquartersCapacity(producer.ResourceType));
                 int clamped = Math.Min(generated, Math.Max(0, capacity - currentStored));
                 Stored.Add(producer.ResourceType, clamped);
             }

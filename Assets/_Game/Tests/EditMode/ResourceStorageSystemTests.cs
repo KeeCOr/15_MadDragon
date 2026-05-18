@@ -26,6 +26,29 @@ public class ResourceStorageSystemTests
     }
 
     [Test]
+    public void TickProduction_ClampsToAggregateCapacityForSameResourceProducers()
+    {
+        var storage = new ResourceStorageSystem(headquartersLevel: 1);
+        storage.AddProducer(new ResourceProductionBuilding("GoldMineA", ResourceType.Gold, 10, 100));
+        storage.AddProducer(new ResourceProductionBuilding("GoldMineB", ResourceType.Gold, 10, 100));
+
+        storage.TickProduction(20f);
+
+        Assert.AreEqual(200, storage.Stored.Get(ResourceType.Gold));
+    }
+
+    [Test]
+    public void TickProduction_ClampsToHeadquartersCapacity()
+    {
+        var storage = new ResourceStorageSystem(headquartersLevel: 1);
+        storage.AddProducer(new ResourceProductionBuilding("GoldMine", ResourceType.Gold, 1000, 5000));
+
+        storage.TickProduction(2f);
+
+        Assert.AreEqual(1000, storage.Stored.Get(ResourceType.Gold));
+    }
+
+    [Test]
     public void CollectAll_MovesStoredResourcesToOwnedWallet()
     {
         var storage = new ResourceStorageSystem(headquartersLevel: 1);
@@ -61,5 +84,32 @@ public class ResourceStorageSystemTests
 
         Assert.AreEqual(0.10f, level1.ProtectionRate, 0.0001f);
         Assert.AreEqual(0.40f, level4.ProtectionRate, 0.0001f);
+    }
+
+    [Test]
+    public void ProtectionRate_CapsAtSeventyFivePercent()
+    {
+        var storage = new ResourceStorageSystem(headquartersLevel: 8);
+
+        Assert.AreEqual(0.75f, storage.ProtectionRate, 0.0001f);
+    }
+
+    [Test]
+    public void SetHeadquartersLevel_ClampsToMinimumLevelOne()
+    {
+        var storage = new ResourceStorageSystem(headquartersLevel: 3);
+
+        storage.SetHeadquartersLevel(0);
+
+        Assert.AreEqual(1, storage.HeadquartersLevel);
+        Assert.AreEqual(1000, storage.GetHeadquartersCapacity(ResourceType.Gold));
+    }
+
+    [Test]
+    public void AddProducer_NullProducer_ThrowsArgumentNullException()
+    {
+        var storage = new ResourceStorageSystem(headquartersLevel: 1);
+
+        Assert.Throws<System.ArgumentNullException>(() => storage.AddProducer(null));
     }
 }
