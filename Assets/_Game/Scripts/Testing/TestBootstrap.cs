@@ -149,6 +149,7 @@ namespace MedievalRTS.Testing
         private ResourceStorageSystem _resourceStorage;
         private CampaignHubScreen _campaignHubScreen;
         private BaseManagementScreen _baseManagementScreen;
+        private AttackPrepScreen _attackPrepScreen;
 
         // ═══════════════════════════════════════════════════════
         //  라이프사이클
@@ -393,6 +394,7 @@ namespace MedievalRTS.Testing
             if (_dsHud != null) _dsHud.SetActive(false);
             _campaignHubScreen?.SetVisible(false);
             _baseManagementScreen?.SetVisible(false);
+            _attackPrepScreen?.SetVisible(false);
             _battleHud.SetActive(true);
             _upgradePanel.SetActive(true);
             _phase = Phase.Battle;
@@ -1228,8 +1230,10 @@ namespace MedievalRTS.Testing
         {
             _campaignHubScreen = new CampaignHubScreen(_canvas, _font, ShowAttackPrep, ShowBaseManagement);
             _baseManagementScreen = new BaseManagementScreen(_canvas, _font, CollectStoredResources, ShowCampaignHub);
+            _attackPrepScreen = new AttackPrepScreen(_canvas, _font, EnterBattle, ShowArmyEditor, ShowBaseManagement, ShowCampaignHub);
             _campaignHubScreen.SetVisible(false);
             _baseManagementScreen.SetVisible(false);
+            _attackPrepScreen.SetVisible(false);
         }
 
         private void ShowCampaignHub()
@@ -1239,6 +1243,7 @@ namespace MedievalRTS.Testing
             if (_dsHud != null) _dsHud.SetActive(false);
             _campaignHubScreen?.SetVisible(true);
             _baseManagementScreen?.SetVisible(false);
+            _attackPrepScreen?.SetVisible(false);
             RefreshMobileLoopScreens();
         }
 
@@ -1247,6 +1252,17 @@ namespace MedievalRTS.Testing
             if (_phase != Phase.Prep) return;
             _campaignHubScreen?.SetVisible(false);
             _baseManagementScreen?.SetVisible(false);
+            _attackPrepScreen?.SetVisible(true);
+            _prepPanel.SetActive(false);
+            RefreshMobileLoopScreens();
+        }
+
+        private void ShowArmyEditor()
+        {
+            if (_phase != Phase.Prep) return;
+            _campaignHubScreen?.SetVisible(false);
+            _baseManagementScreen?.SetVisible(false);
+            _attackPrepScreen?.SetVisible(false);
             _prepPanel.SetActive(true);
             RefreshPrepGold();
         }
@@ -1258,6 +1274,7 @@ namespace MedievalRTS.Testing
             if (_dsHud != null) _dsHud.SetActive(false);
             _campaignHubScreen?.SetVisible(false);
             _baseManagementScreen?.SetVisible(true);
+            _attackPrepScreen?.SetVisible(false);
             RefreshMobileLoopScreens();
         }
 
@@ -1278,6 +1295,10 @@ namespace MedievalRTS.Testing
             SyncOwnedResources();
             var forecast = BuildCurrentRaidForecast();
             _campaignHubScreen?.Refresh(_ownedResources, _resourceStorage.Stored, forecast);
+            _attackPrepScreen?.Refresh(
+                BuildRosterSummary(),
+                "Fireball / Heal / Freeze",
+                "Expected defense: walls, towers, central keep");
             _baseManagementScreen?.Refresh(
                 _ownedResources,
                 _resourceStorage.Stored,
@@ -1297,6 +1318,18 @@ namespace MedievalRTS.Testing
             RefreshSpecialBldgUI();
             RefreshSpellBuyUI();
             RefreshMobileLoopScreens();
+        }
+
+        private string BuildRosterSummary()
+        {
+            var sb = new StringBuilder();
+            for (int i = 0; i < Defs.Length; i++)
+            {
+                if (_roster[i] <= 0) continue;
+                if (sb.Length > 0) sb.Append(" / ");
+                sb.Append($"{Defs[i].name} x{_roster[i]}");
+            }
+            return sb.Length == 0 ? "No troops selected" : sb.ToString();
         }
 
         // ── 준비 화면 ─────────────────────────────────────────
