@@ -1,5 +1,7 @@
 // Assets/_Game/Scripts/Progression/SaveSystem.cs
 using System.IO;
+using System.Collections.Generic;
+using MedievalRTS.Economy;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -22,8 +24,14 @@ namespace MedievalRTS.Progression
             if (!File.Exists(path)) return new SaveData();
             try
             {
-                return JsonConvert.DeserializeObject<SaveData>(File.ReadAllText(path))
-                       ?? new SaveData();
+                var data = JsonConvert.DeserializeObject<SaveData>(File.ReadAllText(path))
+                           ?? new SaveData();
+                data.StageStars ??= new Dictionary<int, int>();
+                data.UnitLevels ??= new Dictionary<string, int>();
+                data.OwnedResources ??= new ResourceWallet();
+                data.StoredResources ??= new ResourceWallet();
+                if (data.HeadquartersLevel <= 0) data.HeadquartersLevel = 1;
+                return data;
             }
             catch (JsonException ex)
             {

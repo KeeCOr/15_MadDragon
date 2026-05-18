@@ -79,6 +79,24 @@ public class SaveSystemTests
     }
 
     [Test]
+    public void Save_Then_Load_PreservesEconomyState()
+    {
+        var data = new SaveData();
+        data.OwnedResources.Add(MedievalRTS.Economy.ResourceType.Gold, 8000);
+        data.StoredResources.Add(MedievalRTS.Economy.ResourceType.Gold, 1200);
+        data.HeadquartersLevel = 3;
+        data.LastCollectionUnixSeconds = 1778780000;
+
+        SaveSystem.Save(data, _testPath);
+        var loaded = SaveSystem.Load(_testPath);
+
+        Assert.AreEqual(8000, loaded.OwnedResources.Get(MedievalRTS.Economy.ResourceType.Gold));
+        Assert.AreEqual(1200, loaded.StoredResources.Get(MedievalRTS.Economy.ResourceType.Gold));
+        Assert.AreEqual(3, loaded.HeadquartersLevel);
+        Assert.AreEqual(1778780000, loaded.LastCollectionUnixSeconds);
+    }
+
+    [Test]
     public void Delete_RemovesFile()
     {
         SaveSystem.Save(new SaveData(), _testPath);
