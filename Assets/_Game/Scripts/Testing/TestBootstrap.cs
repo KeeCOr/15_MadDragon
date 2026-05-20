@@ -392,7 +392,13 @@ namespace MedievalRTS.Testing
             int total = 0;
             foreach (var c in _roster) total += c;
             // 공격 모드는 유닛 필요, 수비 모드는 타워만으로도 가능
-            if (total == 0 && !_defenseMode) return;
+            if (total == 0 && !_defenseMode)
+            {
+                _roster[0] = 3;
+                total = 3;
+                UpdateRosterText();
+                RefreshMobileLoopScreens();
+            }
 
             _prepPanel.SetActive(false);
             if (_dsHud != null) _dsHud.SetActive(false);
