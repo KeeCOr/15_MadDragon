@@ -15,6 +15,9 @@ using MedievalRTS.Data;
 using MedievalRTS.Units;
 using MedievalRTS.Buildings;
 using MedievalRTS.Battle;
+using MedievalRTS.Economy;
+using MedievalRTS.UI;
+using MedievalRTS.Visuals;
 
 namespace MedievalRTS.Testing
 {
@@ -143,6 +146,12 @@ namespace MedievalRTS.Testing
         private int _pendingSpell = -1;
         private readonly Button[] _spellBattleBtns      = new Button[5];
         private readonly Text[]   _spellBattleChargeLbls = new Text[5];
+        private ResourceWallet _ownedResources;
+        private ResourceStorageSystem _resourceStorage;
+        private CampaignHubScreen _campaignHubScreen;
+        private BaseManagementScreen _baseManagementScreen;
+        private AttackPrepScreen _attackPrepScreen;
+        private MobileBattleHud _mobileBattleHud;
 
         // ═══════════════════════════════════════════════════════
         //  라이프사이클
@@ -151,8 +160,15 @@ namespace MedievalRTS.Testing
         {
             BuildingEffectSystem.Reset();
             SpellSystem.Reset();
+            _ownedResources = new ResourceWallet();
+            _ownedResources.Add(ResourceType.Gold, _gold);
+            _resourceStorage = new ResourceStorageSystem(1);
+            _resourceStorage.AddProducer(new ResourceProductionBuilding("GoldMine", ResourceType.Gold, 8f, 1200));
             BuildWorld();
             BuildUI();
+            BuildMobileLoopScreens();
+            ShowCampaignHub();
+            RefreshMobileLoopScreens();
             EventBus.Subscribe<BuildingDestroyedEvent>(OnBuildingDestroyed);
         }
 
@@ -163,6 +179,12 @@ namespace MedievalRTS.Testing
 
         private void Update()
         {
+            if (_resourceStorage != null)
+            {
+                _resourceStorage.TickProduction(Time.deltaTime);
+                RefreshMobileLoopScreens();
+            }
+
             // 수비 진형 구성 중: 유닛 선택·명령 + 건물 배치
             if (_phase == Phase.Prep && _defenseSetupActive)
             {
@@ -185,6 +207,11 @@ namespace MedievalRTS.Testing
                 _enemyHpText.text = $"아군 성: {(_playerCastle != null ? _playerCastle.CurrentHp : 0)}";
             else
                 _enemyHpText.text = $"적성: {(_enemyCastle != null ? _enemyCastle.CurrentHp : 0)}";
+            _mobileBattleHud?.Refresh(
+                remSec,
+                _defenseMode ? (_playerCastle != null ? _playerCastle.CurrentHp : 0) : (_enemyCastle != null ? _enemyCastle.CurrentHp : 0),
+                _earnedGold,
+                _earnedValor);
 
             HandleInput();
             _playerUnits.RemoveAll(u => u == null || !u.GetComponent<Unit>().IsAlive);
@@ -203,6 +230,7 @@ namespace MedievalRTS.Testing
             SetupCamera();
             SetupLight();
             SetupGround();
+            BuildBrightArenaDetails();
 
             // 1선: 성벽 (x=2) — 고체력 장벽
             MakeWall("Wall_L",  new Vector3(2, 1f,  6));
@@ -229,7 +257,24 @@ namespace MedievalRTS.Testing
 
             // 적 성 (x=21)
             _enemyCastle = MakeBuilding("EnemyCastle", new Vector3(21, 1.5f, 0), 900, false,
-                new Color(0.75f, 0.1f, 0.1f), new Vector3(4, 3, 4));
+                MobileVisualStyle.EnemyRed, new Vector3(4, 3, 4));
+        }
+
+        private void BuildBrightArenaDetails()
+        {
+            MakeFlatDetail("MainPath", new Vector3(0f, 0.03f, 0f), new Vector3(3.6f, 0.04f, 18f), MobileVisualStyle.PathStone);
+            MakeFlatDetail("CrossPath", new Vector3(9f, 0.04f, 0f), new Vector3(18f, 0.04f, 3.2f), MobileVisualStyle.PathStone);
+
+            for (int i = 0; i < 9; i++)
+            {
+                float x = -24f + i * 6f;
+                MakeTree($"Pine_N_{i}", new Vector3(x, 0f, 10.8f));
+                MakeTree($"Pine_S_{i}", new Vector3(x + 2f, 0f, -10.8f));
+            }
+
+            MakeRockCluster("Rock_L", new Vector3(-18f, 0f, 8.4f));
+            MakeRockCluster("Rock_C", new Vector3(0f, 0f, -9.2f));
+            MakeRockCluster("Rock_R", new Vector3(18f, 0f, 8.4f));
         }
 
         private void MakeWall(string n, Vector3 pos)
@@ -237,7 +282,8 @@ namespace MedievalRTS.Testing
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
             go.name = n; go.transform.position = pos;
             go.transform.localScale = new Vector3(0.8f, 2f, 3.5f);
-            Paint(go, new Color(0.35f, 0.35f, 0.38f));
+            Paint(go, MobileVisualStyle.StoneWarm);
+            AddWallCap(go);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 600;
             var b = go.AddComponent<Building>();
@@ -250,7 +296,8 @@ namespace MedievalRTS.Testing
             var go = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             go.name = n; go.transform.position = pos;
             go.transform.localScale = new Vector3(1.2f, 1.4f, 1.2f);
-            Paint(go, new Color(0.45f, 0.1f, 0.75f));
+            Paint(go, MobileVisualStyle.MageViolet);
+            AddMageTowerDecor(go);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 180;
             var b = go.AddComponent<Building>();
@@ -264,7 +311,8 @@ namespace MedievalRTS.Testing
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
             go.name = n; go.transform.position = pos;
             go.transform.localScale = new Vector3(1.8f, 1.5f, 1.8f);
-            Paint(go, new Color(0.85f, 0.72f, 0.1f));
+            Paint(go, MobileVisualStyle.GoldAccent);
+            AddGoldCacheDecor(go);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 150;
             var b = go.AddComponent<Building>();
@@ -281,24 +329,130 @@ namespace MedievalRTS.Testing
                 var g = new GameObject("Main Camera") { tag = "MainCamera" };
                 cam = g.AddComponent<Camera>(); g.AddComponent<AudioListener>();
             }
-            cam.transform.SetPositionAndRotation(new Vector3(4, 28, -22), Quaternion.Euler(50, 0, 0));
-            cam.backgroundColor = new Color(0.36f, 0.55f, 0.85f);
-            cam.clearFlags = CameraClearFlags.SolidColor;
+            MobileVisualStyle.ApplyCamera(cam, _defenseMode);
         }
 
         private void SetupLight()
         {
             var l = FindObjectOfType<Light>();
             if (l == null) { var g = new GameObject("Sun"); l = g.AddComponent<Light>(); l.type = LightType.Directional; }
-            l.transform.rotation = Quaternion.Euler(50, -30, 0);
-            l.intensity = 1.2f;
+            MobileVisualStyle.ApplyLight(l);
         }
 
         private void SetupGround()
         {
             var g = GameObject.CreatePrimitive(PrimitiveType.Plane);
             g.name = "Ground"; g.transform.localScale = new Vector3(6, 1, 3);
-            Paint(g, new Color(0.28f, 0.48f, 0.18f));
+            Paint(g, MobileVisualStyle.GrassBase);
+        }
+
+        private void MakeFlatDetail(string name, Vector3 position, Vector3 scale, Color color)
+        {
+            var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            go.name = name;
+            go.transform.position = position;
+            go.transform.localScale = scale;
+            Paint(go, color);
+            RemoveCollider(go);
+        }
+
+        private void MakeTree(string name, Vector3 position)
+        {
+            var trunk = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            trunk.name = name;
+            trunk.transform.position = position + new Vector3(0f, 0.45f, 0f);
+            trunk.transform.localScale = new Vector3(0.28f, 0.45f, 0.28f);
+            Paint(trunk, MobileVisualStyle.WoodWarm);
+            RemoveCollider(trunk);
+
+            var crown = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            crown.name = name + "_Crown";
+            crown.transform.position = position + new Vector3(0f, 1.15f, 0f);
+            crown.transform.localScale = new Vector3(1.0f, 0.9f, 1.0f);
+            Paint(crown, MobileVisualStyle.GrassDark);
+            RemoveCollider(crown);
+        }
+
+        private void MakeRockCluster(string name, Vector3 position)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                var rock = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                rock.name = $"{name}_{i}";
+                rock.transform.position = position + new Vector3(i * 0.55f, 0.2f, (i % 2 == 0 ? 0.25f : -0.25f));
+                rock.transform.localScale = new Vector3(0.75f - i * 0.12f, 0.38f, 0.55f);
+                Paint(rock, i == 1 ? MobileVisualStyle.StoneShadow : MobileVisualStyle.StoneWarm);
+                RemoveCollider(rock);
+            }
+        }
+
+        private void AddBuildingDecor(GameObject root, Color roofColor, bool large)
+        {
+            float roofY = 0.58f;
+            float roofScale = large ? 0.82f : 0.74f;
+            AddDecorBlock(root, "Roof", PrimitiveType.Cube, new Vector3(0f, roofY, 0f), new Vector3(roofScale, 0.18f, roofScale), roofColor);
+            AddDecorBlock(root, "Trim", PrimitiveType.Cube, new Vector3(0f, 0.18f, 0f), new Vector3(1.08f, 0.08f, 1.08f), MobileVisualStyle.GoldAccent);
+            AddDecorBlock(root, "Door", PrimitiveType.Cube, new Vector3(0f, -0.12f, -0.51f), new Vector3(0.28f, 0.42f, 0.04f), MobileVisualStyle.WoodWarm);
+
+            if (large)
+            {
+                AddDecorBlock(root, "KeepTop", PrimitiveType.Cube, new Vector3(0f, 0.78f, 0f), new Vector3(0.42f, 0.2f, 0.42f), roofColor);
+                AddDecorBlock(root, "Banner", PrimitiveType.Cube, new Vector3(0f, 0.42f, -0.56f), new Vector3(0.16f, 0.52f, 0.04f), roofColor);
+            }
+        }
+
+        private void AddTowerDecor(GameObject root, Color roofColor)
+        {
+            AddDecorBlock(root, "TowerRoof", PrimitiveType.Cube, new Vector3(0f, 0.58f, 0f), new Vector3(0.92f, 0.18f, 0.92f), roofColor);
+            AddDecorBlock(root, "Torch", PrimitiveType.Sphere, new Vector3(0f, 0.82f, -0.28f), new Vector3(0.18f, 0.18f, 0.18f), MobileVisualStyle.TorchOrange);
+            AddPointGlow(root.transform, new Vector3(0f, 0.82f, -0.28f), MobileVisualStyle.TorchOrange, 0.65f, 2.2f);
+        }
+
+        private void AddMageTowerDecor(GameObject root)
+        {
+            AddDecorBlock(root, "Crystal", PrimitiveType.Sphere, new Vector3(0f, 0.72f, 0f), new Vector3(0.35f, 0.5f, 0.35f), MobileVisualStyle.MageViolet);
+            AddPointGlow(root.transform, new Vector3(0f, 0.75f, 0f), MobileVisualStyle.MageViolet, 0.75f, 3f);
+        }
+
+        private void AddGoldCacheDecor(GameObject root)
+        {
+            AddDecorBlock(root, "GoldPile", PrimitiveType.Sphere, new Vector3(0f, 0.55f, 0f), new Vector3(0.65f, 0.25f, 0.65f), MobileVisualStyle.GoldAccent);
+            AddDecorBlock(root, "WoodBase", PrimitiveType.Cube, new Vector3(0f, -0.2f, 0f), new Vector3(1.1f, 0.12f, 1.1f), MobileVisualStyle.WoodWarm);
+        }
+
+        private void AddWallCap(GameObject root)
+        {
+            AddDecorBlock(root, "WallCap", PrimitiveType.Cube, new Vector3(0f, 0.56f, 0f), new Vector3(1.14f, 0.16f, 1.05f), MobileVisualStyle.StoneShadow);
+        }
+
+        private GameObject AddDecorBlock(GameObject root, string name, PrimitiveType primitive, Vector3 localPosition, Vector3 localScale, Color color)
+        {
+            var go = GameObject.CreatePrimitive(primitive);
+            go.name = name;
+            go.transform.SetParent(root.transform, false);
+            go.transform.localPosition = localPosition;
+            go.transform.localScale = localScale;
+            Paint(go, color);
+            RemoveCollider(go);
+            return go;
+        }
+
+        private void AddPointGlow(Transform parent, Vector3 localPosition, Color color, float intensity, float range)
+        {
+            var go = new GameObject("Glow");
+            go.transform.SetParent(parent, false);
+            go.transform.localPosition = localPosition;
+            var light = go.AddComponent<Light>();
+            light.type = LightType.Point;
+            light.color = color;
+            light.intensity = intensity;
+            light.range = range;
+        }
+
+        private static void RemoveCollider(GameObject go)
+        {
+            var collider = go.GetComponent<Collider>();
+            if (collider != null) Destroy(collider);
         }
 
         private Building MakeBuilding(string n, Vector3 pos, int hp,
@@ -308,6 +462,7 @@ namespace MedievalRTS.Testing
             go.name = n; go.transform.position = pos;
             go.transform.localScale = scale ?? Vector3.one;
             Paint(go, col);
+            AddBuildingDecor(go, isPlayer ? MobileVisualStyle.FriendlyBlue : MobileVisualStyle.EnemyRed, hp >= 800);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = hp;
             var b = go.AddComponent<Building>();
@@ -319,7 +474,7 @@ namespace MedievalRTS.Testing
         private Building MakeBarracks(string n, Vector3 pos)
         {
             return MakeBuilding(n, pos, 300, false,
-                new Color(0.45f, 0.08f, 0.08f), new Vector3(2.5f, 1.2f, 2.5f));
+                MobileVisualStyle.EnemyRed, new Vector3(2.5f, 1.2f, 2.5f));
         }
 
         private void MakeTower(string n, Vector3 pos)
@@ -327,7 +482,8 @@ namespace MedievalRTS.Testing
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
             go.name = n; go.transform.position = pos;
             go.transform.localScale = new Vector3(1.5f, 2f, 1.5f);
-            Paint(go, new Color(0.55f, 0.08f, 0.08f));
+            Paint(go, MobileVisualStyle.EnemyRed);
+            AddTowerDecor(go, MobileVisualStyle.EnemyRed);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 220;
             var tb = go.AddComponent<Building>();
@@ -368,10 +524,20 @@ namespace MedievalRTS.Testing
             int total = 0;
             foreach (var c in _roster) total += c;
             // 공격 모드는 유닛 필요, 수비 모드는 타워만으로도 가능
-            if (total == 0 && !_defenseMode) return;
+            if (total == 0 && !_defenseMode)
+            {
+                _roster[0] = 3;
+                total = 3;
+                UpdateRosterText();
+                RefreshMobileLoopScreens();
+            }
 
             _prepPanel.SetActive(false);
             if (_dsHud != null) _dsHud.SetActive(false);
+            _campaignHubScreen?.SetVisible(false);
+            _baseManagementScreen?.SetVisible(false);
+            _attackPrepScreen?.SetVisible(false);
+            _mobileBattleHud?.SetVisible(true);
             _battleHud.SetActive(true);
             _upgradePanel.SetActive(true);
             _phase = Phase.Battle;
@@ -550,7 +716,7 @@ namespace MedievalRTS.Testing
         {
             // 플레이어 성 (왼쪽 끝)
             _playerCastle = MakePlayerBuilding("PlayerCastle", new Vector3(-21, 1.5f, 0), 900,
-                new Color(0.2f, 0.35f, 0.75f), new Vector3(4, 3, 4));
+                MobileVisualStyle.FriendlyBlue, new Vector3(4, 3, 4));
 
             // 플레이어 타워 (성 앞)
             MakePlayerTower("PTower_L",  new Vector3(-16, 1f,  6));
@@ -572,6 +738,7 @@ namespace MedievalRTS.Testing
             go.name = n; go.transform.position = pos;
             go.transform.localScale = scale ?? Vector3.one;
             Paint(go, col);
+            AddBuildingDecor(go, MobileVisualStyle.FriendlyBlue, hp >= 800);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = hp;
             var b = go.AddComponent<Building>();
@@ -585,7 +752,8 @@ namespace MedievalRTS.Testing
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
             go.name = n; go.transform.position = pos;
             go.transform.localScale = new Vector3(1.5f, 2f, 1.5f);
-            Paint(go, new Color(0.2f, 0.35f, 0.75f));
+            Paint(go, MobileVisualStyle.FriendlyBlue);
+            AddTowerDecor(go, MobileVisualStyle.FriendlyBlue);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 220;
             var b = go.AddComponent<Building>();
@@ -609,7 +777,8 @@ namespace MedievalRTS.Testing
                 go.name = $"Wall_{i}";
                 go.transform.position = new Vector3(wallX, segH * 0.5f, z);
                 go.transform.localScale = new Vector3(segW, segH, 2.3f);
-                Paint(go, isGate ? new Color(0.6f, 0.5f, 0.1f) : new Color(0.35f, 0.35f, 0.38f));
+                Paint(go, isGate ? MobileVisualStyle.GoldAccent : MobileVisualStyle.StoneWarm);
+                AddWallCap(go);
                 // 문(gate)은 통과 가능 (콜라이더 없앰)
                 if (isGate) { Destroy(go.GetComponent<Collider>()); }
                 _wallSegments.Add(go);
@@ -626,7 +795,7 @@ namespace MedievalRTS.Testing
             var old = _wallSegments[_gateIndex];
             if (old != null)
             {
-                Paint(old, new Color(0.35f, 0.35f, 0.38f));
+                Paint(old, MobileVisualStyle.StoneWarm);
                 if (old.GetComponent<Collider>() == null) old.AddComponent<BoxCollider>();
                 old.name = $"Wall_{_gateIndex}";
             }
@@ -634,7 +803,7 @@ namespace MedievalRTS.Testing
             var gateGo = _wallSegments[_gateIndex];
             if (gateGo != null)
             {
-                Paint(gateGo, new Color(0.6f, 0.5f, 0.1f));
+                Paint(gateGo, MobileVisualStyle.GoldAccent);
                 Destroy(gateGo.GetComponent<Collider>());
                 gateGo.name = "Gate";
             }
@@ -1112,6 +1281,7 @@ namespace MedievalRTS.Testing
             int valor = b == _enemyCastle ? 3 : 1;
             _gold         += gold;
             _valor        += valor;
+            SyncOwnedResources();
             _earnedGold   += gold;
             _earnedValor  += valor;
             _destroyedBuildings++;
@@ -1202,6 +1372,114 @@ namespace MedievalRTS.Testing
             _resultPanel.SetActive(false);
         }
 
+        private void BuildMobileLoopScreens()
+        {
+            _campaignHubScreen = new CampaignHubScreen(_canvas, _font, EnterBattle, ShowAttackPrep, ShowBaseManagement);
+            _baseManagementScreen = new BaseManagementScreen(_canvas, _font, CollectStoredResources, ShowCampaignHub);
+            _attackPrepScreen = new AttackPrepScreen(_canvas, _font, EnterBattle, ShowArmyEditor, ShowBaseManagement, ShowCampaignHub);
+            _mobileBattleHud = new MobileBattleHud(_canvas, _font);
+            _campaignHubScreen.SetVisible(false);
+            _baseManagementScreen.SetVisible(false);
+            _attackPrepScreen.SetVisible(false);
+            _mobileBattleHud.SetVisible(false);
+        }
+
+        private void ShowCampaignHub()
+        {
+            if (_phase != Phase.Prep) return;
+            _prepPanel.SetActive(false);
+            if (_dsHud != null) _dsHud.SetActive(false);
+            _campaignHubScreen?.SetVisible(true);
+            _baseManagementScreen?.SetVisible(false);
+            _attackPrepScreen?.SetVisible(false);
+            RefreshMobileLoopScreens();
+        }
+
+        private void ShowAttackPrep()
+        {
+            if (_phase != Phase.Prep) return;
+            _campaignHubScreen?.SetVisible(false);
+            _baseManagementScreen?.SetVisible(false);
+            _attackPrepScreen?.SetVisible(true);
+            _prepPanel.SetActive(false);
+            RefreshMobileLoopScreens();
+        }
+
+        private void ShowArmyEditor()
+        {
+            if (_phase != Phase.Prep) return;
+            _campaignHubScreen?.SetVisible(false);
+            _baseManagementScreen?.SetVisible(false);
+            _attackPrepScreen?.SetVisible(false);
+            _prepPanel.SetActive(true);
+            RefreshPrepGold();
+        }
+
+        private void ShowBaseManagement()
+        {
+            if (_phase != Phase.Prep) return;
+            _prepPanel.SetActive(false);
+            if (_dsHud != null) _dsHud.SetActive(false);
+            _campaignHubScreen?.SetVisible(false);
+            _baseManagementScreen?.SetVisible(true);
+            _attackPrepScreen?.SetVisible(false);
+            RefreshMobileLoopScreens();
+        }
+
+        private RaidForecast BuildCurrentRaidForecast()
+        {
+            if (_resourceStorage == null || _ownedResources == null) return null;
+            return RaidLossCalculator.Calculate(
+                _resourceStorage.Stored,
+                _ownedResources,
+                RaidOutcome.ClearFailure,
+                _resourceStorage.ProtectionRate);
+        }
+
+        private void RefreshMobileLoopScreens()
+        {
+            if (_ownedResources == null || _resourceStorage == null) return;
+
+            SyncOwnedResources();
+            var forecast = BuildCurrentRaidForecast();
+            _campaignHubScreen?.Refresh(_ownedResources, _resourceStorage.Stored, forecast);
+            _attackPrepScreen?.Refresh(
+                BuildRosterSummary(),
+                "Fireball / Heal / Freeze",
+                "Expected defense: walls, towers, central keep");
+            _baseManagementScreen?.Refresh(
+                _ownedResources,
+                _resourceStorage.Stored,
+                forecast,
+                _resourceStorage.HeadquartersLevel,
+                _resourceStorage.GetHeadquartersCapacity(ResourceType.Gold));
+        }
+
+        private void CollectStoredResources()
+        {
+            if (_resourceStorage == null || _ownedResources == null) return;
+
+            _resourceStorage.CollectAll(_ownedResources);
+            _gold = _ownedResources.Get(ResourceType.Gold);
+            RefreshPrepGold();
+            RefreshBuyBtns();
+            RefreshSpecialBldgUI();
+            RefreshSpellBuyUI();
+            RefreshMobileLoopScreens();
+        }
+
+        private string BuildRosterSummary()
+        {
+            var sb = new StringBuilder();
+            for (int i = 0; i < Defs.Length; i++)
+            {
+                if (_roster[i] <= 0) continue;
+                if (sb.Length > 0) sb.Append(" / ");
+                sb.Append($"{Defs[i].name} x{_roster[i]}");
+            }
+            return sb.Length == 0 ? "No troops selected" : sb.ToString();
+        }
+
         // ── 준비 화면 ─────────────────────────────────────────
         // 모든 요소: anchor=(0.5,1), pivot=(0.5,1) — 패널 상단 중앙 기준 Y 누적
         private void BuildPrepPanel()
@@ -1264,6 +1542,11 @@ namespace MedievalRTS.Testing
                 new Vector2(720, 36), "병력 없음", 20, new Color(0.9f, 0.9f, 0.8f));
             if (_rosterText != null) _rosterText.alignment = TextAnchor.UpperCenter;
 
+            Btn(_prepPanel, "HubBtn", new Vector2(0f, 1f), new Vector2(70f, -34f),
+                new Vector2(120f, 44f), "Hub", MobileHudTheme.SecondaryButton, ShowCampaignHub);
+            Btn(_prepPanel, "BaseBtn", new Vector2(0f, 1f), new Vector2(200f, -34f),
+                new Vector2(120f, 44f), "Base", MobileHudTheme.PrimaryButton, ShowBaseManagement);
+
             _startBattleBtn = Btn(_prepPanel, "StartBtn", a, new Vector2(0, -681),
                 new Vector2(250, 66), "출전! ▶", new Color(0.1f, 0.55f, 0.15f), EnterBattle);
             _enterSetupBtn = Btn(_prepPanel, "SetupBtn", a, new Vector2(0, -681),
@@ -1314,7 +1597,16 @@ namespace MedievalRTS.Testing
 
         private void RefreshPrepGold()
         {
+            SyncOwnedResources();
             if (_prepGoldText != null) _prepGoldText.text = $"골드: {_gold}";
+            RefreshMobileLoopScreens();
+        }
+
+        private void SyncOwnedResources()
+        {
+            if (_ownedResources == null) return;
+            _ownedResources.Set(ResourceType.Gold, _gold);
+            _ownedResources.Set(ResourceType.Honor, _valor);
         }
 
         private void RefreshBuyBtns()
@@ -1839,7 +2131,7 @@ namespace MedievalRTS.Testing
             // 기본 기지: 성 + 자동 성벽
             _playerCastle = MakePlayerBuilding("PlayerCastle",
                 new Vector3(-21f, 1.5f, 0f), 900,
-                new Color(0.2f, 0.35f, 0.75f), new Vector3(4f, 3f, 4f));
+                MobileVisualStyle.FriendlyBlue, new Vector3(4f, 3f, 4f));
             GenerateAutoWall(-10f, -8f, 8f);
 
             // 카메라를 플레이어 구역 중심으로 이동
@@ -1992,7 +2284,7 @@ namespace MedievalRTS.Testing
             go.name = "PTower_Custom";
             go.transform.position = hitPos;
             go.transform.localScale = new Vector3(1.5f, 2f, 1.5f);
-            Paint(go, new Color(0.2f, 0.35f, 0.75f));
+            Paint(go, MobileVisualStyle.FriendlyBlue);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = "방어탑"; data.maxHp = 220;
             var b = go.AddComponent<Building>();
@@ -2009,7 +2301,7 @@ namespace MedievalRTS.Testing
             go.name = "PCustomWall";
             go.transform.position = hitPos;
             go.transform.localScale = new Vector3(0.8f, 2f, 2.3f);
-            Paint(go, new Color(0.32f, 0.32f, 0.36f));
+            Paint(go, MobileVisualStyle.StoneWarm);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = "성벽"; data.maxHp = 400;
             var b = go.AddComponent<Building>();
