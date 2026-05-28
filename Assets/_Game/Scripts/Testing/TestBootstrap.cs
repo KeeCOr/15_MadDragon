@@ -284,6 +284,7 @@ namespace MedievalRTS.Testing
             go.transform.localScale = new Vector3(0.8f, 2f, 3.5f);
             Paint(go, MobileVisualStyle.StoneWarm);
             AddWallCap(go);
+            ApplyGeneratedFacade(go, "Buildings/wall", new Vector3(0f, 1.2f, -0.15f), new Vector2(3.6f, 3.6f));
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 600;
             var b = go.AddComponent<Building>();
@@ -298,6 +299,7 @@ namespace MedievalRTS.Testing
             go.transform.localScale = new Vector3(1.2f, 1.4f, 1.2f);
             Paint(go, MobileVisualStyle.MageViolet);
             AddMageTowerDecor(go);
+            ApplyGeneratedFacade(go, "Buildings/mage_tower", new Vector3(0f, 1.35f, -0.15f), new Vector2(3.4f, 3.4f));
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 180;
             var b = go.AddComponent<Building>();
@@ -313,6 +315,7 @@ namespace MedievalRTS.Testing
             go.transform.localScale = new Vector3(1.8f, 1.5f, 1.8f);
             Paint(go, MobileVisualStyle.GoldAccent);
             AddGoldCacheDecor(go);
+            ApplyGeneratedFacade(go, "Buildings/elixir_well", new Vector3(0f, 1.05f, -0.15f), new Vector2(3.0f, 3.0f));
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 150;
             var b = go.AddComponent<Building>();
@@ -425,6 +428,24 @@ namespace MedievalRTS.Testing
             AddDecorBlock(root, "WallCap", PrimitiveType.Cube, new Vector3(0f, 0.56f, 0f), new Vector3(1.14f, 0.16f, 1.05f), MobileVisualStyle.StoneShadow);
         }
 
+        private void ApplyGeneratedFacade(GameObject root, string artKey, Vector3 localPosition, Vector2 worldSize)
+        {
+            var sprite = GeneratedArtLibrary.LoadSprite(artKey, 160f);
+            if (sprite == null) return;
+
+            foreach (var meshRenderer in root.GetComponentsInChildren<MeshRenderer>())
+                meshRenderer.enabled = false;
+
+            var go = new GameObject("GeneratedFacade");
+            go.transform.SetParent(root.transform, false);
+            go.transform.localPosition = localPosition;
+            go.transform.localScale = new Vector3(worldSize.x, worldSize.y, 1f);
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = sprite;
+            sr.sortingOrder = 10;
+            go.AddComponent<GeneratedArtBillboard>();
+        }
+
         private GameObject AddDecorBlock(GameObject root, string name, PrimitiveType primitive, Vector3 localPosition, Vector3 localScale, Color color)
         {
             var go = GameObject.CreatePrimitive(primitive);
@@ -463,6 +484,11 @@ namespace MedievalRTS.Testing
             go.transform.localScale = scale ?? Vector3.one;
             Paint(go, col);
             AddBuildingDecor(go, isPlayer ? MobileVisualStyle.FriendlyBlue : MobileVisualStyle.EnemyRed, hp >= 800);
+            ApplyGeneratedFacade(
+                go,
+                hp >= 800 ? (isPlayer ? "Buildings/player_castle" : "Buildings/enemy_castle") : "Buildings/barracks",
+                new Vector3(0f, hp >= 800 ? 1.75f : 1.0f, -0.2f),
+                hp >= 800 ? new Vector2(5.4f, 5.4f) : new Vector2(3.4f, 3.4f));
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = hp;
             var b = go.AddComponent<Building>();
@@ -484,6 +510,7 @@ namespace MedievalRTS.Testing
             go.transform.localScale = new Vector3(1.5f, 2f, 1.5f);
             Paint(go, MobileVisualStyle.EnemyRed);
             AddTowerDecor(go, MobileVisualStyle.EnemyRed);
+            ApplyGeneratedFacade(go, "Buildings/tower", new Vector3(0f, 1.35f, -0.15f), new Vector2(3.0f, 3.0f));
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 220;
             var tb = go.AddComponent<Building>();
@@ -739,6 +766,11 @@ namespace MedievalRTS.Testing
             go.transform.localScale = scale ?? Vector3.one;
             Paint(go, col);
             AddBuildingDecor(go, MobileVisualStyle.FriendlyBlue, hp >= 800);
+            ApplyGeneratedFacade(
+                go,
+                hp >= 800 ? "Buildings/player_castle" : "Buildings/barracks",
+                new Vector3(0f, hp >= 800 ? 1.75f : 1.0f, -0.2f),
+                hp >= 800 ? new Vector2(5.4f, 5.4f) : new Vector2(3.4f, 3.4f));
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = hp;
             var b = go.AddComponent<Building>();
@@ -754,6 +786,7 @@ namespace MedievalRTS.Testing
             go.transform.localScale = new Vector3(1.5f, 2f, 1.5f);
             Paint(go, MobileVisualStyle.FriendlyBlue);
             AddTowerDecor(go, MobileVisualStyle.FriendlyBlue);
+            ApplyGeneratedFacade(go, "Buildings/tower", new Vector3(0f, 1.35f, -0.15f), new Vector2(3.0f, 3.0f));
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 220;
             var b = go.AddComponent<Building>();
@@ -779,6 +812,7 @@ namespace MedievalRTS.Testing
                 go.transform.localScale = new Vector3(segW, segH, 2.3f);
                 Paint(go, isGate ? MobileVisualStyle.GoldAccent : MobileVisualStyle.StoneWarm);
                 AddWallCap(go);
+                ApplyGeneratedFacade(go, "Buildings/wall", new Vector3(0f, 1.2f, -0.15f), new Vector2(3.0f, 3.0f));
                 // 문(gate)은 통과 가능 (콜라이더 없앰)
                 if (isGate) { Destroy(go.GetComponent<Collider>()); }
                 _wallSegments.Add(go);
@@ -1512,6 +1546,7 @@ namespace MedievalRTS.Testing
                 float y = row == 0 ? row1Y : row2Y;
                 var b = Btn(_prepPanel, $"Buy{i}", a, new Vector2(x, y), btnSize,
                     BuildBuyLabel(i), BuyColor(i), () => BuyUnit(idx));
+                AddButtonArt(b, UnitArtKey(i), new Vector2(-68f, 0f), new Vector2(58f, 76f), reserveLeftTextSpace: true);
                 _buyBtns[i]   = b;
                 _buyLabels[i] = b.GetComponentInChildren<Text>();
             }
@@ -1534,6 +1569,7 @@ namespace MedievalRTS.Testing
                 float sy = i < 3 ? spellRow1Y : spellRow2Y;
                 var sb = Btn(_spellSectionRoot, $"SpellBuy{i}", a, new Vector2(sx, sy), btnSize,
                     BuildSpellBuyLabel(i), SpellBuyColor(i), () => TryBuySpell(si));
+                AddButtonArt(sb, SpellArtKey(i), new Vector2(-68f, 0f), new Vector2(58f, 58f), reserveLeftTextSpace: true);
                 _spellBuyBtns[i] = sb;
                 _spellBuyLbls[i] = sb.GetComponentInChildren<Text>();
             }
@@ -2285,6 +2321,8 @@ namespace MedievalRTS.Testing
             go.transform.position = hitPos;
             go.transform.localScale = new Vector3(1.5f, 2f, 1.5f);
             Paint(go, MobileVisualStyle.FriendlyBlue);
+            AddTowerDecor(go, MobileVisualStyle.FriendlyBlue);
+            ApplyGeneratedFacade(go, "Buildings/tower", new Vector3(0f, 1.35f, -0.15f), new Vector2(3.0f, 3.0f));
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = "방어탑"; data.maxHp = 220;
             var b = go.AddComponent<Building>();
@@ -2302,6 +2340,8 @@ namespace MedievalRTS.Testing
             go.transform.position = hitPos;
             go.transform.localScale = new Vector3(0.8f, 2f, 2.3f);
             Paint(go, MobileVisualStyle.StoneWarm);
+            AddWallCap(go);
+            ApplyGeneratedFacade(go, "Buildings/wall", new Vector3(0f, 1.2f, -0.15f), new Vector2(3.0f, 3.0f));
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = "성벽"; data.maxHp = 400;
             var b = go.AddComponent<Building>();
