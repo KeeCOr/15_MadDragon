@@ -264,6 +264,13 @@ namespace MedievalRTS.Testing
         {
             MakeFlatDetail("MainPath", new Vector3(0f, 0.03f, 0f), new Vector3(3.6f, 0.04f, 18f), MobileVisualStyle.PathStone);
             MakeFlatDetail("CrossPath", new Vector3(9f, 0.04f, 0f), new Vector3(18f, 0.04f, 3.2f), MobileVisualStyle.PathStone);
+            MakeFlatDetail("ForestBed_N", new Vector3(0f, 0.02f, 12.4f), new Vector3(56f, 0.03f, 4.6f), MobileVisualStyle.ForestDeep);
+            MakeFlatDetail("ForestBed_S", new Vector3(0f, 0.02f, -12.4f), new Vector3(56f, 0.03f, 4.6f), MobileVisualStyle.ForestDeep);
+            MakeFlatDetail("OuterGrass_N", new Vector3(0f, 0.025f, 9.7f), new Vector3(58f, 0.03f, 1.4f), MobileVisualStyle.GrassPatch);
+            MakeFlatDetail("OuterGrass_S", new Vector3(0f, 0.025f, -9.7f), new Vector3(58f, 0.03f, 1.4f), MobileVisualStyle.GrassPatch);
+            MakeFlatDetail("Creek", new Vector3(-12f, 0.035f, -8.8f), new Vector3(13f, 0.035f, 0.75f), MobileVisualStyle.WaterBlue);
+            MakeFlatDetail("CreekBank_A", new Vector3(-12f, 0.04f, -8.25f), new Vector3(13.5f, 0.035f, 0.16f), MobileVisualStyle.DirtWarm);
+            MakeFlatDetail("CreekBank_B", new Vector3(-12f, 0.04f, -9.35f), new Vector3(13.5f, 0.035f, 0.16f), MobileVisualStyle.DirtWarm);
 
             for (int i = 0; i < 9; i++)
             {
@@ -271,6 +278,25 @@ namespace MedievalRTS.Testing
                 MakeTree($"Pine_N_{i}", new Vector3(x, 0f, 10.8f));
                 MakeTree($"Pine_S_{i}", new Vector3(x + 2f, 0f, -10.8f));
             }
+
+            for (int i = 0; i < 8; i++)
+            {
+                float x = -24f + i * 7f;
+                MakeForestCluster($"Forest_N_{i}", new Vector3(x, 0f, 12.1f), i);
+                MakeForestCluster($"Forest_S_{i}", new Vector3(x + 3.5f, 0f, -12.0f), i + 8);
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
+                float x = -25f + i * 5.5f;
+                MakeGrassTuft($"Grass_N_{i}", new Vector3(x, 0f, 8.8f + (i % 3) * 0.35f), 0.9f + (i % 2) * 0.2f);
+                MakeGrassTuft($"Grass_S_{i}", new Vector3(x + 1.8f, 0f, -8.8f - (i % 3) * 0.35f), 0.85f + (i % 2) * 0.18f);
+            }
+
+            MakeFlowerPatch("Flowers_Left", new Vector3(-22f, 0f, -7.3f), 7);
+            MakeFlowerPatch("Flowers_Right", new Vector3(18f, 0f, 7.4f), 9);
+            MakeBackgroundRidge("Ridge_Back_N", new Vector3(0f, 0f, 14.6f));
+            MakeBackgroundRidge("Ridge_Back_S", new Vector3(0f, 0f, -14.6f));
 
             MakeRockCluster("Rock_L", new Vector3(-18f, 0f, 8.4f));
             MakeRockCluster("Rock_C", new Vector3(0f, 0f, -9.2f));
@@ -374,6 +400,65 @@ namespace MedievalRTS.Testing
             crown.transform.localScale = new Vector3(1.0f, 0.9f, 1.0f);
             Paint(crown, MobileVisualStyle.GrassDark);
             RemoveCollider(crown);
+        }
+
+        private void MakeForestCluster(string name, Vector3 position, int seed)
+        {
+            MakeTree(name + "_TreeA", position + new Vector3(-0.75f, 0f, 0.2f));
+            MakeTree(name + "_TreeB", position + new Vector3(0.55f, 0f, -0.35f));
+            MakeBush(name + "_BushA", position + new Vector3(1.35f, 0f, 0.45f), 0.8f);
+            MakeBush(name + "_BushB", position + new Vector3(-1.35f, 0f, -0.35f), 0.65f);
+            if (seed % 2 == 0) MakeRockCluster(name + "_Rocks", position + new Vector3(0.3f, 0f, 1.0f));
+        }
+
+        private void MakeBush(string name, Vector3 position, float scale)
+        {
+            var bush = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            bush.name = name;
+            bush.transform.position = position + new Vector3(0f, 0.28f * scale, 0f);
+            bush.transform.localScale = new Vector3(1.25f * scale, 0.55f * scale, 0.85f * scale);
+            Paint(bush, MobileVisualStyle.GrassLight);
+            RemoveCollider(bush);
+        }
+
+        private void MakeGrassTuft(string name, Vector3 position, float scale)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                var blade = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                blade.name = $"{name}_{i}";
+                blade.transform.position = position + new Vector3((i - 1.5f) * 0.18f * scale, 0.16f * scale, (i % 2 == 0 ? 0.1f : -0.1f) * scale);
+                blade.transform.localScale = new Vector3(0.08f * scale, 0.32f * scale, 0.08f * scale);
+                blade.transform.rotation = Quaternion.Euler(0f, i * 28f, i % 2 == 0 ? 10f : -10f);
+                Paint(blade, i % 2 == 0 ? MobileVisualStyle.GrassLight : MobileVisualStyle.GrassPatch);
+                RemoveCollider(blade);
+            }
+        }
+
+        private void MakeFlowerPatch(string name, Vector3 position, int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                var flower = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                flower.name = $"{name}_{i}";
+                flower.transform.position = position + new Vector3((i % 4) * 0.48f, 0.18f, (i / 4) * 0.45f);
+                flower.transform.localScale = new Vector3(0.18f, 0.12f, 0.18f);
+                Paint(flower, i % 2 == 0 ? MobileVisualStyle.FlowerPink : MobileVisualStyle.FlowerYellow);
+                RemoveCollider(flower);
+            }
+        }
+
+        private void MakeBackgroundRidge(string name, Vector3 position)
+        {
+            for (int i = 0; i < 7; i++)
+            {
+                var ridge = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                ridge.name = $"{name}_{i}";
+                ridge.transform.position = position + new Vector3(-24f + i * 8f, 0.22f, 0f);
+                ridge.transform.localScale = new Vector3(6f, 0.42f + (i % 3) * 0.12f, 0.7f);
+                Paint(ridge, MobileVisualStyle.GrassDark);
+                RemoveCollider(ridge);
+            }
         }
 
         private void MakeRockCluster(string name, Vector3 position)

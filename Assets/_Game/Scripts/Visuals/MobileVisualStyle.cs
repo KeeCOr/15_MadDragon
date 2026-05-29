@@ -8,6 +8,13 @@ namespace MedievalRTS.Visuals
         public static readonly Color EnemyRed = new(0.92f, 0.18f, 0.12f);
         public static readonly Color GrassBase = new(0.42f, 0.72f, 0.25f);
         public static readonly Color GrassDark = new(0.24f, 0.52f, 0.18f);
+        public static readonly Color GrassLight = new(0.58f, 0.84f, 0.32f);
+        public static readonly Color GrassPatch = new(0.34f, 0.64f, 0.21f);
+        public static readonly Color ForestDeep = new(0.12f, 0.36f, 0.16f);
+        public static readonly Color FlowerPink = new(1.00f, 0.42f, 0.58f);
+        public static readonly Color FlowerYellow = new(1.00f, 0.86f, 0.18f);
+        public static readonly Color WaterBlue = new(0.26f, 0.68f, 0.92f);
+        public static readonly Color DirtWarm = new(0.57f, 0.42f, 0.24f);
         public static readonly Color PathStone = new(0.66f, 0.60f, 0.47f);
         public static readonly Color StoneWarm = new(0.68f, 0.65f, 0.58f);
         public static readonly Color StoneShadow = new(0.42f, 0.42f, 0.39f);
