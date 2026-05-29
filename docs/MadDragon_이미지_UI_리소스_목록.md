@@ -23,10 +23,17 @@
 
 ## 다음 분할 권장안
 
-1. 건물 아틀라스에서 성/타워/성벽/마법탑/자원 건물을 개별 PNG로 크롭한다.
-2. 유닛 카드 아틀라스는 7개 카드 이미지로 분리하고 기존 구매 버튼에 매핑한다.
-3. 아이콘 아틀라스는 64x64 또는 128x128 기준으로 자원/마법/액션 아이콘을 분리한다.
-4. UI 키트는 버튼/패널 프레임을 9-slice Sprite로 설정해 모바일 HUD에 적용한다.
+1. 완료: 건물 아틀라스에서 성/타워/성벽/마법탑/자원 건물을 개별 PNG로 크롭해 `Assets/Resources/MadDragonArt/Buildings`에 배치했다.
+2. 완료: 유닛 카드 아틀라스는 7개 카드 이미지로 분리해 `Assets/Resources/MadDragonArt/Units`에 배치했고, 병력 구매 버튼에 썸네일로 연결했다.
+3. 완료: 아이콘 아틀라스는 자원/마법/액션 아이콘으로 분리해 `Assets/Resources/MadDragonArt/Icons`에 배치했고, 마법 구매 버튼에 연결했다.
+4. 진행 후보: UI 키트는 `Assets/Resources/MadDragonArt/Ui`에 분리해 두었고, 다음 단계에서 버튼/패널 프레임을 9-slice Sprite로 설정해 모바일 HUD 전체에 적용한다.
+
+## 적용 상태
+
+- `GeneratedArtLibrary`가 `Resources/MadDragonArt` 아래 PNG를 런타임 Sprite로 로드한다.
+- `GeneratedArtBillboard`가 월드에 붙은 건물 스프라이트를 카메라 방향으로 회전시킨다.
+- `TestBootstrap`의 성, 타워, 성벽, 병영, 마법탑, 자원 건물은 기존 primitive 콜라이더/AI를 유지하고, 렌더링만 생성 이미지 파사드로 보강한다.
+- 공격 준비 화면의 병력 구매 버튼과 마법 구매 버튼에는 생성 이미지 썸네일을 표시한다.
 
 ## 생성 프롬프트 요약
 

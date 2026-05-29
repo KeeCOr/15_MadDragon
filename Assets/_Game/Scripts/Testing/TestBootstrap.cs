@@ -2154,6 +2154,59 @@ namespace MedievalRTS.Testing
             return btn;
         }
 
+        private static string UnitArtKey(int i)
+        {
+            switch (i)
+            {
+                case 0: return "Units/knight";
+                case 1: return "Units/archer";
+                case 2: return "Units/mage";
+                case 3: return "Units/knight";
+                case 4: return "Units/cavalry";
+                case 5: return "Units/siege";
+                default: return null;
+            }
+        }
+
+        private static string SpellArtKey(int i)
+        {
+            switch (i)
+            {
+                case 0: return "Icons/fireball";
+                case 1: return "Icons/lightning";
+                case 2: return "Icons/heal";
+                case 3: return "Icons/freeze";
+                case 4: return "Icons/rage";
+                default: return null;
+            }
+        }
+
+        private void AddButtonArt(Button button, string artKey, Vector2 anchoredPosition, Vector2 size, bool reserveLeftTextSpace)
+        {
+            if (button == null) return;
+            var sprite = GeneratedArtLibrary.LoadSprite(artKey, 160f);
+            if (sprite == null) return;
+
+            var go = new GameObject("ArtIcon");
+            go.transform.SetParent(button.transform, false);
+            var image = go.AddComponent<Image>();
+            image.sprite = sprite;
+            image.preserveAspect = true;
+            image.raycastTarget = false;
+
+            var rt = image.rectTransform;
+            rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.anchoredPosition = anchoredPosition;
+            rt.sizeDelta = size;
+
+            if (!reserveLeftTextSpace) return;
+            var label = button.GetComponentInChildren<Text>();
+            if (label == null) return;
+            label.alignment = TextAnchor.MiddleLeft;
+            label.rectTransform.offsetMin = new Vector2(62f, 0f);
+            label.rectTransform.offsetMax = new Vector2(-8f, 0f);
+        }
+
         // ═══════════════════════════════════════════════════════
         //  수비 진형 구성
         // ═══════════════════════════════════════════════════════
