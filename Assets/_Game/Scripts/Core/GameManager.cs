@@ -19,13 +19,19 @@ namespace MedievalRTS.Core
         {
             CurrentState = newState;
             EventBus.Publish(new GameStateChangedEvent(newState));
-            switch (newState)
+            SceneManager.LoadScene(SceneNameForState(newState));
+        }
+
+        public static string SceneNameForState(GameState state)
+        {
+            return state switch
             {
-                case GameState.MainMenu:    SceneManager.LoadScene("MainMenu");    break;
-                case GameState.BaseBuilder: SceneManager.LoadScene("BaseBuilder"); break;
-                case GameState.Battle:      SceneManager.LoadScene("Battle");      break;
-                case GameState.Result:      SceneManager.LoadScene("Result");      break;
-            }
+                GameState.MainMenu => "01_MainMenu",
+                GameState.BaseBuilder => "02_BaseBuilder",
+                GameState.Battle => "05_TestBattle",
+                GameState.Result => "04_Result",
+                _ => "05_TestBattle"
+            };
         }
     }
 }
