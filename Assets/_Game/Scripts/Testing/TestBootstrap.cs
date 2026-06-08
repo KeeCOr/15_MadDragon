@@ -557,18 +557,20 @@ namespace MedievalRTS.Testing
 
         private void ApplyBuildingVisual(GameObject root, string key, string fallbackArtKey, Vector3 fallbackLocalPosition, Vector2 fallbackWorldSize, float groundOffsetY, Vector3 worldScale)
         {
-            if (ApplyToonyBuildingVisual(root, key, groundOffsetY, worldScale))
+            if (ApplyToonyBuildingVisual(root, key, groundOffsetY, worldScale, fallbackWorldSize))
                 return;
 
             ApplyGeneratedFacade(root, fallbackArtKey, fallbackLocalPosition, fallbackWorldSize);
         }
 
-        private bool ApplyToonyBuildingVisual(GameObject root, string key, float groundOffsetY, Vector3 worldScale)
+        private bool ApplyToonyBuildingVisual(GameObject root, string key, float groundOffsetY, Vector3 worldScale, Vector2 targetFootprint)
         {
             var prefab = ToonyRtsVisualLibrary.LoadBuilding(key);
             var visual = ToonyRtsVisualApplier.Attach(root, prefab, new Vector3(0f, groundOffsetY, 0f), worldScale, Quaternion.identity);
             if (visual == null) return false;
 
+            ToonyRtsVisualApplier.FitFootprintToWorldSize(visual, targetFootprint, 0.45f, 3.5f);
+            ToonyRtsVisualApplier.AlignBottomToWorldY(visual, root.transform.position.y + groundOffsetY);
             ToonyRtsVisualApplier.HideRootRenderers(root);
             return true;
         }
@@ -729,6 +731,7 @@ namespace MedievalRTS.Testing
             }
             else
             {
+                EnsureFogVisualLayer();
                 DeployArmy();
                 StartCoroutine(SpawnInitialEnemyForce());
                 StartCoroutine(FogOfWarRoutine());
@@ -1058,7 +1061,111 @@ namespace MedievalRTS.Testing
                 foreach (var (p, r) in sources) MarkRevealed(p, r);
                 ApplyFog("EnemyUnit", sources, 10f);
                 ApplyFogBuildings(sources, 14f);
+                UpdateFogVisualLayer(sources);
             }
+        }
+
+        // Visual layer: unexplored cells are dark, explored cells stay lightly misted.
+        private void EnsureFogVisualLayer()
+        {
+            if (_defenseMode) return;
+            if (_fowVisualRoot != null)
+            {
+                SetFogVisualLayerVisible(true);
+                return;
+            }
+
+            _fowVisualRoot = new GameObject("FogOfWarVisualLayer");
+            _fowVisualMaterial = CreateFogVisualMaterial();
+            _fowVisualCells.Clear();
+
+            int minCellX = Mathf.FloorToInt(FowMinX / FowCellSize);
+            int maxCellX = Mathf.CeilToInt(FowMaxX / FowCellSize);
+            int minCellZ = Mathf.FloorToInt(FowMinZ / FowCellSize);
+            int maxCellZ = Mathf.CeilToInt(FowMaxZ / FowCellSize);
+
+            for (int x = minCellX; x <= maxCellX; x++)
+            for (int z = minCellZ; z <= maxCellZ; z++)
+            {
+                var tile = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                tile.name = $"FogCell_{x}_{z}";
+                tile.transform.SetParent(_fowVisualRoot.transform, false);
+                tile.transform.position = new Vector3(x * FowCellSize, 0.13f, z * FowCellSize);
+                tile.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+                tile.transform.localScale = Vector3.one * (FowCellSize * 1.08f);
+                RemoveCollider(tile);
+
+                var renderer = tile.GetComponent<Renderer>();
+                renderer.sharedMaterial = _fowVisualMaterial;
+                renderer.sortingOrder = 20;
+                _fowVisualCells.Add(new FowVisualCell
+                {
+                    cell = new Vector2Int(x, z),
+                    worldCenter = tile.transform.position,
+                    renderer = renderer
+                });
+            }
+        }
+
+        private Material CreateFogVisualMaterial()
+        {
+            var shader = Shader.Find("Universal Render Pipeline/Unlit")
+                      ?? Shader.Find("Unlit/Transparent")
+                      ?? Shader.Find("Sprites/Default")
+                      ?? Shader.Find("Standard");
+            var mat = new Material(shader);
+            mat.name = "FOW_DarkMist";
+            mat.renderQueue = 3000;
+            mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            mat.SetInt("_ZWrite", 0);
+            mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+            mat.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+            mat.color = new Color(0.02f, 0.035f, 0.055f, 0.7f);
+            return mat;
+        }
+
+        private void SetFogVisualLayerVisible(bool visible)
+        {
+            if (_fowVisualRoot != null)
+                _fowVisualRoot.SetActive(visible && !_defenseMode);
+        }
+
+        private void UpdateFogVisualLayer(List<(Vector3 p, float r)> sources)
+        {
+            if (_fowVisualRoot == null) return;
+            SetFogVisualLayerVisible(true);
+
+            foreach (var cell in _fowVisualCells)
+            {
+                if (cell.renderer == null) continue;
+
+                bool currentlyVisible = IsWithinAnySightSource(cell.worldCenter, sources, 0.6f);
+                bool explored = _revealedCells.Contains(cell.cell);
+                if (currentlyVisible)
+                {
+                    cell.renderer.enabled = false;
+                    continue;
+                }
+
+                cell.renderer.enabled = true;
+                cell.renderer.material.color = explored
+                    ? new Color(0.04f, 0.055f, 0.07f, 0.36f)
+                    : new Color(0.01f, 0.018f, 0.032f, 0.72f);
+            }
+        }
+
+        private bool IsWithinAnySightSource(Vector3 point, List<(Vector3 p, float r)> sources, float feather)
+        {
+            foreach (var (p, r) in sources)
+            {
+                float radius = r + feather;
+                Vector2 delta = new Vector2(point.x - p.x, point.z - p.z);
+                if (delta.sqrMagnitude <= radius * radius)
+                    return true;
+            }
+
+            return false;
         }
 
         // 건물: 한 번 본 것은 영구 표시
@@ -1484,6 +1591,7 @@ namespace MedievalRTS.Testing
         {
             if (_phase == Phase.GameOver) return;
             _phase = Phase.GameOver;
+            SetFogVisualLayerVisible(false);
             Time.timeScale = 0.25f;
             _resultPanel.SetActive(true);
             _resultText.text  = victory ? $"승리!\n{reason}" : $"패배\n{reason}";

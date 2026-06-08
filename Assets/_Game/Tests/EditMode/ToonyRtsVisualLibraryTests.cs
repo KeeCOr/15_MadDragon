@@ -47,4 +47,39 @@ public class ToonyRtsVisualLibraryTests
         Object.DestroyImmediate(root);
         Object.DestroyImmediate(visualPrefab);
     }
+
+    [Test]
+    public void ToonyRts_ApplierFitsVisualFootprintToTargetWorldSize()
+    {
+        var root = new GameObject("Root");
+        var visualPrefab = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        visualPrefab.name = "VisualPrefab";
+
+        var visual = ToonyRtsVisualApplier.Attach(root, visualPrefab, Vector3.zero, Vector3.one, Quaternion.identity);
+        ToonyRtsVisualApplier.FitFootprintToWorldSize(visual, new Vector2(4f, 2f));
+
+        var bounds = visual.GetComponentInChildren<Renderer>().bounds;
+        Assert.That(bounds.size.x, Is.EqualTo(2f).Within(0.05f));
+        Assert.That(bounds.size.z, Is.EqualTo(2f).Within(0.05f));
+
+        Object.DestroyImmediate(root);
+        Object.DestroyImmediate(visualPrefab);
+    }
+
+    [Test]
+    public void ToonyRts_ApplierAlignsVisualBottomToWorldY()
+    {
+        var root = new GameObject("Root");
+        var visualPrefab = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        visualPrefab.name = "VisualPrefab";
+
+        var visual = ToonyRtsVisualApplier.Attach(root, visualPrefab, Vector3.up * 2f, Vector3.one, Quaternion.identity);
+        ToonyRtsVisualApplier.AlignBottomToWorldY(visual, 0f);
+
+        var bounds = visual.GetComponentInChildren<Renderer>().bounds;
+        Assert.That(bounds.min.y, Is.EqualTo(0f).Within(0.05f));
+
+        Object.DestroyImmediate(root);
+        Object.DestroyImmediate(visualPrefab);
+    }
 }
