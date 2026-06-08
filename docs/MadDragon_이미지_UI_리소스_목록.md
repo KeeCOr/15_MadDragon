@@ -35,6 +35,16 @@
 - `TestBootstrap`의 성, 타워, 성벽, 병영, 마법탑, 자원 건물은 기존 primitive 콜라이더/AI를 유지하고, 렌더링만 생성 이미지 파사드로 보강한다.
 - 공격 준비 화면의 병력 구매 버튼과 마법 구매 버튼에는 생성 이미지 썸네일을 표시한다.
 
+## Toony RTS 3D 리소스 적용
+
+- 원본 에셋: `Assets/ToonyTinyPeople/TT_RTS/TT_RTS_Standard`
+- 런타임 포함 매니페스트: `Assets/Resources/ToonyRts/ToonyRtsVisualManifest.asset`
+- 유닛/공성기: `TT_Swordman`, `TT_Archer`, `TT_Mage`, `TT_Scout`, `TT_Light_Cavalry`, `TT_Catapult_lvl1`
+- 건물: `TownHall`, `Keep`, `Wall_A_wall`, `Tower_A`, `Stables`, `MageTower`, `Temple`, `Granary`
+- 장식/FX: 파랑/빨강 배너, 건물 파괴/화염/공성기 파괴 FX 참조
+- 적용 방식: 기존 게임플레이 루트의 자식 비주얼로 붙이고 Toony 콜라이더/Rigidbody는 제거한다.
+- 건물 표시 우선순위: Toony FBX/프리팹 모델을 먼저 사용하고, 모델 로드 실패 시에만 생성 이미지 파사드를 fallback으로 사용한다.
+
 ## 생성 프롬프트 요약
 
 - 건물: 밝은 Clash-like 3D 이소메트릭 건물 아틀라스, 파랑/빨강 진영성, 성벽, 타워, 병영, 마법탑, 금광, 엘릭서, 공방, 자연 장식.

@@ -122,8 +122,22 @@ namespace MedievalRTS.Testing
         private bool       _isDragging;
         private readonly HashSet<GameObject>  _revealedBuildings = new HashSet<GameObject>();
         private readonly HashSet<Vector2Int>  _revealedCells     = new HashSet<Vector2Int>();
+        private readonly List<FowVisualCell>  _fowVisualCells    = new List<FowVisualCell>();
         private const float FowCellSize = 2f;
+        private const float FowMinX = -30f;
+        private const float FowMaxX = 30f;
+        private const float FowMinZ = -15f;
+        private const float FowMaxZ = 15f;
         private LineRenderer _spellRangeCircle;
+        private GameObject _fowVisualRoot;
+        private Material _fowVisualMaterial;
+
+        private struct FowVisualCell
+        {
+            public Vector2Int cell;
+            public Vector3 worldCenter;
+            public Renderer renderer;
+        }
 
         // 기지 개발
         private readonly Button[] _upgBtns = new Button[4];
@@ -258,6 +272,8 @@ namespace MedievalRTS.Testing
             // 적 성 (x=21)
             _enemyCastle = MakeBuilding("EnemyCastle", new Vector3(21, 1.5f, 0), 900, false,
                 MobileVisualStyle.EnemyRed, new Vector3(4, 3, 4));
+            AddToonyDecoration("red_banner", new Vector3(18.5f, 0f, 2.9f), Vector3.one * 0.9f, 180f);
+            AddToonyDecoration("red_banner", new Vector3(18.5f, 0f, -2.9f), Vector3.one * 0.9f, 180f);
         }
 
         private void BuildBrightArenaDetails()
@@ -310,7 +326,7 @@ namespace MedievalRTS.Testing
             go.transform.localScale = new Vector3(0.8f, 2f, 3.5f);
             Paint(go, MobileVisualStyle.StoneWarm);
             AddWallCap(go);
-            ApplyGeneratedFacade(go, "Buildings/wall", new Vector3(0f, 1.2f, -0.15f), new Vector2(3.6f, 3.6f));
+            ApplyBuildingVisual(go, "wall", "Buildings/wall", new Vector3(0f, 1.2f, -0.15f), new Vector2(3.6f, 3.6f), -0.95f, Vector3.one * 1.25f);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 600;
             var b = go.AddComponent<Building>();
@@ -325,7 +341,7 @@ namespace MedievalRTS.Testing
             go.transform.localScale = new Vector3(1.2f, 1.4f, 1.2f);
             Paint(go, MobileVisualStyle.MageViolet);
             AddMageTowerDecor(go);
-            ApplyGeneratedFacade(go, "Buildings/mage_tower", new Vector3(0f, 1.35f, -0.15f), new Vector2(3.4f, 3.4f));
+            ApplyBuildingVisual(go, "mage_tower", "Buildings/mage_tower", new Vector3(0f, 1.35f, -0.15f), new Vector2(3.4f, 3.4f), -0.7f, Vector3.one * 1.2f);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 180;
             var b = go.AddComponent<Building>();
@@ -341,7 +357,7 @@ namespace MedievalRTS.Testing
             go.transform.localScale = new Vector3(1.8f, 1.5f, 1.8f);
             Paint(go, MobileVisualStyle.GoldAccent);
             AddGoldCacheDecor(go);
-            ApplyGeneratedFacade(go, "Buildings/elixir_well", new Vector3(0f, 1.05f, -0.15f), new Vector2(3.0f, 3.0f));
+            ApplyBuildingVisual(go, "elixir_well", "Buildings/elixir_well", new Vector3(0f, 1.05f, -0.15f), new Vector2(3.0f, 3.0f), -0.75f, Vector3.one * 1.1f);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 150;
             var b = go.AddComponent<Building>();
@@ -531,6 +547,42 @@ namespace MedievalRTS.Testing
             go.AddComponent<GeneratedArtBillboard>();
         }
 
+        private void ApplyToonyUnitVisual(GameObject root, UnitDef def)
+        {
+            var prefab = ToonyRtsVisualLibrary.LoadUnit(def.assetName);
+            var visual = ToonyRtsVisualApplier.Attach(root, prefab, new Vector3(0f, -0.48f, 0f), Vector3.one * 0.88f, Quaternion.identity);
+            if (visual != null)
+                ToonyRtsVisualApplier.HideRootRenderers(root);
+        }
+
+        private void ApplyBuildingVisual(GameObject root, string key, string fallbackArtKey, Vector3 fallbackLocalPosition, Vector2 fallbackWorldSize, float groundOffsetY, Vector3 worldScale)
+        {
+            if (ApplyToonyBuildingVisual(root, key, groundOffsetY, worldScale))
+                return;
+
+            ApplyGeneratedFacade(root, fallbackArtKey, fallbackLocalPosition, fallbackWorldSize);
+        }
+
+        private bool ApplyToonyBuildingVisual(GameObject root, string key, float groundOffsetY, Vector3 worldScale)
+        {
+            var prefab = ToonyRtsVisualLibrary.LoadBuilding(key);
+            var visual = ToonyRtsVisualApplier.Attach(root, prefab, new Vector3(0f, groundOffsetY, 0f), worldScale, Quaternion.identity);
+            if (visual == null) return false;
+
+            ToonyRtsVisualApplier.HideRootRenderers(root);
+            return true;
+        }
+
+        private void AddToonyDecoration(string key, Vector3 position, Vector3 worldScale, float yaw)
+        {
+            var prefab = ToonyRtsVisualLibrary.LoadDecoration(key);
+            if (prefab == null) return;
+
+            var root = new GameObject($"Toony_{key}");
+            root.transform.position = position;
+            ToonyRtsVisualApplier.Attach(root, prefab, Vector3.zero, worldScale, Quaternion.Euler(0f, yaw, 0f));
+        }
+
         private GameObject AddDecorBlock(GameObject root, string name, PrimitiveType primitive, Vector3 localPosition, Vector3 localScale, Color color)
         {
             var go = GameObject.CreatePrimitive(primitive);
@@ -569,11 +621,14 @@ namespace MedievalRTS.Testing
             go.transform.localScale = scale ?? Vector3.one;
             Paint(go, col);
             AddBuildingDecor(go, isPlayer ? MobileVisualStyle.FriendlyBlue : MobileVisualStyle.EnemyRed, hp >= 800);
-            ApplyGeneratedFacade(
+            ApplyBuildingVisual(
                 go,
+                hp >= 800 ? (isPlayer ? "player_castle" : "enemy_castle") : "barracks",
                 hp >= 800 ? (isPlayer ? "Buildings/player_castle" : "Buildings/enemy_castle") : "Buildings/barracks",
                 new Vector3(0f, hp >= 800 ? 1.75f : 1.0f, -0.2f),
-                hp >= 800 ? new Vector2(5.4f, 5.4f) : new Vector2(3.4f, 3.4f));
+                hp >= 800 ? new Vector2(5.4f, 5.4f) : new Vector2(3.4f, 3.4f),
+                -(scale ?? Vector3.one).y * 0.5f,
+                hp >= 800 ? Vector3.one * 1.8f : Vector3.one * 1.25f);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = hp;
             var b = go.AddComponent<Building>();
@@ -595,7 +650,7 @@ namespace MedievalRTS.Testing
             go.transform.localScale = new Vector3(1.5f, 2f, 1.5f);
             Paint(go, MobileVisualStyle.EnemyRed);
             AddTowerDecor(go, MobileVisualStyle.EnemyRed);
-            ApplyGeneratedFacade(go, "Buildings/tower", new Vector3(0f, 1.35f, -0.15f), new Vector2(3.0f, 3.0f));
+            ApplyBuildingVisual(go, "tower", "Buildings/tower", new Vector3(0f, 1.35f, -0.15f), new Vector2(3.0f, 3.0f), -1f, Vector3.one * 1.2f);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 220;
             var tb = go.AddComponent<Building>();
@@ -735,6 +790,7 @@ namespace MedievalRTS.Testing
                 Paint(go, def.color);
             }
             go.name = $"{(isPlayer ? "P" : "E")}_{def.name}";
+            ApplyToonyUnitVisual(go, def);
 
             // 공격 모드 적 유닛: FOW 적용 전까지 숨겨서 깜박임 방지
             // 수비 모드: FOW 없음 → 적 유닛 즉시 표시
@@ -829,6 +885,8 @@ namespace MedievalRTS.Testing
             // 플레이어 성 (왼쪽 끝)
             _playerCastle = MakePlayerBuilding("PlayerCastle", new Vector3(-21, 1.5f, 0), 900,
                 MobileVisualStyle.FriendlyBlue, new Vector3(4, 3, 4));
+            AddToonyDecoration("blue_banner", new Vector3(-18.5f, 0f, 2.9f), Vector3.one * 0.9f, 0f);
+            AddToonyDecoration("blue_banner", new Vector3(-18.5f, 0f, -2.9f), Vector3.one * 0.9f, 0f);
 
             // 플레이어 타워 (성 앞)
             MakePlayerTower("PTower_L",  new Vector3(-16, 1f,  6));
@@ -851,11 +909,14 @@ namespace MedievalRTS.Testing
             go.transform.localScale = scale ?? Vector3.one;
             Paint(go, col);
             AddBuildingDecor(go, MobileVisualStyle.FriendlyBlue, hp >= 800);
-            ApplyGeneratedFacade(
+            ApplyBuildingVisual(
                 go,
+                hp >= 800 ? "player_castle" : "barracks",
                 hp >= 800 ? "Buildings/player_castle" : "Buildings/barracks",
                 new Vector3(0f, hp >= 800 ? 1.75f : 1.0f, -0.2f),
-                hp >= 800 ? new Vector2(5.4f, 5.4f) : new Vector2(3.4f, 3.4f));
+                hp >= 800 ? new Vector2(5.4f, 5.4f) : new Vector2(3.4f, 3.4f),
+                -(scale ?? Vector3.one).y * 0.5f,
+                hp >= 800 ? Vector3.one * 1.8f : Vector3.one * 1.25f);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = hp;
             var b = go.AddComponent<Building>();
@@ -871,7 +932,7 @@ namespace MedievalRTS.Testing
             go.transform.localScale = new Vector3(1.5f, 2f, 1.5f);
             Paint(go, MobileVisualStyle.FriendlyBlue);
             AddTowerDecor(go, MobileVisualStyle.FriendlyBlue);
-            ApplyGeneratedFacade(go, "Buildings/tower", new Vector3(0f, 1.35f, -0.15f), new Vector2(3.0f, 3.0f));
+            ApplyBuildingVisual(go, "tower", "Buildings/tower", new Vector3(0f, 1.35f, -0.15f), new Vector2(3.0f, 3.0f), -1f, Vector3.one * 1.2f);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 220;
             var b = go.AddComponent<Building>();
@@ -897,7 +958,7 @@ namespace MedievalRTS.Testing
                 go.transform.localScale = new Vector3(segW, segH, 2.3f);
                 Paint(go, isGate ? MobileVisualStyle.GoldAccent : MobileVisualStyle.StoneWarm);
                 AddWallCap(go);
-                ApplyGeneratedFacade(go, "Buildings/wall", new Vector3(0f, 1.2f, -0.15f), new Vector2(3.0f, 3.0f));
+                ApplyBuildingVisual(go, "wall", "Buildings/wall", new Vector3(0f, 1.2f, -0.15f), new Vector2(3.0f, 3.0f), -1f, Vector3.one * 1.15f);
                 // 문(gate)은 통과 가능 (콜라이더 없앰)
                 if (isGate) { Destroy(go.GetComponent<Collider>()); }
                 _wallSegments.Add(go);
@@ -2306,6 +2367,8 @@ namespace MedievalRTS.Testing
             _playerCastle = MakePlayerBuilding("PlayerCastle",
                 new Vector3(-21f, 1.5f, 0f), 900,
                 MobileVisualStyle.FriendlyBlue, new Vector3(4f, 3f, 4f));
+            AddToonyDecoration("blue_banner", new Vector3(-18.5f, 0f, 2.9f), Vector3.one * 0.9f, 0f);
+            AddToonyDecoration("blue_banner", new Vector3(-18.5f, 0f, -2.9f), Vector3.one * 0.9f, 0f);
             GenerateAutoWall(-10f, -8f, 8f);
 
             // 카메라를 플레이어 구역 중심으로 이동
@@ -2460,7 +2523,7 @@ namespace MedievalRTS.Testing
             go.transform.localScale = new Vector3(1.5f, 2f, 1.5f);
             Paint(go, MobileVisualStyle.FriendlyBlue);
             AddTowerDecor(go, MobileVisualStyle.FriendlyBlue);
-            ApplyGeneratedFacade(go, "Buildings/tower", new Vector3(0f, 1.35f, -0.15f), new Vector2(3.0f, 3.0f));
+            ApplyBuildingVisual(go, "tower", "Buildings/tower", new Vector3(0f, 1.35f, -0.15f), new Vector2(3.0f, 3.0f), -1f, Vector3.one * 1.2f);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = "방어탑"; data.maxHp = 220;
             var b = go.AddComponent<Building>();
@@ -2479,7 +2542,7 @@ namespace MedievalRTS.Testing
             go.transform.localScale = new Vector3(0.8f, 2f, 2.3f);
             Paint(go, MobileVisualStyle.StoneWarm);
             AddWallCap(go);
-            ApplyGeneratedFacade(go, "Buildings/wall", new Vector3(0f, 1.2f, -0.15f), new Vector2(3.0f, 3.0f));
+            ApplyBuildingVisual(go, "wall", "Buildings/wall", new Vector3(0f, 1.2f, -0.15f), new Vector2(3.0f, 3.0f), -1f, Vector3.one * 1.15f);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = "성벽"; data.maxHp = 400;
             var b = go.AddComponent<Building>();
