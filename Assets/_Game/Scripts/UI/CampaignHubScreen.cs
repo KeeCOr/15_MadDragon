@@ -8,15 +8,17 @@ namespace MedievalRTS.UI
     {
         private readonly GameObject _root;
         private readonly Font _font;
+        private readonly System.Action _startBattle;
         private readonly System.Action _openAttackPrep;
         private readonly System.Action _openBase;
         private Text _summary;
 
         public GameObject Root => _root;
 
-        public CampaignHubScreen(GameObject canvas, Font font, System.Action openAttackPrep, System.Action openBase)
+        public CampaignHubScreen(GameObject canvas, Font font, System.Action startBattle, System.Action openAttackPrep, System.Action openBase)
         {
             _font = font;
+            _startBattle = startBattle;
             _openAttackPrep = openAttackPrep;
             _openBase = openBase;
             _root = MobileUiFactory.CreatePanel(canvas, "CampaignHubScreen", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, MobileHudTheme.PanelStrong);
@@ -46,11 +48,14 @@ namespace MedievalRTS.UI
             _summary = MobileUiFactory.CreateLabel(_root, "Summary", _font, "", 22, Color.white, TextAnchor.MiddleCenter);
             MobileUiFactory.SetRect(_summary.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0f, 90f), new Vector2(720f, 190f));
 
-            var attack = MobileUiFactory.CreateButton(_root, "Attack", _font, "Attack", MobileHudTheme.PrimaryButton, _openAttackPrep);
-            MobileUiFactory.SetRect(attack.GetComponent<RectTransform>(), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-110f, 80f), MobileHudTheme.LargeButtonSize);
+            var play = MobileUiFactory.CreateButton(_root, "Play", _font, "Play", MobileHudTheme.PrimaryButton, _startBattle);
+            MobileUiFactory.SetRect(play.GetComponent<RectTransform>(), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-170f, 80f), MobileHudTheme.LargeButtonSize);
+
+            var prep = MobileUiFactory.CreateButton(_root, "Prep", _font, "Prep", MobileHudTheme.SecondaryButton, _openAttackPrep);
+            MobileUiFactory.SetRect(prep.GetComponent<RectTransform>(), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(40f, 80f), MobileHudTheme.LargeButtonSize);
 
             var baseButton = MobileUiFactory.CreateButton(_root, "Base", _font, "Base", MobileHudTheme.SecondaryButton, _openBase);
-            MobileUiFactory.SetRect(baseButton.GetComponent<RectTransform>(), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(110f, 80f), MobileHudTheme.LargeButtonSize);
+            MobileUiFactory.SetRect(baseButton.GetComponent<RectTransform>(), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(250f, 80f), MobileHudTheme.LargeButtonSize);
         }
     }
 }

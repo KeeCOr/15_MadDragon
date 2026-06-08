@@ -230,6 +230,7 @@ namespace MedievalRTS.Testing
             SetupCamera();
             SetupLight();
             SetupGround();
+            BuildBrightArenaDetails();
 
             // 1선: 성벽 (x=2) — 고체력 장벽
             MakeWall("Wall_L",  new Vector3(2, 1f,  6));
@@ -259,12 +260,30 @@ namespace MedievalRTS.Testing
                 MobileVisualStyle.EnemyRed, new Vector3(4, 3, 4));
         }
 
+        private void BuildBrightArenaDetails()
+        {
+            MakeFlatDetail("MainPath", new Vector3(0f, 0.03f, 0f), new Vector3(3.6f, 0.04f, 18f), MobileVisualStyle.PathStone);
+            MakeFlatDetail("CrossPath", new Vector3(9f, 0.04f, 0f), new Vector3(18f, 0.04f, 3.2f), MobileVisualStyle.PathStone);
+
+            for (int i = 0; i < 9; i++)
+            {
+                float x = -24f + i * 6f;
+                MakeTree($"Pine_N_{i}", new Vector3(x, 0f, 10.8f));
+                MakeTree($"Pine_S_{i}", new Vector3(x + 2f, 0f, -10.8f));
+            }
+
+            MakeRockCluster("Rock_L", new Vector3(-18f, 0f, 8.4f));
+            MakeRockCluster("Rock_C", new Vector3(0f, 0f, -9.2f));
+            MakeRockCluster("Rock_R", new Vector3(18f, 0f, 8.4f));
+        }
+
         private void MakeWall(string n, Vector3 pos)
         {
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
             go.name = n; go.transform.position = pos;
             go.transform.localScale = new Vector3(0.8f, 2f, 3.5f);
             Paint(go, MobileVisualStyle.StoneWarm);
+            AddWallCap(go);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 600;
             var b = go.AddComponent<Building>();
@@ -278,6 +297,7 @@ namespace MedievalRTS.Testing
             go.name = n; go.transform.position = pos;
             go.transform.localScale = new Vector3(1.2f, 1.4f, 1.2f);
             Paint(go, MobileVisualStyle.MageViolet);
+            AddMageTowerDecor(go);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 180;
             var b = go.AddComponent<Building>();
@@ -292,6 +312,7 @@ namespace MedievalRTS.Testing
             go.name = n; go.transform.position = pos;
             go.transform.localScale = new Vector3(1.8f, 1.5f, 1.8f);
             Paint(go, MobileVisualStyle.GoldAccent);
+            AddGoldCacheDecor(go);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 150;
             var b = go.AddComponent<Building>();
@@ -325,6 +346,115 @@ namespace MedievalRTS.Testing
             Paint(g, MobileVisualStyle.GrassBase);
         }
 
+        private void MakeFlatDetail(string name, Vector3 position, Vector3 scale, Color color)
+        {
+            var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            go.name = name;
+            go.transform.position = position;
+            go.transform.localScale = scale;
+            Paint(go, color);
+            RemoveCollider(go);
+        }
+
+        private void MakeTree(string name, Vector3 position)
+        {
+            var trunk = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            trunk.name = name;
+            trunk.transform.position = position + new Vector3(0f, 0.45f, 0f);
+            trunk.transform.localScale = new Vector3(0.28f, 0.45f, 0.28f);
+            Paint(trunk, MobileVisualStyle.WoodWarm);
+            RemoveCollider(trunk);
+
+            var crown = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            crown.name = name + "_Crown";
+            crown.transform.position = position + new Vector3(0f, 1.15f, 0f);
+            crown.transform.localScale = new Vector3(1.0f, 0.9f, 1.0f);
+            Paint(crown, MobileVisualStyle.GrassDark);
+            RemoveCollider(crown);
+        }
+
+        private void MakeRockCluster(string name, Vector3 position)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                var rock = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                rock.name = $"{name}_{i}";
+                rock.transform.position = position + new Vector3(i * 0.55f, 0.2f, (i % 2 == 0 ? 0.25f : -0.25f));
+                rock.transform.localScale = new Vector3(0.75f - i * 0.12f, 0.38f, 0.55f);
+                Paint(rock, i == 1 ? MobileVisualStyle.StoneShadow : MobileVisualStyle.StoneWarm);
+                RemoveCollider(rock);
+            }
+        }
+
+        private void AddBuildingDecor(GameObject root, Color roofColor, bool large)
+        {
+            float roofY = 0.58f;
+            float roofScale = large ? 0.82f : 0.74f;
+            AddDecorBlock(root, "Roof", PrimitiveType.Cube, new Vector3(0f, roofY, 0f), new Vector3(roofScale, 0.18f, roofScale), roofColor);
+            AddDecorBlock(root, "Trim", PrimitiveType.Cube, new Vector3(0f, 0.18f, 0f), new Vector3(1.08f, 0.08f, 1.08f), MobileVisualStyle.GoldAccent);
+            AddDecorBlock(root, "Door", PrimitiveType.Cube, new Vector3(0f, -0.12f, -0.51f), new Vector3(0.28f, 0.42f, 0.04f), MobileVisualStyle.WoodWarm);
+
+            if (large)
+            {
+                AddDecorBlock(root, "KeepTop", PrimitiveType.Cube, new Vector3(0f, 0.78f, 0f), new Vector3(0.42f, 0.2f, 0.42f), roofColor);
+                AddDecorBlock(root, "Banner", PrimitiveType.Cube, new Vector3(0f, 0.42f, -0.56f), new Vector3(0.16f, 0.52f, 0.04f), roofColor);
+            }
+        }
+
+        private void AddTowerDecor(GameObject root, Color roofColor)
+        {
+            AddDecorBlock(root, "TowerRoof", PrimitiveType.Cube, new Vector3(0f, 0.58f, 0f), new Vector3(0.92f, 0.18f, 0.92f), roofColor);
+            AddDecorBlock(root, "Torch", PrimitiveType.Sphere, new Vector3(0f, 0.82f, -0.28f), new Vector3(0.18f, 0.18f, 0.18f), MobileVisualStyle.TorchOrange);
+            AddPointGlow(root.transform, new Vector3(0f, 0.82f, -0.28f), MobileVisualStyle.TorchOrange, 0.65f, 2.2f);
+        }
+
+        private void AddMageTowerDecor(GameObject root)
+        {
+            AddDecorBlock(root, "Crystal", PrimitiveType.Sphere, new Vector3(0f, 0.72f, 0f), new Vector3(0.35f, 0.5f, 0.35f), MobileVisualStyle.MageViolet);
+            AddPointGlow(root.transform, new Vector3(0f, 0.75f, 0f), MobileVisualStyle.MageViolet, 0.75f, 3f);
+        }
+
+        private void AddGoldCacheDecor(GameObject root)
+        {
+            AddDecorBlock(root, "GoldPile", PrimitiveType.Sphere, new Vector3(0f, 0.55f, 0f), new Vector3(0.65f, 0.25f, 0.65f), MobileVisualStyle.GoldAccent);
+            AddDecorBlock(root, "WoodBase", PrimitiveType.Cube, new Vector3(0f, -0.2f, 0f), new Vector3(1.1f, 0.12f, 1.1f), MobileVisualStyle.WoodWarm);
+        }
+
+        private void AddWallCap(GameObject root)
+        {
+            AddDecorBlock(root, "WallCap", PrimitiveType.Cube, new Vector3(0f, 0.56f, 0f), new Vector3(1.14f, 0.16f, 1.05f), MobileVisualStyle.StoneShadow);
+        }
+
+        private GameObject AddDecorBlock(GameObject root, string name, PrimitiveType primitive, Vector3 localPosition, Vector3 localScale, Color color)
+        {
+            var go = GameObject.CreatePrimitive(primitive);
+            go.name = name;
+            go.transform.SetParent(root.transform, false);
+            go.transform.localPosition = localPosition;
+            go.transform.localScale = localScale;
+            Paint(go, color);
+            RemoveCollider(go);
+            return go;
+        }
+
+        private void AddPointGlow(Transform parent, Vector3 localPosition, Color color, float intensity, float range)
+        {
+            var go = new GameObject("Glow");
+            go.transform.SetParent(parent, false);
+            go.transform.localPosition = localPosition;
+            var light = go.AddComponent<Light>();
+            light.type = LightType.Point;
+            light.color = color;
+            light.intensity = intensity;
+            light.range = range;
+        }
+
+        private static void RemoveCollider(GameObject go)
+        {
+            var collider = go.GetComponent<Collider>();
+            if (collider != null) Destroy(collider);
+        }
+
         private Building MakeBuilding(string n, Vector3 pos, int hp,
             bool isPlayer, Color col, Vector3? scale = null)
         {
@@ -332,6 +462,7 @@ namespace MedievalRTS.Testing
             go.name = n; go.transform.position = pos;
             go.transform.localScale = scale ?? Vector3.one;
             Paint(go, col);
+            AddBuildingDecor(go, isPlayer ? MobileVisualStyle.FriendlyBlue : MobileVisualStyle.EnemyRed, hp >= 800);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = hp;
             var b = go.AddComponent<Building>();
@@ -352,6 +483,7 @@ namespace MedievalRTS.Testing
             go.name = n; go.transform.position = pos;
             go.transform.localScale = new Vector3(1.5f, 2f, 1.5f);
             Paint(go, MobileVisualStyle.EnemyRed);
+            AddTowerDecor(go, MobileVisualStyle.EnemyRed);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 220;
             var tb = go.AddComponent<Building>();
@@ -606,6 +738,7 @@ namespace MedievalRTS.Testing
             go.name = n; go.transform.position = pos;
             go.transform.localScale = scale ?? Vector3.one;
             Paint(go, col);
+            AddBuildingDecor(go, MobileVisualStyle.FriendlyBlue, hp >= 800);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = hp;
             var b = go.AddComponent<Building>();
@@ -620,6 +753,7 @@ namespace MedievalRTS.Testing
             go.name = n; go.transform.position = pos;
             go.transform.localScale = new Vector3(1.5f, 2f, 1.5f);
             Paint(go, MobileVisualStyle.FriendlyBlue);
+            AddTowerDecor(go, MobileVisualStyle.FriendlyBlue);
             var data = ScriptableObject.CreateInstance<BuildingData>();
             data.buildingName = n; data.maxHp = 220;
             var b = go.AddComponent<Building>();
@@ -644,6 +778,7 @@ namespace MedievalRTS.Testing
                 go.transform.position = new Vector3(wallX, segH * 0.5f, z);
                 go.transform.localScale = new Vector3(segW, segH, 2.3f);
                 Paint(go, isGate ? MobileVisualStyle.GoldAccent : MobileVisualStyle.StoneWarm);
+                AddWallCap(go);
                 // 문(gate)은 통과 가능 (콜라이더 없앰)
                 if (isGate) { Destroy(go.GetComponent<Collider>()); }
                 _wallSegments.Add(go);
@@ -1239,7 +1374,7 @@ namespace MedievalRTS.Testing
 
         private void BuildMobileLoopScreens()
         {
-            _campaignHubScreen = new CampaignHubScreen(_canvas, _font, ShowAttackPrep, ShowBaseManagement);
+            _campaignHubScreen = new CampaignHubScreen(_canvas, _font, EnterBattle, ShowAttackPrep, ShowBaseManagement);
             _baseManagementScreen = new BaseManagementScreen(_canvas, _font, CollectStoredResources, ShowCampaignHub);
             _attackPrepScreen = new AttackPrepScreen(_canvas, _font, EnterBattle, ShowArmyEditor, ShowBaseManagement, ShowCampaignHub);
             _mobileBattleHud = new MobileBattleHud(_canvas, _font);
