@@ -1,9 +1,9 @@
-﻿// Assets/_Game/Scripts/Testing/TestBootstrap.cs
-// ? 以鍮??붾㈃: 怨⑤뱶濡?蹂묐젰 援ъ꽦
-// ? 異쒖쟾 ?? 蹂묐젰 ?꾩껜 ?꾩뿴 (?⑹깋 留?= 紐낅졊 ?湲?
-// ? 醫뚰겢由??좏깮 ???고겢由?紐⑹쟻吏/????紐낅졊 ?좉툑 (?ъ???遺덇?)
-// ? 諛⑺뼢 踰꾪듉: ?湲?以묒씤 蹂묐젰 ?쇨큵 ?뚭껄
-// ? ?쒖빞 ?쒖뒪?? ?꾧뎔 ?쒖빞 諛????좊떅 ???
+// Assets/_Game/Scripts/Testing/TestBootstrap.cs
+// ─ 준비 화면: 골드로 병력 구성
+// ─ 출전 시: 병력 전체 도열 (황색 링 = 명령 대기)
+// ─ 좌클릭 선택 → 우클릭 목적지/적 → 명령 잠금 (재지정 불가)
+// ─ 방향 버튼: 대기 중인 병력 일괄 파견
+// ─ 시야 시스템: 아군 시야 밖 적 유닛 은폐
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -23,9 +23,9 @@ namespace MedievalRTS.Testing
 {
     public class TestBootstrap : MonoBehaviour
     {
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
-        //  ?좊떅 ?뺤쓽
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
+        // ═══════════════════════════════════════════════════════
+        //  유닛 정의
+        // ═══════════════════════════════════════════════════════
         private struct UnitDef
         {
             public string name, assetName, desc;
@@ -37,17 +37,17 @@ namespace MedievalRTS.Testing
 
         private static readonly UnitDef[] Defs =
         {
-            new UnitDef{name="湲곗궗",  assetName="Knight",  desc="?깆빱 洹쇱젒",  hp=150,dmg=22,cost=50, speed=2.5f,atkRange=1.8f,cooldown=1.0f,threat=6f, bldgMult=1.0f,color=new Color(0.2f,0.4f,1f),   valorToUnlock=0},
-            new UnitDef{name="沅곸닔",  assetName="Archer",  desc="?먭굅由???,  hp=70, dmg=30,cost=35, speed=3.0f,atkRange=7.0f,cooldown=1.2f,threat=9f, bldgMult=1.0f,color=new Color(0.2f,0.8f,0.8f), valorToUnlock=0},
-            new UnitDef{name="留덈쾿??,assetName="Mage",    desc="嫄대Ъ 留덈쾿",  hp=90, dmg=55,cost=75, speed=2.0f,atkRange=5.5f,cooldown=1.5f,threat=7f, bldgMult=1.8f,color=new Color(0.7f,0.1f,0.9f), valorToUnlock=0},
-            new UnitDef{name="?뺤같蹂?,assetName="Scout",   desc="??는룰퀬??,  hp=50, dmg=18,cost=25, speed=5.5f,atkRange=1.5f,cooldown=0.8f,threat=5f, bldgMult=1.0f,color=new Color(0.3f,0.8f,0.3f), valorToUnlock=0},
-            new UnitDef{name="湲곕퀝",  assetName="Cavalry", desc="?뚭꺽?",     hp=130,dmg=32,cost=70, speed=6.0f,atkRange=1.8f,cooldown=0.9f,threat=7f, bldgMult=1.0f,color=new Color(1f,0.85f,0.1f),  valorToUnlock=1},
-            new UnitDef{name="怨듭꽦湲?,assetName="Catapult",desc="嫄대Ъ ?뱁솕",  hp=50, dmg=85,cost=110,speed=1.2f,atkRange=10f, cooldown=2.5f,threat=6f, bldgMult=3.5f,color=new Color(1f,0.45f,0.1f),  valorToUnlock=2},
+            new UnitDef{name="기사",  assetName="Knight",  desc="탱커 근접",  hp=150,dmg=22,cost=50, speed=2.5f,atkRange=1.8f,cooldown=1.0f,threat=6f, bldgMult=1.0f,color=new Color(0.2f,0.4f,1f),   valorToUnlock=0},
+            new UnitDef{name="궁수",  assetName="Archer",  desc="원거리 딜",  hp=70, dmg=30,cost=35, speed=3.0f,atkRange=7.0f,cooldown=1.2f,threat=9f, bldgMult=1.0f,color=new Color(0.2f,0.8f,0.8f), valorToUnlock=0},
+            new UnitDef{name="마법사",assetName="Mage",    desc="건물 마법",  hp=90, dmg=55,cost=75, speed=2.0f,atkRange=5.5f,cooldown=1.5f,threat=7f, bldgMult=1.8f,color=new Color(0.7f,0.1f,0.9f), valorToUnlock=0},
+            new UnitDef{name="정찰병",assetName="Scout",   desc="저렴·고속",  hp=50, dmg=18,cost=25, speed=5.5f,atkRange=1.5f,cooldown=0.8f,threat=5f, bldgMult=1.0f,color=new Color(0.3f,0.8f,0.3f), valorToUnlock=0},
+            new UnitDef{name="기병",  assetName="Cavalry", desc="돌격대",     hp=130,dmg=32,cost=70, speed=6.0f,atkRange=1.8f,cooldown=0.9f,threat=7f, bldgMult=1.0f,color=new Color(1f,0.85f,0.1f),  valorToUnlock=1},
+            new UnitDef{name="공성기",assetName="Catapult",desc="건물 특화",  hp=50, dmg=85,cost=110,speed=1.2f,atkRange=10f, cooldown=2.5f,threat=6f, bldgMult=3.5f,color=new Color(1f,0.45f,0.1f),  valorToUnlock=2},
         };
 
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
-        //  寃뚯엫 ?곹깭
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
+        // ═══════════════════════════════════════════════════════
+        //  게임 상태
+        // ═══════════════════════════════════════════════════════
         private enum Phase { Prep, Battle, GameOver }
         private Phase _phase = Phase.Prep;
 
@@ -60,15 +60,15 @@ namespace MedievalRTS.Testing
         private readonly int[]        _roster   = new int[6];
         private readonly HashSet<int> _unlocked = new HashSet<int>();
 
-        // ?꾪닾 以??띾뱷 ?듦퀎
+        // 전투 중 획득 통계
         private int _earnedGold, _earnedValor, _destroyedBuildings;
 
-        // 紐⑤뱶 ?좏깮
+        // 모드 선택
         private bool _defenseMode = false;
 
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
-        //  ???ㅻ툕?앺듃
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
+        // ═══════════════════════════════════════════════════════
+        //  씬 오브젝트
+        // ═══════════════════════════════════════════════════════
         private Building _enemyCastle;
         private Building _playerCastle;
         private readonly List<Building>         _enemyBarracks     = new List<Building>();
@@ -77,11 +77,11 @@ namespace MedievalRTS.Testing
         private readonly List<TestSimpleUnitAI> _playerUnits       = new List<TestSimpleUnitAI>();
         private readonly List<TestSimpleUnitAI> _selectedUnits     = new List<TestSimpleUnitAI>();
         private readonly List<GameObject>       _wallSegments      = new List<GameObject>();
-        private int _gateIndex = 2; // ?숈そ ?깅꼍 以??대뒓 移몄씠 臾몄씤吏
+        private int _gateIndex = 2; // 동쪽 성벽 중 어느 칸이 문인지
 
-        // ?섎퉬 吏꾪삎 援ъ꽦
+        // 수비 진형 구성
         private bool _defenseSetupActive;
-        private int  _selectedPlaceBldg = -1; // 0=諛⑹뼱?? 1=?깅꼍
+        private int  _selectedPlaceBldg = -1; // 0=방어탑, 1=성벽
         private GameObject _dsHud;
         private Text _dsGoldText, _dsStatusText;
         private readonly Button[] _dsPalBtns  = new Button[2];
@@ -95,27 +95,27 @@ namespace MedievalRTS.Testing
 
         private static readonly (string label, int cost)[] _placeDefs =
         {
-            ("諛⑹뼱??, 80),
-            ("?깅꼍",   20),
+            ("방어탑", 80),
+            ("성벽",   20),
         };
 
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
+        // ═══════════════════════════════════════════════════════
         //  UI
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
+        // ═══════════════════════════════════════════════════════
         private Font       _font;
         private GameObject _canvas;
         private GameObject _prepPanel, _battleHud, _upgradePanel, _resultPanel;
         private GameObject _rightPanel;
-        private GameObject _spellSectionRoot; // 留덈쾿 援щℓ ?뱀뀡 ?꾩껜 (?덉씠釉?+ 踰꾪듉)
+        private GameObject _spellSectionRoot; // 마법 구매 섹션 전체 (레이블 + 버튼)
 
-        // 以鍮??붾㈃
+        // 준비 화면
         private Text   _prepGoldText, _rosterText;
         private Button _modeToggleBtn;
         private Text   _modeToggleLbl;
         private readonly Button[] _buyBtns   = new Button[6];
         private readonly Text[]   _buyLabels = new Text[6];
 
-        // ?꾪닾 HUD
+        // 전투 HUD
         private Text       _timerText, _valorHudText, _enemyHpText, _infoText;
         private GameObject _unitTypeBar, _selectionBox;
         private Vector2    _dragStart;
@@ -139,24 +139,24 @@ namespace MedievalRTS.Testing
             public Renderer renderer;
         }
 
-        // 湲곗? 媛쒕컻
+        // 기지 개발
         private readonly Button[] _upgBtns = new Button[4];
 
-        // 寃곌낵
+        // 결과
         private Text _resultText, _resultStatsText;
 
-        // ?꾪닾 以??먯썝 ?꾪솴 ?⑤꼸
+        // 전투 중 자원 현황 패널
         private Text _statGoldText, _statValorText, _statBldgText;
 
-        // ?뱀닔 嫄대Ъ UI (以鍮??붾㈃ ?곗륫)
+        // 특수 건물 UI (준비 화면 우측)
         private readonly Button[] _specialBldgBtns = new Button[6];
         private readonly Text[]   _specialBldgLbls = new Text[6];
 
-        // 留덈쾿 援щℓ UI (以鍮??붾㈃ ?곗륫)
+        // 마법 구매 UI (준비 화면 우측)
         private readonly Button[] _spellBuyBtns = new Button[5];
         private readonly Text[]   _spellBuyLbls = new Text[5];
 
-        // 留덈쾿 ?꾪닾 踰꾪듉
+        // 마법 전투 버튼
         private int _pendingSpell = -1;
         private readonly Button[] _spellBattleBtns      = new Button[5];
         private readonly Text[]   _spellBattleChargeLbls = new Text[5];
@@ -167,9 +167,9 @@ namespace MedievalRTS.Testing
         private AttackPrepScreen _attackPrepScreen;
         private MobileBattleHud _mobileBattleHud;
 
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
-        //  ?쇱씠?꾩궗?댄겢
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
+        // ═══════════════════════════════════════════════════════
+        //  라이프사이클
+        // ═══════════════════════════════════════════════════════
         private void Start()
         {
             BuildingEffectSystem.Reset();
@@ -199,7 +199,7 @@ namespace MedievalRTS.Testing
                 RefreshMobileLoopScreens();
             }
 
-            // ?섎퉬 吏꾪삎 援ъ꽦 以? ?좊떅 ?좏깮쨌紐낅졊 + 嫄대Ъ 諛곗튂
+            // 수비 진형 구성 중: 유닛 선택·명령 + 건물 배치
             if (_phase == Phase.Prep && _defenseSetupActive)
             {
                 _playerUnits.RemoveAll(u => u == null || !u.GetComponent<Unit>().IsAlive);
@@ -213,14 +213,14 @@ namespace MedievalRTS.Testing
             _elapsed += Time.deltaTime;
             float remaining = BattleTimeLimit - _elapsed;
             int remSec = Mathf.CeilToInt(Mathf.Max(remaining, 0f));
-            _timerText.text  = $"??{remSec}s";
+            _timerText.text  = $"⏱ {remSec}s";
             _timerText.color = remaining < 30f
                 ? (Mathf.FloorToInt(remaining * 2f) % 2 == 0 ? Color.red : Color.white)
                 : Color.white;
             if (_defenseMode)
-                _enemyHpText.text = $"?꾧뎔 ?? {(_playerCastle != null ? _playerCastle.CurrentHp : 0)}";
+                _enemyHpText.text = $"아군 성: {(_playerCastle != null ? _playerCastle.CurrentHp : 0)}";
             else
-                _enemyHpText.text = $"?곸꽦: {(_enemyCastle != null ? _enemyCastle.CurrentHp : 0)}";
+                _enemyHpText.text = $"적성: {(_enemyCastle != null ? _enemyCastle.CurrentHp : 0)}";
             _mobileBattleHud?.Refresh(
                 remSec,
                 _defenseMode ? (_playerCastle != null ? _playerCastle.CurrentHp : 0) : (_enemyCastle != null ? _enemyCastle.CurrentHp : 0),
@@ -231,14 +231,14 @@ namespace MedievalRTS.Testing
             _playerUnits.RemoveAll(u => u == null || !u.GetComponent<Unit>().IsAlive);
             _selectedUnits.RemoveAll(u => u == null);
 
-            // ?? 醫낅즺 議곌굔 泥댄겕 ??????????????????????????????
-            if (remaining <= 0f) { EndGame(!_defenseMode, "?쒓컙 珥덇낵"); return; }
-            if (!_defenseMode && _playerUnits.Count == 0) { EndGame(false, "?꾧뎔 ?꾨㈇"); return; }
+            // ── 종료 조건 체크 ──────────────────────────────
+            if (remaining <= 0f) { EndGame(!_defenseMode, "시간 초과"); return; }
+            if (!_defenseMode && _playerUnits.Count == 0) { EndGame(false, "전군 전멸"); return; }
         }
 
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
-        //  ?붾뱶 援ъ꽦
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
+        // ═══════════════════════════════════════════════════════
+        //  월드 구성
+        // ═══════════════════════════════════════════════════════
         private void BuildWorld()
         {
             SetupCamera();
@@ -246,30 +246,30 @@ namespace MedievalRTS.Testing
             SetupGround();
             BuildBrightArenaDetails();
 
-            // 1?? ?깅꼍 (x=2) ??怨좎껜???λ꼍
+            // 1선: 성벽 (x=2) — 고체력 장벽
             MakeWall("Wall_L",  new Vector3(2, 1f,  6));
             MakeWall("Wall_C",  new Vector3(2, 1f,  0));
             MakeWall("Wall_R",  new Vector3(2, 1f, -6));
 
-            // 2?? 留앸（ (x=5) ???꾨갑 怨듦꺽 ???
+            // 2선: 망루 (x=5) — 전방 공격 타워
             MakeTower("Tower_F1", new Vector3(5, 1f,  5));
             MakeTower("Tower_F2", new Vector3(5, 1f, -5));
 
-            // 3?? 蹂묒쁺 + 遊됲솕? (x=9)
+            // 3선: 병영 + 봉화대 (x=9)
             _enemyBarracks.Add(MakeBarracks("Barracks_L", new Vector3(9, 0.6f,  5)));
             _enemyBarracks.Add(MakeBarracks("Barracks_R", new Vector3(9, 0.6f, -5)));
             MakeBuffBuilding("Shrine", new Vector3(9, 0.75f, 0));
 
-            // 4?? 留덈쾿????(x=13)
+            // 4선: 마법사 탑 (x=13)
             MakeMageTower("MageTower_L", new Vector3(13, 1.4f,  4));
             MakeMageTower("MageTower_R", new Vector3(13, 1.4f, -4));
 
-            // 5?? ?꾨갑 留앸（ (x=16)
+            // 5선: 후방 망루 (x=16)
             MakeTower("Tower_B1", new Vector3(16, 1f,  6));
             MakeTower("Tower_BC", new Vector3(16, 1f,  0));
             MakeTower("Tower_B2", new Vector3(16, 1f, -6));
 
-            // ????(x=21)
+            // 적 성 (x=21)
             _enemyCastle = MakeBuilding("EnemyCastle", new Vector3(21, 1.5f, 0), 900, false,
                 MobileVisualStyle.EnemyRed, new Vector3(4, 3, 4));
             AddToonyDecoration("red_banner", new Vector3(18.5f, 0f, 2.9f), Vector3.one * 0.9f, 180f);
@@ -661,38 +661,38 @@ namespace MedievalRTS.Testing
             go.AddComponent<TestTowerAI>().Setup(false, 9f, 18, 1.2f);
         }
 
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
-        //  紐⑤뱶 ?꾪솚
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
+        // ═══════════════════════════════════════════════════════
+        //  모드 전환
+        // ═══════════════════════════════════════════════════════
         private void ToggleMode()
         {
             _defenseMode = !_defenseMode;
             if (_modeToggleLbl != null)
-                _modeToggleLbl.text = _defenseMode ? "?섎퉬 紐⑤뱶 ?썳" : "怨듦꺽 紐⑤뱶 ??;
+                _modeToggleLbl.text = _defenseMode ? "수비 모드 🛡" : "공격 모드 ▶";
             _modeToggleBtn.GetComponent<Image>().color = _defenseMode
                 ? new Color(0.4f, 0.15f, 0.15f)
                 : new Color(0.15f, 0.4f, 0.15f);
             ApplyModePrepVisibility();
         }
 
-        /// <summary>怨듦꺽/?섎퉬 紐⑤뱶???곕씪 以鍮??붾㈃ ?뱀뀡 媛?쒖꽦??議곗젙?⑸땲??</summary>
+        /// <summary>공격/수비 모드에 따라 준비 화면 섹션 가시성을 조정합니다.</summary>
         private void ApplyModePrepVisibility()
         {
-            // 怨듦꺽 紐⑤뱶: 留덈쾿 ?뱀뀡쨌異쒖쟾 踰꾪듉 / ?섎퉬 紐⑤뱶: 吏꾪삎 援ъ꽦 ?쒖옉 踰꾪듉
+            // 공격 모드: 마법 섹션·출전 버튼 / 수비 모드: 진형 구성 시작 버튼
             if (_spellSectionRoot != null)  _spellSectionRoot.SetActive(!_defenseMode);
-            if (_rightPanel != null)        _rightPanel.SetActive(false); // ?섎퉬 ?뱀닔嫄대Ъ? 吏꾪삎 援ъ꽦 HUD???쒖떆
+            if (_rightPanel != null)        _rightPanel.SetActive(false); // 수비 특수건물은 진형 구성 HUD에 표시
             if (_startBattleBtn != null)    _startBattleBtn.gameObject.SetActive(!_defenseMode);
             if (_enterSetupBtn != null)     _enterSetupBtn.gameObject.SetActive(_defenseMode);
         }
 
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
-        //  ?섏씠利??꾪솚
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
+        // ═══════════════════════════════════════════════════════
+        //  페이즈 전환
+        // ═══════════════════════════════════════════════════════
         private void EnterBattle()
         {
             int total = 0;
             foreach (var c in _roster) total += c;
-            // 怨듦꺽 紐⑤뱶???좊떅 ?꾩슂, ?섎퉬 紐⑤뱶????뚮쭔?쇰줈??媛??
+            // 공격 모드는 유닛 필요, 수비 모드는 타워만으로도 가능
             if (total == 0 && !_defenseMode)
             {
                 _roster[0] = 3;
@@ -717,13 +717,13 @@ namespace MedievalRTS.Testing
             {
                 if (_defenseSetupActive)
                 {
-                    // 吏꾪삎 援ъ꽦?먯꽌 ?꾪솚 ??嫄대Ъ쨌?좊떅 ?대? 諛곗튂??
+                    // 진형 구성에서 전환 — 건물·유닛 이미 배치됨
                     BuildUnitTypeButtons();
-                    SetInfo("?꾪닾 ?쒖옉! ?곸씠 ?ㅻⅨ履쎌뿉??怨듦꺽?⑸땲??");
+                    SetInfo("전투 시작! 적이 오른쪽에서 공격합니다.");
                 }
                 else
                 {
-                    // 以鍮??⑤꼸?먯꽌 諛붾줈 ?쒖옉 (?대갚)
+                    // 준비 패널에서 바로 시작 (폴백)
                     BuildDefenseBase();
                     DeployDefenseArmy();
                 }
@@ -738,18 +738,18 @@ namespace MedievalRTS.Testing
             }
         }
 
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
-        //  蹂묐젰 ?꾩뿴
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
+        // ═══════════════════════════════════════════════════════
+        //  병력 도열
+        // ═══════════════════════════════════════════════════════
         private void DeployArmy()
         {
-            // 4??醫낅?濡?醫뚯륫 諛곗튂
+            // 4열 종대로 좌측 배치
             int col = 0, row = 0;
             for (int i = 0; i < Defs.Length; i++)
             {
                 for (int k = 0; k < _roster[i]; k++)
                 {
-                    // x: -14遺???ㅻ줈, z: 以묒븰 湲곗? 醫뚯슦
+                    // x: -14부터 뒤로, z: 중앙 기준 좌우
                     float x = -14f - col * 2.2f;
                     float z = (row - 1) * 2.4f;
                     var ai = SpawnUnit(i, true, new Vector3(x, 0, z));
@@ -759,12 +759,12 @@ namespace MedievalRTS.Testing
                 }
             }
             BuildUnitTypeButtons();
-            SetInfo("蹂묐젰???꾩뿴?덉뒿?덈떎 ???쒕옒洹맞룻겢由?쑝濡??좏깮 ???고겢由??먮뒗 諛⑺뼢 踰꾪듉");
+            SetInfo("병력이 도열했습니다 — 드래그·클릭으로 선택 후 우클릭 또는 방향 버튼");
         }
 
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
-        //  ?좊떅 ?ㅽ룿
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
+        // ═══════════════════════════════════════════════════════
+        //  유닛 스폰
+        // ═══════════════════════════════════════════════════════
         private TestSimpleUnitAI SpawnUnit(int idx, bool isPlayer, Vector3 pos)
         {
             var def = Defs[idx];
@@ -772,7 +772,7 @@ namespace MedievalRTS.Testing
             GameObject go;
             if (prefab != null)
             {
-                // NavMeshAgent OnEnable 諛⑹?: 鍮꾪솢???곹깭濡?蹂듭궗 ??而댄룷?뚰듃 ?쒓굅 ???쒖꽦??
+                // NavMeshAgent OnEnable 방지: 비활성 상태로 복사 → 컴포넌트 제거 → 활성화
                 bool wasActive = prefab.activeSelf;
                 prefab.SetActive(false);
                 go = Instantiate(prefab);
@@ -795,8 +795,8 @@ namespace MedievalRTS.Testing
             go.name = $"{(isPlayer ? "P" : "E")}_{def.name}";
             ApplyToonyUnitVisual(go, def);
 
-            // 怨듦꺽 紐⑤뱶 ???좊떅: FOW ?곸슜 ?꾧퉴吏 ?④꺼??源쒕컯??諛⑹?
-            // ?섎퉬 紐⑤뱶: FOW ?놁쓬 ?????좊떅 利됱떆 ?쒖떆
+            // 공격 모드 적 유닛: FOW 적용 전까지 숨겨서 깜박임 방지
+            // 수비 모드: FOW 없음 → 적 유닛 즉시 표시
             if (!isPlayer && !_defenseMode)
             {
                 foreach (var rnd in go.GetComponentsInChildren<Renderer>()) rnd.enabled = false;
@@ -841,13 +841,13 @@ namespace MedievalRTS.Testing
             return null;
         }
 
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
-        //  怨듦꺽 紐⑤뱶 ??珥덇린 ??諛곗튂 (?섎퉬痢≪? ?ъ깮???놁쓬)
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
+        // ═══════════════════════════════════════════════════════
+        //  공격 모드 — 초기 적 배치 (수비측은 재생산 없음)
+        // ═══════════════════════════════════════════════════════
         private IEnumerator SpawnInitialEnemyForce()
         {
             yield return new WaitForSeconds(2f);
-            // 1???섎퉬 ?좊떅 (湲곗궗 + 沅곸닔)
+            // 1선 수비 유닛 (기사 + 궁수)
             var line1 = new[] {
                 new Vector3(4,0,4), new Vector3(4,0,0), new Vector3(4,0,-4),
                 new Vector3(5,0,7), new Vector3(5,0,-7),
@@ -858,7 +858,7 @@ namespace MedievalRTS.Testing
                 yield return new WaitForSeconds(0.2f);
             }
             yield return new WaitForSeconds(1f);
-            // 2?? 留덈쾿??+ ?뺤같蹂?
+            // 2선: 마법사 + 정찰병
             var line2 = new[] {
                 new Vector3(8,0,5), new Vector3(8,0,0), new Vector3(8,0,-5),
             };
@@ -867,7 +867,7 @@ namespace MedievalRTS.Testing
                 SpawnUnit(Random.Range(1, 4), false, p);
                 yield return new WaitForSeconds(0.25f);
             }
-            // 3??(??洹쇱쿂): 媛뺥븳 ?좊떅
+            // 3선 (성 근처): 강한 유닛
             yield return new WaitForSeconds(2f);
             var line3 = new[] {
                 new Vector3(17,0,4), new Vector3(17,0,-4),
@@ -880,29 +880,29 @@ namespace MedievalRTS.Testing
             }
         }
 
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
-        //  ?섎퉬 紐⑤뱶 ??湲곗? 援ъ텞 + ?깅꼍 ?앹꽦
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
+        // ═══════════════════════════════════════════════════════
+        //  수비 모드 — 기지 구축 + 성벽 생성
+        // ═══════════════════════════════════════════════════════
         private void BuildDefenseBase()
         {
-            // ?뚮젅?댁뼱 ??(?쇱そ ??
+            // 플레이어 성 (왼쪽 끝)
             _playerCastle = MakePlayerBuilding("PlayerCastle", new Vector3(-21, 1.5f, 0), 900,
                 MobileVisualStyle.FriendlyBlue, new Vector3(4, 3, 4));
             AddToonyDecoration("blue_banner", new Vector3(-18.5f, 0f, 2.9f), Vector3.one * 0.9f, 0f);
             AddToonyDecoration("blue_banner", new Vector3(-18.5f, 0f, -2.9f), Vector3.one * 0.9f, 0f);
 
-            // ?뚮젅?댁뼱 ???(????
+            // 플레이어 타워 (성 앞)
             MakePlayerTower("PTower_L",  new Vector3(-16, 1f,  6));
             MakePlayerTower("PTower_C",  new Vector3(-16, 1f,  0));
             MakePlayerTower("PTower_R",  new Vector3(-16, 1f, -6));
             MakePlayerTower("PTower_F1", new Vector3(-13, 1f,  4));
             MakePlayerTower("PTower_F2", new Vector3(-13, 1f, -4));
 
-            // ?먮룞 ?깅꼍 ?앹꽦 (x=-10 ?쇱씤, z=-8~8)
+            // 자동 성벽 생성 (x=-10 라인, z=-8~8)
             GenerateAutoWall(-10f, -8f, 8f);
 
-            // ??諛⑺뼢 (?ㅻⅨ履? ?쒖떆???쒖?
-            SetInfo("?섎퉬 以鍮??꾨즺 ???곸씠 ?ㅻⅨ履쎌뿉??怨듦꺽?⑸땲?? 諛⑺뼢 踰꾪듉?쇰줈 蹂묐젰 諛곗튂");
+            // 적 방향 (오른쪽) 표시용 표지
+            SetInfo("수비 준비 완료 — 적이 오른쪽에서 공격합니다! 방향 버튼으로 병력 배치");
         }
 
         private Building MakePlayerBuilding(string n, Vector3 pos, int hp, Color col, Vector3? scale = null)
@@ -941,14 +941,14 @@ namespace MedievalRTS.Testing
             var b = go.AddComponent<Building>();
             b.Initialize(data, isPlayerBuilding: true);
             _allPlayerBuildings.Add(b);
-            // ???AI (?꾧뎔?대?濡?isPlayerSide=true ?????좊떅 怨듦꺽)
+            // 타워 AI (아군이므로 isPlayerSide=true → 적 유닛 공격)
             go.AddComponent<TestTowerAI>().Setup(true, 9f, 18, 1.2f);
         }
 
         private void GenerateAutoWall(float wallX, float zMin, float zMax)
         {
             _wallSegments.Clear();
-            float segH = 2f; // 媛??깅꼍 ?멸렇癒쇳듃 ?믪씠
+            float segH = 2f; // 각 성벽 세그먼트 높이
             float segW = 0.8f;
             int count = Mathf.RoundToInt((zMax - zMin) / 2.5f) + 1;
             for (int i = 0; i < count; i++)
@@ -962,11 +962,11 @@ namespace MedievalRTS.Testing
                 Paint(go, isGate ? MobileVisualStyle.GoldAccent : MobileVisualStyle.StoneWarm);
                 AddWallCap(go);
                 ApplyBuildingVisual(go, "wall", "Buildings/wall", new Vector3(0f, 1.2f, -0.15f), new Vector2(3.0f, 3.0f), -1f, Vector3.one * 1.15f);
-                // 臾?gate)? ?듦낵 媛??(肄쒕씪?대뜑 ?놁빊)
+                // 문(gate)은 통과 가능 (콜라이더 없앰)
                 if (isGate) { Destroy(go.GetComponent<Collider>()); }
                 _wallSegments.Add(go);
 
-                // 臾??대┃ ?대깽?몄슜 ?쒓렇 (BuildingData ?놁씠 ?⑥닚 ?ㅻ툕?앺듃)
+                // 문 클릭 이벤트용 태그 (BuildingData 없이 단순 오브젝트)
                 if (isGate) go.name = "Gate";
             }
         }
@@ -974,7 +974,7 @@ namespace MedievalRTS.Testing
         private void MoveGate(int newIdx)
         {
             if (newIdx < 0 || newIdx >= _wallSegments.Count) return;
-            // 湲곗〈 臾????쇰컲 ?깅꼍?쇰줈 蹂듭썝
+            // 기존 문 → 일반 성벽으로 복원
             var old = _wallSegments[_gateIndex];
             if (old != null)
             {
@@ -994,7 +994,7 @@ namespace MedievalRTS.Testing
 
         private void DeployDefenseArmy()
         {
-            // ?깅꼍 ?덉そ(?쒖そ)??4??諛곗튂
+            // 성벽 안쪽(서쪽)에 4열 배치
             int col = 0, row = 0;
             for (int i = 0; i < Defs.Length; i++)
             {
@@ -1022,8 +1022,8 @@ namespace MedievalRTS.Testing
                 wave++;
                 int unitCount = 3 + wave * 2;
                 int maxUnitIdx = Mathf.Min(wave, Defs.Length - 1);
-                ShowResourcePopup(new Vector3(0, 3, 0), $"??wave}??怨듦꺽!");
-                SetInfo($"??wave}???곸씠 怨듦꺽?⑸땲??");
+                ShowResourcePopup(new Vector3(0, 3, 0), $"제{wave}파 공격!");
+                SetInfo($"제{wave}파 적이 공격합니다!");
                 for (int i = 0; i < unitCount; i++)
                 {
                     float z = Random.Range(-7f, 7f);
@@ -1033,17 +1033,17 @@ namespace MedievalRTS.Testing
                 }
                 if (wave >= 5)
                 {
-                    // 留덉?留???泥섎━ ???쇱젙 ?쒓컙 ?湲????밸━
+                    // 마지막 파 처리 후 일정 시간 대기 → 승리
                     yield return new WaitForSeconds(22f);
-                    if (_phase == Phase.Battle) EndGame(true, "????寃⑺눜!");
+                    if (_phase == Phase.Battle) EndGame(true, "전 파 격퇴!");
                     yield break;
                 }
             }
         }
 
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
-        //  ?쒖빞 ?쒖뒪??(FOW)
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
+        // ═══════════════════════════════════════════════════════
+        //  시야 시스템 (FOW)
+        // ═══════════════════════════════════════════════════════
         private IEnumerator FogOfWarRoutine()
         {
             var wait = new WaitForSeconds(0.12f);
@@ -1057,7 +1057,7 @@ namespace MedievalRTS.Testing
                     var u = ai.GetComponent<Unit>();
                     if (u != null && u.IsAlive) sources.Add((ai.transform.position, 10f));
                 }
-                // ?쒖빞 ?꾨떖 ? 湲곕줉 ??留덈쾿 ?ъ슜 媛??援ъ뿭 ?꾩쟻
+                // 시야 도달 셀 기록 — 마법 사용 가능 구역 누적
                 foreach (var (p, r) in sources) MarkRevealed(p, r);
                 ApplyFog("EnemyUnit", sources, 10f);
                 ApplyFogBuildings(sources, 14f);
@@ -1168,7 +1168,7 @@ namespace MedievalRTS.Testing
             return false;
         }
 
-        // 嫄대Ъ: ??踰?蹂?寃껋? ?곴뎄 ?쒖떆
+        // 건물: 한 번 본 것은 영구 표시
         private void ApplyFogBuildings(List<(Vector3 p, float r)> sources, float sightRadius)
         {
             foreach (var go in GameObject.FindGameObjectsWithTag("EnemyBuilding"))
@@ -1176,7 +1176,7 @@ namespace MedievalRTS.Testing
                 if (go == null) continue;
                 if (_revealedBuildings.Contains(go))
                 {
-                    // ?대? 諛쒓껄??嫄대Ъ ????긽 ?쒖떆
+                    // 이미 발견된 건물 — 항상 표시
                     foreach (var rnd in go.GetComponentsInChildren<Renderer>()) rnd.enabled = true;
                     foreach (var col in go.GetComponentsInChildren<Collider>())  col.enabled = true;
                     continue;
@@ -1184,7 +1184,7 @@ namespace MedievalRTS.Testing
                 bool vis = false;
                 foreach (var (p, r) in sources)
                     if (Vector3.Distance(go.transform.position, p) <= sightRadius) { vis = true; break; }
-                if (vis) _revealedBuildings.Add(go); // 泥?諛쒓껄 ???깅줉
+                if (vis) _revealedBuildings.Add(go); // 첫 발견 시 등록
                 foreach (var rnd in go.GetComponentsInChildren<Renderer>()) rnd.enabled = vis;
                 foreach (var col in go.GetComponentsInChildren<Collider>())  col.enabled = vis;
             }
@@ -1200,15 +1200,15 @@ namespace MedievalRTS.Testing
                     if (Vector3.Distance(go.transform.position, p) <= sightRadius) { vis = true; break; }
                 foreach (var rnd in go.GetComponentsInChildren<Renderer>())
                     rnd.enabled = vis;
-                // 肄쒕씪?대뜑??鍮꾪솢?깊솕?댁꽌 ?쒖빞 諛?嫄대Ъ ?대┃ 諛⑹?
+                // 콜라이더도 비활성화해서 시야 밖 건물 클릭 방지
                 foreach (var col in go.GetComponentsInChildren<Collider>())
                     col.enabled = vis;
             }
         }
 
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
-        //  ?꾪닾 ?낅젰 泥섎━
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
+        // ═══════════════════════════════════════════════════════
+        //  전투 입력 처리
+        // ═══════════════════════════════════════════════════════
         private void HandleInput()
         {
             bool lmbDown = Input.GetMouseButtonDown(0);
@@ -1218,37 +1218,37 @@ namespace MedievalRTS.Testing
 
             bool overUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
 
-            // ?? ?섎퉬 吏꾪삎 援ъ꽦: 嫄대Ъ 諛곗튂 ?좏깮 痍⑥냼 (?고겢由? ??????????
+            // ── 수비 진형 구성: 건물 배치 선택 취소 (우클릭) ──────────
             if (_defenseSetupActive && _selectedPlaceBldg >= 0 && rmb)
             {
                 _selectedPlaceBldg = -1;
                 for (int i = 0; i < _dsPalBtns.Length; i++)
                     if (_dsPalBtns[i] != null)
                         _dsPalBtns[i].GetComponent<Image>().color = new Color(0.15f, 0.25f, 0.4f);
-                SetDsStatus("?좏깮 ?댁젣 ??嫄대Ъ???좏깮?섍굅???좊떅???앹궛?섏꽭??);
+                SetDsStatus("선택 해제 — 건물을 선택하거나 유닛을 생산하세요");
                 return;
             }
 
-            // ?? ?섎퉬 吏꾪삎 援ъ꽦: 吏硫??대┃ ??嫄대Ъ 諛곗튂 ????????????????
+            // ── 수비 진형 구성: 지면 클릭 → 건물 배치 ────────────────
             if (_defenseSetupActive && _selectedPlaceBldg >= 0 && lmbDown && !overUI)
             {
                 var pr = Camera.main.ScreenPointToRay(Input.mousePosition);
                 if (Physics.Raycast(pr, out RaycastHit ph, 200f))
                 {
-                    // ?깅꼍 移??대┃ ??臾??대룞?쇰줈 泥섎━
+                    // 성벽 칸 클릭 시 문 이동으로 처리
                     int wi = _wallSegments.IndexOf(ph.collider.gameObject);
-                    if (wi >= 0) { MoveGate(wi); SetDsStatus($"臾??꾩튂 蹂寃???移?{wi}"); return; }
+                    if (wi >= 0) { MoveGate(wi); SetDsStatus($"문 위치 변경 → 칸 {wi}"); return; }
 
                     Vector3 pos = ph.point;
                     if (pos.x > -10.5f)
-                        SetDsStatus("?깅꼍 ?덉そ?먮쭔 諛곗튂 媛?ν빀?덈떎");
+                        SetDsStatus("성벽 안쪽에만 배치 가능합니다");
                     else if (pos.x < -24f)
-                        SetDsStatus("諛곗튂 媛??踰붿쐞瑜?踰쀬뼱?ъ뒿?덈떎");
+                        SetDsStatus("배치 가능 범위를 벗어났습니다");
                     else
                     {
                         int cost = _placeDefs[_selectedPlaceBldg].cost;
                         if (_gold < cost)
-                            SetDsStatus($"怨⑤뱶 遺議?(?꾩슂: {cost}G)");
+                            SetDsStatus($"골드 부족 (필요: {cost}G)");
                         else
                         {
                             _gold -= cost;
@@ -1263,21 +1263,21 @@ namespace MedievalRTS.Testing
                 return;
             }
 
-            // ?? ?섎퉬 紐⑤뱶: ?깅꼍 ?대┃ ??臾??꾩튂 蹂寃??????????????????
+            // ── 수비 모드: 성벽 클릭 → 문 위치 변경 ─────────────────
             if (_defenseMode && lmbDown && !overUI && _wallSegments.Count > 0)
             {
                 var wr = Camera.main.ScreenPointToRay(Input.mousePosition);
                 if (Physics.Raycast(wr, out RaycastHit wh, 200f))
                 {
                     int wi = _wallSegments.IndexOf(wh.collider.gameObject);
-                    if (wi >= 0) { MoveGate(wi); SetInfo($"臾??꾩튂 蹂寃???移?{wi}"); return; }
+                    if (wi >= 0) { MoveGate(wi); SetInfo($"문 위치 변경 → 칸 {wi}"); return; }
                 }
             }
 
-            // ?? 留덈쾿 ?쒖쟾 ?湲??????????????????????????????????
+            // ── 마법 시전 대기 ─────────────────────────────────
             if (_pendingSpell >= 0)
             {
-                // 留??꾨젅?? 留덉슦???꾩튂??踰붿쐞 ?쒖떆湲?媛깆떊
+                // 매 프레임: 마우스 위치에 범위 표시기 갱신
                 if (!overUI && Camera.main != null)
                 {
                     var rangeRay = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -1290,23 +1290,23 @@ namespace MedievalRTS.Testing
                         if (global) HideSpellRangeCircle();
                         else        UpdateSpellRangeCircle(rh.point, rad,
                                         vis ? col : new Color(0.55f, 0.1f, 0.1f));
-                        string hint = vis ? $"[{SpellSystem.Defs[_pendingSpell].name}] ???꾩튂瑜??쒕옒洹맞룻겢由????볦쑝?몄슂  (?고겢由? 痍⑥냼)"
-                                          : "?쒖빞媛 ?우? ?딆? 吏????留덈쾿 ?ъ슜 遺덇?";
+                        string hint = vis ? $"[{SpellSystem.Defs[_pendingSpell].name}] — 위치를 드래그·클릭 후 놓으세요  (우클릭: 취소)"
+                                          : "시야가 닿지 않은 지역 — 마법 사용 불가";
                         SetInfo(hint);
                     }
                     else HideSpellRangeCircle();
                 }
 
-                // ?고겢由? 痍⑥냼
+                // 우클릭: 취소
                 if (rmb)
                 {
                     HideSpellRangeCircle();
                     _pendingSpell = -1;
-                    SetInfo("留덈쾿 ?쒖쟾 痍⑥냼");
+                    SetInfo("마법 시전 취소");
                     return;
                 }
 
-                // 留덉슦??踰꾪듉 由대━利??쒕옒洹???or ?⑥닚 ?대┃): ?쒖쟾
+                // 마우스 버튼 릴리즈(드래그 끝 or 단순 클릭): 시전
                 if (lmbUp && !overUI && Camera.main != null)
                 {
                     HideSpellRangeCircle();
@@ -1316,7 +1316,7 @@ namespace MedievalRTS.Testing
                         bool global  = GetSpellIndicatorRadius(_pendingSpell) < 0.1f;
                         bool revealed = _defenseMode || global || IsAreaRevealed(ch.point);
                         if (revealed) CastSpell(_pendingSpell, ch.point);
-                        else          SetInfo("?쒖빞媛 ?우? ?딆? 吏??뿉??留덈쾿???ъ슜?????놁뒿?덈떎");
+                        else          SetInfo("시야가 닿지 않은 지역에는 마법을 사용할 수 없습니다");
                     }
                     _pendingSpell = -1;
                     return;
@@ -1324,7 +1324,7 @@ namespace MedievalRTS.Testing
                 return;
             }
 
-            // ?? ?쒕옒洹??좏깮 ?????????????????????????????????
+            // ── 드래그 선택 ─────────────────────────────────
             if (lmbDown && !overUI)
                 _dragStart = Input.mousePosition;
 
@@ -1351,7 +1351,7 @@ namespace MedievalRTS.Testing
             var hits = Physics.RaycastAll(ray, 200f);
             if (hits.Length == 0) return;
 
-            // 嫄곕━???뺣젹 ??Unit/Building???덈뒗 ?덊듃瑜??곗꽑 ?좏깮
+            // 거리순 정렬 후 Unit/Building이 있는 히트를 우선 선택
             System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
             RaycastHit hit = hits[0];
             foreach (var h in hits)
@@ -1370,28 +1370,28 @@ namespace MedievalRTS.Testing
 
             if (lmbDown)
             {
-                // ?꾧뎔 ?좊떅 ?대┃ ???좏깮 (?ㅻⅨ ?좊떅???좏깮???곹깭?먯꽌???꾪솚 媛??
+                // 아군 유닛 클릭 → 선택 (다른 유닛이 선택된 상태에서도 전환 가능)
                 if (hitAI != null && hitUnit != null && hitUnit.IsPlayerUnit)
                 {
                     if (!Input.GetKey(KeyCode.LeftShift)) DeselectAll();
                     Select(hitAI);
-                    string hint = hitAI.AwaitingOrders ? "???고겢由?쑝濡?紐⑺몴 吏?? : "紐낅졊 ?섑뻾 以?;
-                    SetInfo($"[{hitUnit.Data.unitName}] ?좏깮????{hint}");
+                    string hint = hitAI.AwaitingOrders ? "탭/우클릭으로 목표 지정" : "명령 수행 중";
+                    SetInfo($"[{hitUnit.Data.unitName}] 선택됨 — {hint}");
                     return;
                 }
 
-                // ?좊떅???좏깮???곹깭 ?????대┃??紐낅졊?쇰줈 ?숈옉 (?곗튂 ?고겢由??泥?
+                // 유닛이 선택된 상태 → 탭/클릭이 명령으로 동작 (터치 우클릭 대체)
                 if (_selectedUnits.Count > 0)
                 {
                     if ((hitUnit != null && !hitUnit.IsPlayerUnit) ||
                         (hitBldg != null && !hitBldg.IsPlayerBuilding))
                     {
                         foreach (var u in _selectedUnits) u.CommandAttack(hit.collider.transform);
-                        SetInfo("怨듦꺽 紐낅졊 諛쒕졊 ??紐낅졊? 蹂寃쏀븷 ???놁뒿?덈떎");
+                        SetInfo("공격 명령 발령 — 명령은 변경할 수 없습니다");
                         DeselectAll();
                         return;
                     }
-                    // 鍮?吏硫????대룞 紐낅졊
+                    // 빈 지면 → 이동 명령
                     Vector3 dest = hit.point;
                     int i = 0;
                     foreach (var u in _selectedUnits)
@@ -1400,7 +1400,7 @@ namespace MedievalRTS.Testing
                         u.CommandMove(dest + new Vector3(0, 0, off));
                         i++;
                     }
-                    SetInfo("?대룞 紐낅졊 諛쒕졊 ??紐낅졊? 蹂寃쏀븷 ???놁뒿?덈떎");
+                    SetInfo("이동 명령 발령 — 명령은 변경할 수 없습니다");
                     DeselectAll();
                     return;
                 }
@@ -1409,14 +1409,14 @@ namespace MedievalRTS.Testing
                 return;
             }
 
-            // ?고겢由???紐낆떆??紐낅졊 (留덉슦???꾩슜, 湲곗〈 ?숈옉 ?좎?)
+            // 우클릭 — 명시적 명령 (마우스 전용, 기존 동작 유지)
             if (rmb && _selectedUnits.Count > 0)
             {
                 if ((hitUnit != null && !hitUnit.IsPlayerUnit) ||
                     (hitBldg != null && !hitBldg.IsPlayerBuilding))
                 {
                     foreach (var u in _selectedUnits) u.CommandAttack(hit.collider.transform);
-                    SetInfo("怨듦꺽 紐낅졊 諛쒕졊 ??紐낅졊? 蹂寃쏀븷 ???놁뒿?덈떎");
+                    SetInfo("공격 명령 발령 — 명령은 변경할 수 없습니다");
                 }
                 else
                 {
@@ -1428,7 +1428,7 @@ namespace MedievalRTS.Testing
                         u.CommandMove(dest + new Vector3(0, 0, off));
                         i++;
                     }
-                    SetInfo("?대룞 紐낅졊 諛쒕졊 ??紐낅졊? 蹂寃쏀븷 ???놁뒿?덈떎");
+                    SetInfo("이동 명령 발령 — 명령은 변경할 수 없습니다");
                 }
                 DeselectAll();
             }
@@ -1461,14 +1461,14 @@ namespace MedievalRTS.Testing
             }
             int count = _selectedUnits.Count;
             SetInfo(count > 0
-                ? $"{count}湲??좏깮?????고겢由?쑝濡?紐⑺몴 吏???먮뒗 諛⑺뼢 踰꾪듉"
-                : "?곸뿭???좏깮 媛?ν븳 ?좊떅 ?놁쓬");
+                ? $"{count}기 선택됨 — 우클릭으로 목표 지정 또는 방향 버튼"
+                : "영역에 선택 가능한 유닛 없음");
         }
 
-        // ?? ?좊떅 醫낅쪟 踰꾪듉 (?꾪닾 ?쒖옉 ???숈쟻 ?앹꽦) ??????????????
+        // ── 유닛 종류 버튼 (전투 시작 후 동적 생성) ──────────────
         private void BuildUnitTypeButtons()
         {
-            // 湲곗〈 踰꾪듉 ?쒓굅
+            // 기존 버튼 제거
             foreach (Transform c in _unitTypeBar.transform) Destroy(c.gameObject);
 
             var types = new List<int>();
@@ -1477,11 +1477,11 @@ namespace MedievalRTS.Testing
             if (types.Count == 0) return;
 
             Lbl(_unitTypeBar, "TypeLbl", new Vector2(0f, 0.5f), new Vector2(52, 0),
-                new Vector2(90, 40), "醫낅쪟 ?좏깮:", 13, new Color(0.8f,0.8f,0.8f));
+                new Vector2(90, 40), "종류 선택:", 13, new Color(0.8f,0.8f,0.8f));
 
             float btnW = 130f, gap = 8f;
             float totalW = btnW * types.Count + gap * (types.Count - 1);
-            float startX = 105f - totalW / 2f + btnW / 2f; // ?쇰꺼 ?ㅻⅨ履쎈???
+            float startX = 105f - totalW / 2f + btnW / 2f; // 라벨 오른쪽부터
 
             for (int ti = 0; ti < types.Count; ti++)
             {
@@ -1490,7 +1490,7 @@ namespace MedievalRTS.Testing
                 Color c = Defs[idx].color * 0.55f; c.a = 1f;
                 Btn(_unitTypeBar, $"Type{idx}", new Vector2(0f, 0.5f),
                     new Vector2(x, 0), new Vector2(btnW, 48),
-                    $"{Defs[idx].name}  횞{_roster[idx]}", c,
+                    $"{Defs[idx].name}  ×{_roster[idx]}", c,
                     () => SelectUnitsByType(idx));
             }
         }
@@ -1507,8 +1507,8 @@ namespace MedievalRTS.Testing
             }
             int count = _selectedUnits.Count;
             SetInfo(count > 0
-                ? $"{Defs[defIdx].name} {count}湲??좏깮?????고겢由?紐⑺몴 吏???먮뒗 諛⑺뼢 踰꾪듉"
-                : $"?湲?以묒씤 {Defs[defIdx].name} ?놁쓬");
+                ? $"{Defs[defIdx].name} {count}기 선택됨 — 우클릭 목표 지정 또는 방향 버튼"
+                : $"대기 중인 {Defs[defIdx].name} 없음");
         }
 
         private void BuildSelectionBox()
@@ -1534,31 +1534,31 @@ namespace MedievalRTS.Testing
             _selectedUnits.Clear();
         }
 
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
-        //  諛⑺뼢 踰꾪듉 (?湲?以묒씤 ?꾩껜 蹂묐젰 ?쇨큵 ?뚭껄)
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
+        // ═══════════════════════════════════════════════════════
+        //  방향 버튼 (대기 중인 전체 병력 일괄 파견)
+        // ═══════════════════════════════════════════════════════
         private void OrderAwaitingUnits(System.Action<TestSimpleUnitAI> cmd)
         {
             foreach (var u in _playerUnits)
                 if (u != null && u.AwaitingOrders) cmd(u);
-            SetInfo("紐낅졊 諛쒕졊 ?꾨즺");
+            SetInfo("명령 발령 완료");
         }
 
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
-        //  ?대깽??泥섎━
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
+        // ═══════════════════════════════════════════════════════
+        //  이벤트 처리
+        // ═══════════════════════════════════════════════════════
         private void OnBuildingDestroyed(BuildingDestroyedEvent evt)
         {
             if (_phase == Phase.GameOver) return;
             var b = evt.Building;
 
-            // ?섎퉬 紐⑤뱶: ?뚮젅?댁뼱 嫄대Ъ ?뚭눼 泥섎━
+            // 수비 모드: 플레이어 건물 파괴 처리
             if (_defenseMode && b.IsPlayerBuilding)
             {
                 _destroyedBuildings++;
                 RefreshStatPanel();
-                ShowResourcePopup(b.transform.position, "嫄대Ъ ?뚭눼!");
-                if (b == _playerCastle) { EndGame(false, "?꾧뎔 ???⑤씫!"); return; }
+                ShowResourcePopup(b.transform.position, "건물 파괴!");
+                if (b == _playerCastle) { EndGame(false, "아군 성 함락!"); return; }
                 return;
             }
 
@@ -1575,16 +1575,16 @@ namespace MedievalRTS.Testing
 
             RefreshUpgradeBtns();
             RefreshStatPanel();
-            ShowResourcePopup(b.transform.position, $"+{gold}G  +{valor}臾닿났");
-            SetInfo($"嫄대Ъ ?뚭눼! +{gold}G  +{valor} 臾닿났");
+            ShowResourcePopup(b.transform.position, $"+{gold}G  +{valor}무공");
+            SetInfo($"건물 파괴! +{gold}G  +{valor} 무공");
 
-            if (b == _enemyCastle) { EndGame(true, "?????먮졊!"); return; }
+            if (b == _enemyCastle) { EndGame(true, "적 성 점령!"); return; }
 
-            // ?⑥? ??嫄대Ъ???놁쑝硫??밸━
+            // 남은 적 건물이 없으면 승리
             bool allGone = true;
             foreach (var eb in _allEnemyBuildings)
                 if (eb != null && eb.IsAlive) { allGone = false; break; }
-            if (allGone) EndGame(true, "?꾩쟾 ?뺣났!");
+            if (allGone) EndGame(true, "완전 정복!");
         }
 
         private void EndGame(bool victory, string reason = "")
@@ -1594,26 +1594,26 @@ namespace MedievalRTS.Testing
             SetFogVisualLayerVisible(false);
             Time.timeScale = 0.25f;
             _resultPanel.SetActive(true);
-            _resultText.text  = victory ? $"?밸━!\n{reason}" : $"?⑤같\n{reason}";
+            _resultText.text  = victory ? $"승리!\n{reason}" : $"패배\n{reason}";
             _resultText.color = victory ? Color.yellow : Color.red;
             if (_resultStatsText != null)
                 _resultStatsText.text =
-                    $"?뚭눼 嫄대Ъ: {_destroyedBuildings}媛?n" +
-                    $"?띾뱷 怨⑤뱶: +{_earnedGold}G\n" +
-                    $"?띾뱷 臾닿났: +{_earnedValor}";
+                    $"파괴 건물: {_destroyedBuildings}개\n" +
+                    $"획득 골드: +{_earnedGold}G\n" +
+                    $"획득 무공: +{_earnedValor}";
         }
 
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
-        //  湲곗? 媛쒕컻
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
+        // ═══════════════════════════════════════════════════════
+        //  기지 개발
+        // ═══════════════════════════════════════════════════════
         private struct UpgDef { public string label; public int cost; public System.Action action; }
 
         private UpgDef[] GetUpgrades() => new[]
         {
-            new UpgDef{label="?룈 湲곕퀝 ?닿툑\nValor 1",  cost=1, action=()=>{ _unlocked.Add(4); }},
-            new UpgDef{label="??怨듭꽦湲??닿툑\nValor 2", cost=2, action=()=>{ _unlocked.Add(5); }},
-            new UpgDef{label="???꾩닠 ?덈젴\nValor 1",   cost=1, action=()=>{ _dmgMult += 0.3f; SetInfo("怨듦꺽??+30%!"); }},
-            new UpgDef{label="?썳 諛⑹뼱 媛뺥솕\nValor 2",   cost=2, action=()=>{ SetInfo("諛⑹뼱 媛뺥솕 ?꾨즺!"); }},
+            new UpgDef{label="🏇 기병 해금\nValor 1",  cost=1, action=()=>{ _unlocked.Add(4); }},
+            new UpgDef{label="⚙ 공성기 해금\nValor 2", cost=2, action=()=>{ _unlocked.Add(5); }},
+            new UpgDef{label="⚔ 전술 훈련\nValor 1",   cost=1, action=()=>{ _dmgMult += 0.3f; SetInfo("공격력 +30%!"); }},
+            new UpgDef{label="🛡 방어 강화\nValor 2",   cost=2, action=()=>{ SetInfo("방어 강화 완료!"); }},
         };
 
         private void TryUpgrade(int idx)
@@ -1625,9 +1625,9 @@ namespace MedievalRTS.Testing
             RefreshUpgradeBtns();
         }
 
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
-        //  UI 援ъ꽦
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
+        // ═══════════════════════════════════════════════════════
+        //  UI 구성
+        // ═══════════════════════════════════════════════════════
         private void BuildUI()
         {
             if (FindObjectOfType<EventSystem>() == null)
@@ -1824,26 +1824,26 @@ namespace MedievalRTS.Testing
             return sb.Length == 0 ? "No troops selected" : sb.ToString();
         }
 
-        // ?? 以鍮??붾㈃ ?????????????????????????????????????????
-        // 紐⑤뱺 ?붿냼: anchor=(0.5,1), pivot=(0.5,1) ???⑤꼸 ?곷떒 以묒븰 湲곗? Y ?꾩쟻
+        // ── 준비 화면 ─────────────────────────────────────────
+        // 모든 요소: anchor=(0.5,1), pivot=(0.5,1) — 패널 상단 중앙 기준 Y 누적
         private void BuildPrepPanel()
         {
             _prepPanel = NewFillPanel(_canvas, "PrepPanel", new Color(0.04f, 0.04f, 0.10f, 0.93f));
 
-            var a = new Vector2(0.5f, 1f); // ?곷떒 以묒븰 ?듭빱
+            var a = new Vector2(0.5f, 1f); // 상단 중앙 앵커
 
             Lbl(_prepPanel, "Title", a, new Vector2(0, -38),
-                new Vector2(480, 52), "?? ?꾪닾 以鍮?, 36, Color.white);
+                new Vector2(480, 52), "⚔  전투 준비", 36, Color.white);
 
             _prepGoldText = Lbl(_prepPanel, "Gold", a, new Vector2(0, -100),
-                new Vector2(260, 38), $"怨⑤뱶: {_gold}", 24, Color.yellow);
+                new Vector2(260, 38), $"골드: {_gold}", 24, Color.yellow);
 
-            // 怨듦꺽/?섎퉬 紐⑤뱶 ?좉?
+            // 공격/수비 모드 토글
             _modeToggleBtn = Btn(_prepPanel, "ModeToggle", a, new Vector2(0, -138),
-                new Vector2(260, 36), "怨듦꺽 紐⑤뱶 ??, new Color(0.15f, 0.4f, 0.15f), ToggleMode);
+                new Vector2(260, 36), "공격 모드 ▶", new Color(0.15f, 0.4f, 0.15f), ToggleMode);
             _modeToggleLbl = _modeToggleBtn.GetComponentInChildren<Text>();
 
-            // ?좊떅 援щℓ 踰꾪듉 ??3??2??
+            // 유닛 구매 버튼 — 3열 2행
             Vector2 btnSize = new Vector2(200, 90);
             float colW = 215f, startX = -215f;
             float row1Y = -210f, row2Y = -310f;
@@ -1861,7 +1861,7 @@ namespace MedievalRTS.Testing
                 _buyLabels[i] = b.GetComponentInChildren<Text>();
             }
 
-            // 留덈쾿 援щℓ ?뱀뀡 ??怨듦꺽 紐⑤뱶 ?꾩슜 (而⑦뀒?대꼫濡?臾띠뼱???쒕쾲???좉?)
+            // 마법 구매 섹션 — 공격 모드 전용 (컨테이너로 묶어서 한번에 토글)
             _spellSectionRoot = new GameObject("SpellSection");
             _spellSectionRoot.transform.SetParent(_prepPanel.transform, false);
             var ssRt = _spellSectionRoot.AddComponent<RectTransform>();
@@ -1869,7 +1869,7 @@ namespace MedievalRTS.Testing
             ssRt.anchoredPosition = Vector2.zero; ssRt.sizeDelta = Vector2.zero;
 
             Lbl(_spellSectionRoot, "SpellSec", a, new Vector2(0, -390),
-                new Vector2(400, 30), "?? 留덈쾿 援щℓ ??", 17, new Color(0.55f, 0.78f, 1f));
+                new Vector2(400, 30), "── 마법 구매 ──", 17, new Color(0.55f, 0.78f, 1f));
 
             float spellRow1Y = -458f, spellRow2Y = -560f;
             for (int i = 0; i < 5; i++)
@@ -1885,7 +1885,7 @@ namespace MedievalRTS.Testing
             }
 
             _rosterText = Lbl(_prepPanel, "Roster", a, new Vector2(0, -632),
-                new Vector2(720, 36), "蹂묐젰 ?놁쓬", 20, new Color(0.9f, 0.9f, 0.8f));
+                new Vector2(720, 36), "병력 없음", 20, new Color(0.9f, 0.9f, 0.8f));
             if (_rosterText != null) _rosterText.alignment = TextAnchor.UpperCenter;
 
             Btn(_prepPanel, "HubBtn", new Vector2(0f, 1f), new Vector2(70f, -34f),
@@ -1894,18 +1894,18 @@ namespace MedievalRTS.Testing
                 new Vector2(120f, 44f), "Base", MobileHudTheme.PrimaryButton, ShowBaseManagement);
 
             _startBattleBtn = Btn(_prepPanel, "StartBtn", a, new Vector2(0, -681),
-                new Vector2(250, 66), "異쒖쟾! ??, new Color(0.1f, 0.55f, 0.15f), EnterBattle);
+                new Vector2(250, 66), "출전! ▶", new Color(0.1f, 0.55f, 0.15f), EnterBattle);
             _enterSetupBtn = Btn(_prepPanel, "SetupBtn", a, new Vector2(0, -681),
-                new Vector2(250, 66), "吏꾪삎 援ъ꽦 ?쒖옉 ??, new Color(0.55f, 0.3f, 0.05f), EnterDefenseSetup);
+                new Vector2(250, 66), "진형 구성 시작 ▶", new Color(0.55f, 0.3f, 0.05f), EnterDefenseSetup);
 
-            // ?곗륫 ?⑤꼸 ???뱀닔 嫄대Ъ (?섎퉬 紐⑤뱶 ?꾩슜)
+            // 우측 패널 — 특수 건물 (수비 모드 전용)
             _rightPanel = NewAnchoredPanel(_prepPanel, "PrepRightPanel",
                 new Vector2(1, 0), new Vector2(1, 1),
                 new Vector2(-390, 50), new Vector2(-5, -5),
                 new Color(0.06f, 0.06f, 0.18f, 0.92f));
             BuildSpecialBldgPanel(_rightPanel);
 
-            // 珥덇린 媛?쒖꽦: 怨듦꺽 紐⑤뱶 湲곕낯
+            // 초기 가시성: 공격 모드 기본
             ApplyModePrepVisibility();
         }
 
@@ -1914,9 +1914,9 @@ namespace MedievalRTS.Testing
             var d = Defs[i];
             bool locked = i >= 4 && !BuildingEffectSystem.IsUnitUnlocked(i) && !_unlocked.Contains(i);
             int  effCost = Mathf.RoundToInt(d.cost * BuildingEffectSystem.GetCostMultiplier());
-            string lockInfo = i == 4 ? "?ъ씤??Lv1+" : "?ъ씤??Lv2+";
-            string sub = locked ? $"?뵏 {lockInfo}" : $"{effCost}G";
-            return $"[{d.name}]  {d.desc}\n{sub}   蹂댁쑀: {_roster[i]}";
+            string lockInfo = i == 4 ? "여인숙 Lv1+" : "여인숙 Lv2+";
+            string sub = locked ? $"🔒 {lockInfo}" : $"{effCost}G";
+            return $"[{d.name}]  {d.desc}\n{sub}   보유: {_roster[i]}";
         }
 
         private Color BuyColor(int i)
@@ -1944,7 +1944,7 @@ namespace MedievalRTS.Testing
         private void RefreshPrepGold()
         {
             SyncOwnedResources();
-            if (_prepGoldText != null) _prepGoldText.text = $"怨⑤뱶: {_gold}";
+            if (_prepGoldText != null) _prepGoldText.text = $"골드: {_gold}";
             RefreshMobileLoopScreens();
         }
 
@@ -1966,24 +1966,24 @@ namespace MedievalRTS.Testing
 
         private void UpdateRosterText()
         {
-            var sb = new StringBuilder("蹂댁쑀 蹂묐젰:  ");
+            var sb = new StringBuilder("보유 병력:  ");
             bool any = false;
             for (int i = 0; i < Defs.Length; i++)
             {
                 if (_roster[i] <= 0) continue;
                 if (any) sb.Append("   ");
-                sb.Append($"{Defs[i].name} 횞{_roster[i]}");
+                sb.Append($"{Defs[i].name} ×{_roster[i]}");
                 any = true;
             }
-            if (_rosterText != null) _rosterText.text = any ? sb.ToString() : "蹂묐젰 ?놁쓬";
+            if (_rosterText != null) _rosterText.text = any ? sb.ToString() : "병력 없음";
         }
 
-        // ?? ?뱀닔 嫄대Ъ ?⑤꼸 ?????????????????????????????????????
+        // ── 특수 건물 패널 ─────────────────────────────────────
         private void BuildSpecialBldgPanel(GameObject parent)
         {
             var a = new Vector2(0.5f, 1f);
             Lbl(parent, "BldgTitle", a, new Vector2(0, -12), new Vector2(370, 28),
-                "??? ?뱀닔 嫄대Ъ ?낃렇?덉씠?????", 15, new Color(0.95f, 0.85f, 0.5f));
+                "─── 특수 건물 업그레이드 ───", 15, new Color(0.95f, 0.85f, 0.5f));
 
             for (int i = 0; i < 6; i++)
             {
@@ -2003,7 +2003,7 @@ namespace MedievalRTS.Testing
             int lv = BuildingEffectSystem.GetLevel(t);
             bool maxed = lv >= BuildingEffectSystem.MaxLevel;
             bool unlocked = BuildingEffectSystem.IsBuildingUnlocked(t);
-            string levelStr = maxed ? "Lv MAX" : (unlocked ? $"Lv {lv} ??{lv + 1}" : "?뵏 怨듬갑 ?꾩슂");
+            string levelStr = maxed ? "Lv MAX" : (unlocked ? $"Lv {lv} → {lv + 1}" : "🔒 공방 필요");
             string costStr  = (maxed || !unlocked) ? "" : $"  |  {BuildingEffectSystem.GetUpgradeCost(t)}G";
             return $"[{BuildingEffectSystem.Names[(int)t]}] {BuildingEffectSystem.EffectDescs[(int)t]}\n{levelStr}{costStr}";
         }
@@ -2029,8 +2029,8 @@ namespace MedievalRTS.Testing
             BuildingEffectSystem.Upgrade(type);
             RefreshPrepGold();
             RefreshSpecialBldgUI();
-            RefreshBuyBtns();     // Blacksmith 蹂寃????좊떅 鍮꾩슜 ?쒖떆 媛깆떊
-            RefreshSpellBuyUI();  // 怨⑤뱶 蹂寃?
+            RefreshBuyBtns();     // Blacksmith 변경 → 유닛 비용 표시 갱신
+            RefreshSpellBuyUI();  // 골드 변경
         }
 
         private void RefreshSpecialBldgUI()
@@ -2048,8 +2048,8 @@ namespace MedievalRTS.Testing
             var def = SpellSystem.Defs[i];
             int charges = SpellSystem.GetCharges((SpellType)i);
             bool maxed  = charges >= def.maxCharges;
-            string chargeStr = maxed ? "MAX" : $"{charges}/{def.maxCharges}??;
-            return $"[{def.name}]  {def.desc}\n蹂댁쑀: {chargeStr}";
+            string chargeStr = maxed ? "MAX" : $"{charges}/{def.maxCharges}회";
+            return $"[{def.name}]  {def.desc}\n보유: {chargeStr}";
         }
 
         private Color SpellBuyColor(int i)
@@ -2080,18 +2080,18 @@ namespace MedievalRTS.Testing
             }
         }
 
-        // ?? 留덈쾿 ?꾪닾 ??????????????????????????????????????????
+        // ── 마법 전투 ──────────────────────────────────────────
         private string BuildSpellBattleLabel(int i)
         {
             int charges = SpellSystem.GetCharges((SpellType)i);
-            return $"{SpellSystem.Defs[i].name}\n({charges}??";
+            return $"{SpellSystem.Defs[i].name}\n({charges}회)";
         }
 
         private void ActivateSpell(int si)
         {
             if (!SpellSystem.HasCharge((SpellType)si)) return;
             _pendingSpell = si;
-            SetInfo($"[{SpellSystem.Defs[si].name}] ???쒖쟾???꾩튂瑜??대┃?섏꽭?? (?고겢由? 痍⑥냼)");
+            SetInfo($"[{SpellSystem.Defs[si].name}] — 시전할 위치를 클릭하세요  (우클릭: 취소)");
         }
 
         private void RefreshSpellBattleBtns()
@@ -2121,7 +2121,7 @@ namespace MedievalRTS.Testing
                     foreach (var go in GameObject.FindGameObjectsWithTag("EnemyBuilding"))
                         if (Vector3.Distance(go.transform.position, worldPos) <= 3f)
                             go.GetComponent<Building>()?.TakeDamage(120);
-                    ShowResourcePopup(worldPos, "?붿뿼援?");
+                    ShowResourcePopup(worldPos, "화염구!");
                     break;
 
                 case SpellType.Lightning:
@@ -2140,7 +2140,7 @@ namespace MedievalRTS.Testing
                     {
                         ltTarget.GetComponent<Unit>()?.TakeDamage(200);
                         ltTarget.GetComponent<Building>()?.TakeDamage(200);
-                        ShowResourcePopup(ltTarget.position, "踰덇컻!");
+                        ShowResourcePopup(ltTarget.position, "번개!");
                     }
                     break;
 
@@ -2155,22 +2155,22 @@ namespace MedievalRTS.Testing
                     if (healTarget != null)
                     {
                         healTarget.GetComponent<Unit>()?.Heal(300);
-                        ShowResourcePopup(healTarget.transform.position, "移섏쑀!");
+                        ShowResourcePopup(healTarget.transform.position, "치유!");
                     }
                     break;
 
                 case SpellType.Freeze:
                     StartCoroutine(FreezeEnemies(5f));
-                    ShowResourcePopup(worldPos, "鍮숆껐!");
+                    ShowResourcePopup(worldPos, "빙결!");
                     break;
 
                 case SpellType.Rage:
                     StartCoroutine(RagePlayerUnits(8f));
-                    ShowResourcePopup(worldPos, "遺꾨끂!");
+                    ShowResourcePopup(worldPos, "분노!");
                     break;
             }
             RefreshSpellBattleBtns();
-            SetInfo($"[{SpellSystem.Defs[si].name}] ?쒖쟾 ?꾨즺");
+            SetInfo($"[{SpellSystem.Defs[si].name}] 시전 완료");
         }
 
         private IEnumerator FreezeEnemies(float duration)
@@ -2195,7 +2195,7 @@ namespace MedievalRTS.Testing
             foreach (var ai in _playerUnits) if (ai != null) ai.DamageMultiplier = Mathf.Max(1f, ai.DamageMultiplier - 0.5f);
         }
 
-        // ?? ?꾪닾 HUD ??????????????????????????????????????????
+        // ── 전투 HUD ──────────────────────────────────────────
         private void BuildBattleHud()
         {
             _battleHud = new GameObject("BattleHud");
@@ -2203,7 +2203,7 @@ namespace MedievalRTS.Testing
             var rt = _battleHud.AddComponent<RectTransform>();
             rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one; rt.sizeDelta = Vector2.zero;
 
-            // ?곷떒 諛?諛곌꼍
+            // 상단 바 배경
             var topBar = NewAnchoredPanel(_battleHud, "TopBar",
                 new Vector2(0,1), new Vector2(1,1), new Vector2(0,-48), Vector2.zero,
                 new Color(0,0,0,0.55f));
@@ -2212,25 +2212,25 @@ namespace MedievalRTS.Testing
             var tc = new Vector2(0.5f, 1f);
             var tr = new Vector2(1f, 1f);
 
-            _timerText    = Lbl(topBar, "Timer",   tc, new Vector2(-60,-7), new Vector2(130,34), "??0s",    20, Color.white);
-            _valorHudText = Lbl(topBar, "Valor",   tl, new Vector2(10, -7), new Vector2(160,34), "臾닿났: 0",  20, new Color(1f,0.8f,0.2f));
-            _enemyHpText  = Lbl(topBar, "EnemyHp", tr, new Vector2(-10,-7), new Vector2(220,34), "?곸꽦: 900",20, new Color(1f,0.4f,0.4f));
+            _timerText    = Lbl(topBar, "Timer",   tc, new Vector2(-60,-7), new Vector2(130,34), "⏱ 0s",    20, Color.white);
+            _valorHudText = Lbl(topBar, "Valor",   tl, new Vector2(10, -7), new Vector2(160,34), "무공: 0",  20, new Color(1f,0.8f,0.2f));
+            _enemyHpText  = Lbl(topBar, "EnemyHp", tr, new Vector2(-10,-7), new Vector2(220,34), "적성: 900",20, new Color(1f,0.4f,0.4f));
             if (_enemyHpText != null) _enemyHpText.alignment = TextAnchor.UpperRight;
 
-            // ?좊떅 醫낅쪟 ?좏깮 諛?(?숈쟻 踰꾪듉? DeployArmy?먯꽌 ?앹꽦)
+            // 유닛 종류 선택 바 (동적 버튼은 DeployArmy에서 생성)
             _unitTypeBar = NewAnchoredPanel(_battleHud, "UnitTypeBar",
                 new Vector2(0,0), new Vector2(1,0),
                 new Vector2(0,118), new Vector2(0,178),
                 new Color(0,0,0,0.4f));
 
-            // 留덈쾿 鍮좊Ⅸ ?쒖쟾 諛?
+            // 마법 빠른 시전 바
             var spellBar = NewAnchoredPanel(_battleHud, "SpellBar",
                 new Vector2(0,0), new Vector2(1,0),
                 new Vector2(0,178), new Vector2(0,232),
                 new Color(0.02f,0.04f,0.18f,0.88f));
 
             Lbl(spellBar, "SpellLbl", new Vector2(0f,0.5f), new Vector2(46,0),
-                new Vector2(82,44), "留덈쾿:", 15, new Color(0.7f,0.8f,1f));
+                new Vector2(82,44), "마법:", 15, new Color(0.7f,0.8f,1f));
 
             float spellBtnW = 150f, spellGap = 8f;
             float spellTotalW = spellBtnW * 5 + spellGap * 4;
@@ -2246,7 +2246,7 @@ namespace MedievalRTS.Testing
                 _spellBattleChargeLbls[i] = sb.GetComponentInChildren<Text>();
             }
 
-            // ?섎떒 ?덈궡 + 諛⑺뼢 踰꾪듉 諛곌꼍
+            // 하단 안내 + 방향 버튼 배경
             var botBar = NewAnchoredPanel(_battleHud, "BotBar",
                 new Vector2(0,0), new Vector2(1,0), Vector2.zero, new Vector2(0,118),
                 new Color(0,0,0,0.55f));
@@ -2255,16 +2255,16 @@ namespace MedievalRTS.Testing
                 new Vector2(800,28), "", 16, new Color(0.9f,0.9f,0.7f));
             if (_infoText != null) _infoText.alignment = TextAnchor.UpperCenter;
 
-            // 諛⑺뼢 踰꾪듉 7媛?(?湲??좊떅 ?쇨큵 ?뚭껄)
+            // 방향 버튼 7개 (대기 유닛 일괄 파견)
             var tactics = new (string lbl, Color col, System.Action act)[]
             {
-                ("?꾧뎔 ?좏깮",   new Color(0.2f,0.35f,0.55f), ()=>{ DeselectAll(); foreach(var u in _playerUnits) if(u!=null&&u.AwaitingOrders) Select(u); }),
-                ("?꾧뎔 ?뚭꺽",   new Color(0.65f,0.1f,0.1f),  ()=> OrderAwaitingUnits(u=>u.CommandAttack(_enemyCastle?.transform))),
-                ("醫뚯륫 怨듦꺽",   new Color(0.2f,0.4f,0.22f),  ()=> OrderAwaitingUnits(u=>u.CommandMove(new Vector3(6,0, 7)))),
-                ("以묒븰 ?뚰뙆",   new Color(0.2f,0.4f,0.22f),  ()=> OrderAwaitingUnits(u=>u.CommandMove(new Vector3(6,0, 0)))),
-                ("?곗륫 怨듦꺽",   new Color(0.2f,0.4f,0.22f),  ()=> OrderAwaitingUnits(u=>u.CommandMove(new Vector3(6,0,-7)))),
-                ("?좏깮?믩ぉ??,  new Color(0.35f,0.25f,0.5f),  ()=> SetInfo("?고겢由?쑝濡?紐⑺몴瑜?吏?뺥븯?몄슂")),
-                ("?꾧뎔 ?먮룞",   new Color(0.3f,0.3f,0.3f),   ()=> OrderAwaitingUnits(u=>u.CommandAttack(null))),
+                ("전군 선택",   new Color(0.2f,0.35f,0.55f), ()=>{ DeselectAll(); foreach(var u in _playerUnits) if(u!=null&&u.AwaitingOrders) Select(u); }),
+                ("전군 돌격",   new Color(0.65f,0.1f,0.1f),  ()=> OrderAwaitingUnits(u=>u.CommandAttack(_enemyCastle?.transform))),
+                ("좌측 공격",   new Color(0.2f,0.4f,0.22f),  ()=> OrderAwaitingUnits(u=>u.CommandMove(new Vector3(6,0, 7)))),
+                ("중앙 돌파",   new Color(0.2f,0.4f,0.22f),  ()=> OrderAwaitingUnits(u=>u.CommandMove(new Vector3(6,0, 0)))),
+                ("우측 공격",   new Color(0.2f,0.4f,0.22f),  ()=> OrderAwaitingUnits(u=>u.CommandMove(new Vector3(6,0,-7)))),
+                ("선택→목표",  new Color(0.35f,0.25f,0.5f),  ()=> SetInfo("우클릭으로 목표를 지정하세요")),
+                ("전군 자동",   new Color(0.3f,0.3f,0.3f),   ()=> OrderAwaitingUnits(u=>u.CommandAttack(null))),
             };
 
             float btnW = 130f, totalW = btnW * tactics.Length + 10f * (tactics.Length - 1);
@@ -2277,7 +2277,7 @@ namespace MedievalRTS.Testing
             }
         }
 
-        // ?? 湲곗? 媛쒕컻 ?⑤꼸 (?곗륫) ?????????????????????????????
+        // ── 기지 개발 패널 (우측) ─────────────────────────────
         private void BuildUpgradePanel()
         {
             _upgradePanel = NewAnchoredPanel(_canvas, "UpgradePanel",
@@ -2286,7 +2286,7 @@ namespace MedievalRTS.Testing
                 new Color(0.05f,0.05f,0.12f,0.88f));
 
             Lbl(_upgradePanel, "Title", new Vector2(0.5f,1), new Vector2(0,-14),
-                new Vector2(175,32), "湲곗? 媛쒕컻", 18, Color.white);
+                new Vector2(175,32), "기지 개발", 18, Color.white);
 
             var defs = GetUpgrades();
             for (int i = 0; i < defs.Length; i++)
@@ -2308,10 +2308,10 @@ namespace MedievalRTS.Testing
                 _upgBtns[i].GetComponent<Image>().color =
                     _valor >= d[i].cost ? new Color(0.18f,0.38f,0.55f) : new Color(0.18f,0.18f,0.28f);
             }
-            if (_valorHudText != null) _valorHudText.text = $"臾닿났: {_valor}";
+            if (_valorHudText != null) _valorHudText.text = $"무공: {_valor}";
         }
 
-        // ?? ?먯썝 ?꾪솴 ?⑤꼸 (諛고? 以??곗륫 ?섎떒) ???????????????????
+        // ── 자원 현황 패널 (배틀 중 우측 하단) ───────────────────
         private void BuildStatPanel()
         {
             var panel = NewAnchoredPanel(_battleHud, "StatPanel",
@@ -2320,24 +2320,24 @@ namespace MedievalRTS.Testing
                 new Color(0.04f, 0.06f, 0.14f, 0.85f));
 
             Lbl(panel, "Title", new Vector2(0.5f,1), new Vector2(0,-10),
-                new Vector2(175,26), "?꾪닾 ?띾뱷", 15, Color.white);
+                new Vector2(175,26), "전투 획득", 15, Color.white);
 
             _statGoldText  = Lbl(panel, "Gold",  new Vector2(0.5f,1), new Vector2(0,-42),
-                new Vector2(175,28), "怨⑤뱶   +0G",        16, new Color(1f,0.95f,0.4f));
+                new Vector2(175,28), "골드   +0G",        16, new Color(1f,0.95f,0.4f));
             _statValorText = Lbl(panel, "Valor", new Vector2(0.5f,1), new Vector2(0,-74),
-                new Vector2(175,28), "臾닿났   +0",         16, new Color(0.6f,0.9f,1f));
+                new Vector2(175,28), "무공   +0",         16, new Color(0.6f,0.9f,1f));
             _statBldgText  = Lbl(panel, "Bldg",  new Vector2(0.5f,1), new Vector2(0,-106),
-                new Vector2(175,28), "?뚭눼   0媛?,        16, new Color(1f,0.6f,0.4f));
+                new Vector2(175,28), "파괴   0개",        16, new Color(1f,0.6f,0.4f));
         }
 
         private void RefreshStatPanel()
         {
-            if (_statGoldText  != null) _statGoldText.text  = $"怨⑤뱶   +{_earnedGold}G";
-            if (_statValorText != null) _statValorText.text = $"臾닿났   +{_earnedValor}";
-            if (_statBldgText  != null) _statBldgText.text  = $"?뚭눼   {_destroyedBuildings}媛?;
+            if (_statGoldText  != null) _statGoldText.text  = $"골드   +{_earnedGold}G";
+            if (_statValorText != null) _statValorText.text = $"무공   +{_earnedValor}";
+            if (_statBldgText  != null) _statBldgText.text  = $"파괴   {_destroyedBuildings}개";
         }
 
-        // ?? ?먯썝 ?띾뱷 ?앹뾽 (?뚮줈???띿뒪?? ???????????????????????
+        // ── 자원 획득 팝업 (플로팅 텍스트) ───────────────────────
         private void ShowResourcePopup(Vector3 worldPos, string text)
         {
             var go = new GameObject("Popup"); go.transform.SetParent(_canvas.transform, false);
@@ -2369,7 +2369,7 @@ namespace MedievalRTS.Testing
             Destroy(go);
         }
 
-        // ?? 寃곌낵 ?⑤꼸 ?????????????????????????????????????????
+        // ── 결과 패널 ─────────────────────────────────────────
         private void BuildResultPanel()
         {
             _resultPanel = new GameObject("ResultPanel");
@@ -2388,18 +2388,18 @@ namespace MedievalRTS.Testing
             if (_resultStatsText != null) _resultStatsText.alignment = TextAnchor.MiddleCenter;
 
             Btn(_resultPanel, "Retry", new Vector2(0.5f,0.5f), new Vector2(-80,-80),
-                new Vector2(140,52), "?ㅼ떆 ?쒖옉", new Color(0.1f,0.5f,0.1f), ()=>{
+                new Vector2(140,52), "다시 시작", new Color(0.1f,0.5f,0.1f), ()=>{
                     Time.timeScale = 1f;
                     UnityEngine.SceneManagement.SceneManager.LoadScene(
                         UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
                 });
             Btn(_resultPanel, "Quit", new Vector2(0.5f,0.5f), new Vector2(80,-80),
-                new Vector2(140,52), "醫낅즺", new Color(0.5f,0.1f,0.1f), Application.Quit);
+                new Vector2(140,52), "종료", new Color(0.5f,0.1f,0.1f), Application.Quit);
         }
 
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
-        //  UI ?ы띁
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
+        // ═══════════════════════════════════════════════════════
+        //  UI 헬퍼
+        // ═══════════════════════════════════════════════════════
         private void SetInfo(string msg) { if (_infoText != null) _infoText.text = msg; }
 
         private static void Paint(GameObject go, Color c)
@@ -2420,7 +2420,7 @@ namespace MedievalRTS.Testing
             return go;
         }
 
-        // stretch 諛⑹떇 ?⑤꼸 (offsetMin/offsetMax)
+        // stretch 방식 패널 (offsetMin/offsetMax)
         private GameObject NewAnchoredPanel(GameObject parent, string name,
             Vector2 anchorMin, Vector2 anchorMax,
             Vector2 offsetMin, Vector2 offsetMax, Color bg)
@@ -2517,9 +2517,9 @@ namespace MedievalRTS.Testing
             label.rectTransform.offsetMax = new Vector2(-8f, 0f);
         }
 
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
-        //  ?섎퉬 吏꾪삎 援ъ꽦
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
+        // ═══════════════════════════════════════════════════════
+        //  수비 진형 구성
+        // ═══════════════════════════════════════════════════════
         private void EnterDefenseSetup()
         {
             if (_defenseSetupActive) return;
@@ -2527,7 +2527,7 @@ namespace MedievalRTS.Testing
             _selectedPlaceBldg   = -1;
             _stagingCol = _stagingRow = 0;
 
-            // 湲곕낯 湲곗?: ??+ ?먮룞 ?깅꼍
+            // 기본 기지: 성 + 자동 성벽
             _playerCastle = MakePlayerBuilding("PlayerCastle",
                 new Vector3(-21f, 1.5f, 0f), 900,
                 MobileVisualStyle.FriendlyBlue, new Vector3(4f, 3f, 4f));
@@ -2535,7 +2535,7 @@ namespace MedievalRTS.Testing
             AddToonyDecoration("blue_banner", new Vector3(-18.5f, 0f, -2.9f), Vector3.one * 0.9f, 0f);
             GenerateAutoWall(-10f, -8f, 8f);
 
-            // 移대찓?쇰? ?뚮젅?댁뼱 援ъ뿭 以묒떖?쇰줈 ?대룞
+            // 카메라를 플레이어 구역 중심으로 이동
             var cam = Camera.main;
             if (cam != null)
                 cam.transform.SetPositionAndRotation(
@@ -2547,7 +2547,7 @@ namespace MedievalRTS.Testing
             RefreshDsGold();
             RefreshDsUnitBtns();
             RefreshDsSpecBtns();
-            SetDsStatus("諛⑹뼱???깅꼍???좏깮?????깅꼍 ?덉そ???대┃??諛곗튂  |  ?좊떅 踰꾪듉?쇰줈 利됱떆 ?앹궛  |  ?고겢由? 諛곗튂 痍⑥냼");
+            SetDsStatus("방어탑/성벽을 선택한 뒤 성벽 안쪽을 클릭해 배치  |  유닛 버튼으로 즉시 생산  |  우클릭: 배치 취소");
         }
 
         private void BuildDefenseSetupHud()
@@ -2559,20 +2559,20 @@ namespace MedievalRTS.Testing
 
             var a = new Vector2(0.5f, 1f);
 
-            // ?? ?쇱そ ?⑤꼸: 嫄대Ъ 諛곗튂 + ?좊떅 ?앹궛 ??????????????????????
+            // ── 왼쪽 패널: 건물 배치 + 유닛 생산 ──────────────────────
             var left = NewAnchoredPanel(_dsHud, "DS_Left",
                 new Vector2(0f, 0f), new Vector2(0f, 1f),
                 new Vector2(5f, 5f), new Vector2(222f, -5f),
                 new Color(0.04f, 0.06f, 0.14f, 0.93f));
 
             Lbl(left, "Title", a, new Vector2(0f, -16f), new Vector2(212f, 28f),
-                "?섎퉬 吏꾪삎 援ъ꽦", 16, Color.white);
+                "수비 진형 구성", 16, Color.white);
             _dsGoldText = Lbl(left, "Gold", a, new Vector2(0f, -44f), new Vector2(212f, 22f),
-                $"怨⑤뱶: {_gold}", 14, Color.yellow);
+                $"골드: {_gold}", 14, Color.yellow);
 
-            // 嫄대Ъ 諛곗튂 ?붾젅??
+            // 건물 배치 팔레트
             Lbl(left, "BldgHdr", a, new Vector2(0f, -72f), new Vector2(212f, 18f),
-                "?? 嫄대Ъ 諛곗튂 ??", 11, new Color(0.7f, 0.85f, 1f));
+                "── 건물 배치 ──", 11, new Color(0.7f, 0.85f, 1f));
 
             for (int i = 0; i < _placeDefs.Length; i++)
             {
@@ -2585,10 +2585,10 @@ namespace MedievalRTS.Testing
                 _dsPalLbls[i] = pb.GetComponentInChildren<Text>();
             }
 
-            // ?좊떅 ?앹궛
+            // 유닛 생산
             float uHdrY = -94f - _placeDefs.Length * 46f - 10f;
             Lbl(left, "UnitHdr", a, new Vector2(0f, uHdrY), new Vector2(212f, 18f),
-                "?? ?좊떅 ?앹궛 ??", 11, new Color(0.7f, 1f, 0.7f));
+                "── 유닛 생산 ──", 11, new Color(0.7f, 1f, 0.7f));
 
             float uStartY = uHdrY - 24f;
             for (int i = 0; i < Defs.Length; i++)
@@ -2603,19 +2603,19 @@ namespace MedievalRTS.Testing
                 _dsUnitLbls[i] = ub.GetComponentInChildren<Text>();
             }
 
-            // ?꾪닾 ?쒖옉 (?섎떒 怨좎젙)
+            // 전투 시작 (하단 고정)
             Btn(left, "BattleStart", new Vector2(0.5f, 0f), new Vector2(0f, 8f),
-                new Vector2(208f, 52f), "?꾪닾 ?쒖옉 ??,
+                new Vector2(208f, 52f), "전투 시작 ▶",
                 new Color(0.6f, 0.12f, 0.12f), EnterBattle);
 
-            // ?? ?ㅻⅨ履??⑤꼸: ?뱀닔 嫄대Ъ ?낃렇?덉씠???????????????????????
+            // ── 오른쪽 패널: 특수 건물 업그레이드 ─────────────────────
             var right = NewAnchoredPanel(_dsHud, "DS_Right",
                 new Vector2(1f, 0f), new Vector2(1f, 1f),
                 new Vector2(-222f, 5f), new Vector2(-5f, -5f),
                 new Color(0.06f, 0.06f, 0.18f, 0.93f));
 
             Lbl(right, "SpecHdr", a, new Vector2(0f, -12f), new Vector2(208f, 24f),
-                "?? ?뱀닔 嫄대Ъ ?낃렇?덉씠????", 13, new Color(0.95f, 0.85f, 0.5f));
+                "── 특수 건물 업그레이드 ──", 13, new Color(0.95f, 0.85f, 0.5f));
 
             for (int i = 0; i < 6; i++)
             {
@@ -2629,7 +2629,7 @@ namespace MedievalRTS.Testing
                 _dsSpecLbls[i] = sb.GetComponentInChildren<Text>();
             }
 
-            // ?? ?섎떒 ?곹깭 諛????????????????????????????????????????????
+            // ── 하단 상태 바 ───────────────────────────────────────────
             var bot = NewAnchoredPanel(_dsHud, "DS_Bot",
                 new Vector2(0f, 0f), new Vector2(1f, 0f),
                 new Vector2(228f, 0f), new Vector2(-228f, 34f),
@@ -2653,19 +2653,19 @@ namespace MedievalRTS.Testing
                     : (_gold >= _placeDefs[i].cost ? new Color(0.15f, 0.25f, 0.4f) : new Color(0.22f, 0.22f, 0.26f));
             }
             SetDsStatus(_selectedPlaceBldg >= 0
-                ? $"[{_placeDefs[_selectedPlaceBldg].label}] ?좏깮?????깅꼍 ?덉そ ?대┃?쇰줈 諛곗튂  |  ?고겢由? 痍⑥냼"
-                : "?좏깮 ?댁젣");
+                ? $"[{_placeDefs[_selectedPlaceBldg].label}] 선택됨 — 성벽 안쪽 클릭으로 배치  |  우클릭: 취소"
+                : "선택 해제");
         }
 
         private void BuyUnitDefenseSetup(int idx)
         {
             bool locked = idx >= 4 && !BuildingEffectSystem.IsUnitUnlocked(idx) && !_unlocked.Contains(idx);
             int effCost = Mathf.RoundToInt(Defs[idx].cost * BuildingEffectSystem.GetCostMultiplier());
-            if (locked || _gold < effCost) { SetDsStatus("怨⑤뱶 遺議??먮뒗 ?좉툑 ?곹깭"); return; }
+            if (locked || _gold < effCost) { SetDsStatus("골드 부족 또는 잠금 상태"); return; }
             _gold -= effCost;
             _roster[idx]++;
 
-            // ???ㅼそ ?ㅽ뀒?댁쭠 援ъ뿭??利됱떆 諛곗튂
+            // 성 뒤쪽 스테이징 구역에 즉시 배치
             float x = -19f - _stagingCol * 2.2f;
             float z = (_stagingRow - 2) * 2.4f;
             var ai = SpawnUnit(idx, true, new Vector3(x, 0f, z));
@@ -2675,7 +2675,7 @@ namespace MedievalRTS.Testing
 
             RefreshDsGold();
             RefreshDsUnitBtns();
-            SetDsStatus($"{Defs[idx].name} ?앹궛 ?꾨즺 ???⑹깋 留??좊떅???대┃ ???고겢由?쑝濡??대룞/怨듦꺽 紐낅졊 媛??);
+            SetDsStatus($"{Defs[idx].name} 생산 완료 — 황색 링 유닛을 클릭 후 우클릭으로 이동/공격 명령 가능");
         }
 
         private void PlacePlayerTower(Vector3 hitPos)
@@ -2689,12 +2689,12 @@ namespace MedievalRTS.Testing
             AddTowerDecor(go, MobileVisualStyle.FriendlyBlue);
             ApplyBuildingVisual(go, "tower", "Buildings/tower", new Vector3(0f, 1.35f, -0.15f), new Vector2(3.0f, 3.0f), -1f, Vector3.one * 1.2f);
             var data = ScriptableObject.CreateInstance<BuildingData>();
-            data.buildingName = "諛⑹뼱??; data.maxHp = 220;
+            data.buildingName = "방어탑"; data.maxHp = 220;
             var b = go.AddComponent<Building>();
             b.Initialize(data, isPlayerBuilding: true);
             _allPlayerBuildings.Add(b);
             go.AddComponent<TestTowerAI>().Setup(isPlayer: true, range: 9f, dmg: 18, cooldown: 1.2f);
-            SetDsStatus($"諛⑹뼱??諛곗튂 ?꾨즺  |  ?⑥? 怨⑤뱶: {_gold}G");
+            SetDsStatus($"방어탑 배치 완료  |  남은 골드: {_gold}G");
         }
 
         private void PlacePlayerWall(Vector3 hitPos)
@@ -2708,11 +2708,11 @@ namespace MedievalRTS.Testing
             AddWallCap(go);
             ApplyBuildingVisual(go, "wall", "Buildings/wall", new Vector3(0f, 1.2f, -0.15f), new Vector2(3.0f, 3.0f), -1f, Vector3.one * 1.15f);
             var data = ScriptableObject.CreateInstance<BuildingData>();
-            data.buildingName = "?깅꼍"; data.maxHp = 400;
+            data.buildingName = "성벽"; data.maxHp = 400;
             var b = go.AddComponent<Building>();
             b.Initialize(data, isPlayerBuilding: true);
             _allPlayerBuildings.Add(b);
-            SetDsStatus($"?깅꼍 諛곗튂 ?꾨즺  |  ?⑥? 怨⑤뱶: {_gold}G");
+            SetDsStatus($"성벽 배치 완료  |  남은 골드: {_gold}G");
         }
 
         private void TryUpgradeSpecialBuildingDs(int idx)
@@ -2724,7 +2724,7 @@ namespace MedievalRTS.Testing
 
         private void RefreshDsGold()
         {
-            if (_dsGoldText != null) _dsGoldText.text = $"怨⑤뱶: {_gold}";
+            if (_dsGoldText != null) _dsGoldText.text = $"골드: {_gold}";
         }
 
         private void RefreshDsUnitBtns()
@@ -2761,13 +2761,13 @@ namespace MedievalRTS.Testing
             var d = Defs[i];
             bool locked = i >= 4 && !BuildingEffectSystem.IsUnitUnlocked(i) && !_unlocked.Contains(i);
             int effCost = Mathf.RoundToInt(d.cost * BuildingEffectSystem.GetCostMultiplier());
-            string costStr = locked ? "?좉툑" : $"{effCost}G";
-            return $"[{d.name}]\n{costStr} 蹂댁쑀:{_roster[i]}";
+            string costStr = locked ? "잠금" : $"{effCost}G";
+            return $"[{d.name}]\n{costStr} 보유:{_roster[i]}";
         }
 
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
-        //  留덈쾿 踰붿쐞 ?쒖떆湲?& FOW ? 異붿쟻
-        // ?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧?먥븧??
+        // ═══════════════════════════════════════════════════════
+        //  마법 범위 표시기 & FOW 셀 추적
+        // ═══════════════════════════════════════════════════════
         private void CreateSpellRangeCircle()
         {
             var go = new GameObject("SpellRangeCircle");
@@ -2805,18 +2805,18 @@ namespace MedievalRTS.Testing
             if (_spellRangeCircle != null) _spellRangeCircle.gameObject.SetActive(false);
         }
 
-        /// <summary>留덈쾿蹂?踰붿쐞 ?쒖떆 諛섍꼍. 0 = ?꾩뿭 留덈쾿(??誘명몴??.</summary>
+        /// <summary>마법별 범위 표시 반경. 0 = 전역 마법(원 미표시).</summary>
         private static float GetSpellIndicatorRadius(int si) => (SpellType)si switch
         {
             SpellType.Fireball  => 3f,
             SpellType.Lightning => 1.5f,
             SpellType.Heal      => 1.5f,
-            SpellType.Freeze    => 0f,   // ???????꾩뿭
-            SpellType.Rage      => 0f,   // ???꾧뎔 ???꾩뿭
+            SpellType.Freeze    => 0f,   // 전 적 — 전역
+            SpellType.Rage      => 0f,   // 전 아군 — 전역
             _                   => 1f,
         };
 
-        /// <summary>FOW: ?대떦 以묒떖?먯꽌 諛섍꼍 ??????곴뎄 怨듦컻 紐⑸줉??異붽?.</summary>
+        /// <summary>FOW: 해당 중심에서 반경 내 셀을 영구 공개 목록에 추가.</summary>
         private void MarkRevealed(Vector3 center, float radius)
         {
             int cr = Mathf.CeilToInt(radius / FowCellSize) + 1;
@@ -2833,7 +2833,7 @@ namespace MedievalRTS.Testing
             }
         }
 
-        /// <summary>?대떦 ?꾩튂媛 怨쇨굅????踰덉씠?쇰룄 ?쒖빞???ㅼ뼱?붾뒗吏 ?뺤씤.</summary>
+        /// <summary>해당 위치가 과거에 한 번이라도 시야에 들어왔는지 확인.</summary>
         private bool IsAreaRevealed(Vector3 pos)
         {
             int cx = Mathf.RoundToInt(pos.x / FowCellSize);
@@ -2842,4 +2842,3 @@ namespace MedievalRTS.Testing
         }
     }
 }
-

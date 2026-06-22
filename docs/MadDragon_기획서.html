@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MadDragon 기획서 v0.5</title>
+<title>MadDragon 기획서 v0.6</title>
 <style>
   :root {
     --bg: #101318;
@@ -73,7 +73,7 @@
 <body>
 <header>
   <h1>MadDragon 기획서</h1>
-  <div class="meta">v0.5 draft · 2026-05-15 · 모바일 우선 공방 순환 RTS</div>
+  <div class="meta">v0.6 draft · 2026-06-22 · 모바일 우선 공방 순환 RTS</div>
 </header>
 <main>
   <section class="card">
@@ -144,6 +144,16 @@
   </div>
 
   <h2>구현 상태</h2>
+  <section class="card">
+    <h3>v0.6 구현 요약</h3>
+    <ul>
+      <li><code>MobileBattleHud</code>의 하단 퀵바를 실제 버튼형 명령 슬롯으로 개선했다.</li>
+      <li>퀵바는 <code>Rally</code>, <code>Attack</code>, <code>Hold</code>, <code>Spells</code> 4개 명령으로 구성해 5개 이하 주요 선택지와 44px 이상 터치 타깃 원칙을 지킨다.</li>
+      <li>전투 중 상단 상태는 남은 시간, 목표 HP, 획득 골드/명예만 압축 표시해 플레이 예시 화면의 상단 정보 구조에 더 가까워졌다.</li>
+      <li><code>TestBootstrap</code>은 새 모바일 HUD 명령을 기존 병력 선택, 우선 공격 대상, 대기 명령, 마법 시전 준비 흐름에 연결한다.</li>
+      <li><code>MobileBattleHudTests</code>를 추가해 버튼 존재, 터치 크기, 명령 콜백, 압축 상태 텍스트를 EditMode 테스트로 검증했다.</li>
+    </ul>
+  </section>
   <section class="card">
     <h3>v0.5 구현 요약</h3>
     <ul>
