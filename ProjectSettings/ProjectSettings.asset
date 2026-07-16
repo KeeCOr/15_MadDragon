@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!129 &1
 PlayerSettings:
@@ -139,9 +139,9 @@ PlayerSettings:
   vulkanEnableLateAcquireNextImage: 0
   vulkanEnableCommandBufferRecycling: 1
   loadStoreDebugModeEnabled: 0
-  visionOSBundleVersion: 1.0
-  tvOSBundleVersion: 1.0
-  bundleVersion: 1.0
+  visionOSbundleVersion: 0.6.2
+  tvOSbundleVersion: 0.6.2
+  bundleVersion: 0.6.2
   preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0

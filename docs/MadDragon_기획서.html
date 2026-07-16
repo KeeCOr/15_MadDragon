@@ -1,281 +1,364 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MadDragon 기획서 v0.6</title>
-<style>
-  :root {
-    --bg: #101318;
-    --panel: #181d24;
-    --panel2: #202733;
-    --text: #edf1f7;
-    --muted: #9aa7b7;
-    --line: #33404f;
-    --gold: #e8b84e;
-    --red: #d96459;
-    --blue: #65a7d8;
-    --green: #7bc987;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: "Malgun Gothic", "Segoe UI", sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.65;
-  }
-  header {
-    padding: 36px 24px 28px;
-    border-bottom: 1px solid var(--line);
-    background: #151a21;
-  }
-  main { max-width: 1040px; margin: 0 auto; padding: 28px 22px 72px; }
-  h1 { margin: 0 0 8px; font-size: 32px; color: var(--gold); }
-  h2 { margin: 36px 0 14px; font-size: 22px; color: var(--gold); border-bottom: 1px solid var(--line); padding-bottom: 8px; }
-  h3 { margin: 24px 0 8px; color: var(--blue); }
-  p, li { color: var(--text); }
-  .meta, .muted { color: var(--muted); }
-  .card {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 18px 20px;
-    margin: 14px 0;
-  }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
-  code, pre {
-    font-family: Consolas, "Courier New", monospace;
-    background: var(--panel2);
-    color: #f3d98b;
-  }
-  pre {
-    overflow-x: auto;
-    padding: 14px 16px;
-    border-radius: 8px;
-    border: 1px solid var(--line);
-  }
-  ul { padding-left: 22px; }
-  .tag {
-    display: inline-block;
-    margin: 4px 6px 4px 0;
-    padding: 3px 9px;
-    border-radius: 999px;
-    background: var(--panel2);
-    border: 1px solid var(--line);
-    color: var(--muted);
-    font-size: 13px;
-  }
-  .risk { color: var(--red); font-weight: 700; }
-  .ok { color: var(--green); font-weight: 700; }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MadDragon 기획서 v0.4</title>
+  <style>
+    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.65;max-width:980px;margin:0 auto;padding:40px 24px;color:#20242a;background:#fafafa}
+    h1{font-size:34px;margin:0 0 8px} h2{font-size:24px;margin-top:34px;border-bottom:1px solid #ddd;padding-bottom:6px} h3{font-size:18px;margin-top:24px}
+    p,li,pre{font-size:15px} li{margin:5px 0} pre{white-space:pre-wrap;background:#fff;border:1px solid #ddd;border-radius:8px;padding:8px 10px}
+    table{border-collapse:collapse;width:100%;margin:12px 0} th,td{border:1px solid #ddd;padding:8px 12px;text-align:left} th{background:#f5f5f5;font-weight:600}
+    .meta{color:#666;font-size:14px;margin-bottom:32px}
+    .loop-box{background:#fff;border:1px solid #ddd;border-radius:8px;padding:16px 20px;font-size:15px;white-space:pre-wrap;line-height:1.8}
+    .checklist{list-style:none;padding-left:0}
+    .checklist li::before{content:"☐ ";font-size:16px}
+    hr{border:none;border-top:1px solid #ddd;margin:28px 0}
+    blockquote{border-left:4px solid #ddd;margin:0;padding:8px 16px;color:#555;background:#f9f9f9;border-radius:0 8px 8px 0}
+    code{background:#f0f0f0;border-radius:4px;padding:2px 5px;font-size:13px}
+  </style>
 </head>
 <body>
-<header>
-  <h1>MadDragon 기획서</h1>
-  <div class="meta">v0.6 draft · 2026-06-22 · 모바일 우선 공방 순환 RTS</div>
-</header>
-<main>
-  <section class="card">
-    <h2>플레이 미리보기</h2>
+<h1>MadDragon 기획서 v0.4</h1>
+<p class="meta">최종 갱신: 2026-07-02</p>
+<blockquote>
+<p>최종 갱신: 2026-07-02</p>
+</blockquote>
+<hr>
+<h2>문제 정의</h2>
+<p><strong>어떤 유저가</strong>: 모바일 전략 게임에 익숙한 20~35세 코어 게이머로, 짧은 세션 안에서 의미 있는 선택을 원하는 플레이어.</p>
+<p><strong>어떤 상황에서</strong>: 출퇴근 중 또는 짧은 여가 시간(5~15분)에 게임을 켜는데, 기존 방치형 게임은 선택이 없어 지루하고 풀 RTS는 너무 복잡하여 진입 장벽이 높은 상황.</p>
+<p><strong>어떤 Pain이 있는가</strong>: 방치형 게임을 켜도 선택할 게 없어 "그냥 보고만 있다"는 공허함으로 이탈하고, RTS를 시도하면 첫 5분 안에 조작 복잡도에 압도되어 전략적 판단 자체를 경험하지 못한 채 삭제한다. 배치와 결과 사이의 인과가 느껴지지 않아 "내 선택이 무의미했다"는 무력감이 반복 플레이 의지를 꺾는다.</p>
+<hr>
+<h2>주 페르소나</h2>
+<p><strong>이름</strong>: 이동현 (가상)</p>
+<p><strong>나이</strong>: 34세</p>
+<p><strong>직업</strong>: 중견 제조업 영업직</p>
+<p><strong>CoC 경험</strong>: Clash of Clans를 3년 이상 플레이한 모바일 전략 게임 베테랑. 기지 배치와 병력 조합의 최적화 과정에서 진짜 재미를 느끼며, 라이브 운영(시즌 패스·이벤트)보다 단판 전략 쾌감을 선호한다.</p>
+<p><strong>현재 게임 습관</strong>:</p>
+<ul>
+  <li>평일 출퇴근 지하철에서 하루 20~30분 모바일 게임</li>
+  <li>주말 오전 30분 내외로 전략 게임 집중 플레이</li>
+  <li>광고 강제 노출·과금 유도에 즉시 이탈. CoC도 "과금 없이 즐길 수 있는 선까지"만 플레이한다.</li>
+</ul>
+<p><strong>이 게임을 플레이하는 맥락</strong>:</p>
+<ul>
+  <li>출퇴근 지하철 10분 세션: 웨이브 방어 1판 완료</li>
+  <li>점심시간 15분 세션: 기지 배치 설계 + 유닛 조합 실험</li>
+  <li>게임을 끊기 전에 "다음엔 저 유닛 배치 써봐야지"라는 생각이 남아야 리텐션 성립</li>
+</ul>
+<hr>
+<h2>핵심 루프</h2>
+<pre class="loop-box">유저가 전장 상황(적 웨이브·기지 상태)을 확인한다
+  → 유닛 배치·마법·방어 건물을 선택·배치한다
+  → 전투가 실시간으로 전개되어 승패·손실이 즉시 갱신된다
+  → 결과(보상/손실)를 받아 다음 빌드 전략을 수정한다
+  → 다시 전장 상황 확인으로 돌아간다</pre>
+<p>세부 4단계:</p>
+<ol>
+  <li><strong>확인</strong> — 현재 목표, 보유 자원, 임박한 위험을 한눈에 파악</li>
+  <li><strong>선택</strong> — 5개 이하의 명확한 행동 중 하나를 결정 (유닛/마법/건물/명령/이동)</li>
+  <li><strong>결과</strong> — 전투·점수·자원·성장 상태가 즉시 변화하여 선택의 손맛을 전달</li>
+  <li><strong>준비</strong> — 획득 보상·변화 상태를 바탕으로 다음 선택을 설계하며 루프 반복</li>
+</ol>
+<hr>
+<h2>MVP 가설</h2>
+<table>
+  <thead><tr><th>#</th><th>핵심 기능</th><th>검증할 가설</th><th>검증 방법</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>핵심 전투/운영 루프</td><td>한 판 안에서 선택 결과를 이해한 플레이어는 다음 판을 자발적으로 시작한다</td><td>1회 플레이 후 재시작률 60% 이상</td></tr>
+    <tr><td>2</td><td>위험/보상 동시 표시 HUD</td><td>위험과 보상이 함께 보이면 선택 시간이 줄고 결과 납득도가 오른다</td><td>주요 선택 평균 8초 이내, 결과 불만 피드백 20% 이하</td></tr>
+    <tr><td>3</td><td>세션 간 성장 보상</td><td>보상이 다음 전략 빌드를 바꿀 수 있으면 반복 플레이 피로가 낮아진다</td><td>3판 내 서로 다른 유닛 조합 선택률 50% 이상</td></tr>
+    <tr><td>4</td><td>수비↔공격 전환 구조</td><td>내 기지를 직접 공략해보는 경험이 기지 설계 동기를 높인다</td><td>"내 기지 공략" 기능 이용률 세션당 30% 이상</td></tr>
+    <tr><td>5</td><td>5파 웨이브 구성</td><td>파수가 증가할수록 긴장감이 높아지고 마지막 파에서 가장 높은 집중도를 보인다</td><td>5파 생존 시도 횟수가 1파 대비 70% 이상 유지</td></tr>
+  </tbody>
+</table>
+<hr>
+<h2>레퍼런스 분석</h2>
+<h3>1. Mad Rocket: Fog of War (직접 레퍼런스)</h3>
+<ul>
+  <li><strong>첫 재미 경험까지 UX 단계 수</strong>: 튜토리얼 → 첫 배치 → 첫 발사 → 결과 확인 = <strong>4단계</strong></li>
+  <li><strong>특징</strong>: 안개 전쟁(FOW)으로 정보 제한 → 탐색 욕구 자극, 실시간 포격 피드백으로 즉각적 손맛</li>
+  <li><strong>적용 교훈</strong>: 안개 시스템은 정보 비대칭을 활용한 전략 깊이를 만든다. MadDragon은 이를 중세 판타지로 재해석하여 척후병 유닛이나 마법 투시로 FOW를 해소하는 선택지 구조에 적용한다.</li>
+</ul>
+<h3>2. Clash of Clans</h3>
+<ul>
+  <li><strong>첫 재미 경험까지 UX 단계 수</strong>: 튜토리얼 빌드 → 첫 방어 성공 → 보상 획득 = <strong>3단계, 약 2분</strong></li>
+  <li><strong>특징</strong>: 비동기 PvP로 오프라인 중에도 공격당하는 긴장 구조, 빌더 분리로 항상 진행감 유지</li>
+  <li><strong>적용 교훈</strong>: 첫 성공 경험을 3단계 이내로 설계하여 진입 장벽을 낮춘다. MadDragon은 튜토리얼 웨이브 1파를 반드시 플레이어가 이기도록 난이도 조정 후 즉각 보상을 지급한다.</li>
+</ul>
+<h3>3. Into the Breach (턴제 전략)</h3>
+<ul>
+  <li><strong>첫 재미 경험까지 UX 단계 수</strong>: 배치 → 예측 화살표 확인 → 이동 결정 → 결과 = <strong>4단계, 30초</strong></li>
+  <li><strong>특징</strong>: 모든 적 행동이 사전 공개되어 "완벽한 해결책"을 찾는 퍼즐 쾌감 제공</li>
+  <li><strong>적용 교훈</strong>: 적 웨이브의 진입 경로와 목표를 전투 시작 전에 힌트로 공개하면, 플레이어가 배치 단계에서 전략적 우위감을 느낀다. MadDragon의 Intel 패널에 적용한다.</li>
+</ul>
+<hr>
+<h2>성공 KPI</h2>
+<table>
+  <thead><tr><th>지표</th><th>목표 수치</th><th>측정 방법</th></tr></thead>
+  <tbody>
+    <tr><td>첫 세션 평균 플레이 시간</td><td><strong>8분 이상</strong></td><td>세션 로그 평균값</td></tr>
+    <tr><td>첫 세션 내 2회차 진입률</td><td><strong>55% 이상</strong></td><td>1판 완료 후 재시작 버튼 탭률</td></tr>
+    <tr><td>D1 리텐션</td><td><strong>30% 이상</strong></td><td>설치 다음날 재접속 유저 비율</td></tr>
+    <tr><td>핵심 선택 화면 이탈률</td><td><strong>15% 이하</strong></td><td>배치 화면 이탈 로그</td></tr>
+    <tr><td>5파 생존 성공률 (3판 이후)</td><td><strong>40% 이상</strong></td><td>웨이브 완료 로그</td></tr>
+    <tr><td>3판 내 상이한 빌드 선택률</td><td><strong>50% 이상</strong></td><td>유닛 조합 다양성 로그</td></tr>
+  </tbody>
+</table>
+<hr>
+<h2>게임 소개</h2>
+<p>공격과 방어, 자원 약탈을 순환시키는 모바일 전략 게임.</p>
+<p>MadDragon의 핵심 매력은 한 번의 선택이 다음 장면의 위험도, 보상, 성장 방향으로 이어지는 구조다. 이 문서는 처음 보는 사람에게 게임의 재미와 현재 방향을 빠르게 소개하기 위한 단일 기획서이며, 세부 변경 이력은 별도 업데이트 내역서에서 관리한다.</p>
+<hr>
+<h2>게임 플레이 예시</h2>
+<ul>
+  <li><strong>1단계</strong>: 플레이어가 MadDragon의 현재 목표, 보유 자원, 즉시 대응해야 할 위험을 확인한다.</li>
+  <li><strong>2단계</strong>: 카드, 유닛, 배치, 명령, 이동 중 현재 상황에 맞는 핵심 행동을 선택한다.</li>
+  <li><strong>3단계</strong>: 선택 결과가 전투, 운영, 보상, 손실로 즉시 갱신되고 다음 판단의 근거가 된다.</li>
+  <li><strong>4단계</strong>: 획득한 보상이나 변화한 상태를 바탕으로 다음 선택을 준비하며 핵심 루프를 반복한다.</li>
+  <li><strong>플레이 감각</strong>: 짧은 세션 안에서 상황 파악, 의미 있는 선택, 즉각적인 피드백, 다음 목표 제시가 끊기지 않는 흐름을 지향한다.</li>
+</ul>
+<hr>
+<h2>핵심 재미</h2>
+<ul>
+  <li><strong>읽기 쉬운 상황 판단</strong>: 지금 위험한 요소와 얻을 수 있는 보상이 한눈에 들어온다.</li>
+  <li><strong>직접적인 선택 피드백</strong>: 선택 직후 전투, 점수, 자원, 성장 상태가 변해 손맛을 만든다.</li>
+  <li><strong>누적되는 성장감</strong>: 반복 플레이가 단순 재시작이 아니라 다음 전략의 재료로 이어진다.</li>
+</ul>
+<hr>
+<h2>주요 시스템</h2>
+<ul>
+  <li><strong>핵심 선택 시스템</strong>: 현재 국면에서 가능한 행동을 5개 이하의 명확한 선택지로 제시한다.</li>
+  <li><strong>위험/보상 피드백</strong>: 행동 전후의 이득, 손실, 위협 변화를 빠르게 보여준다.</li>
+  <li><strong>레이드/기지 방어 피드백</strong>: 현재 구현은 약탈 손실 계산, 본부 보호율, 저장 자원, 예상 손실 표시를 제공한다. 다음 개선은 공격력/방어력/마진/티어 결과 요약과 보호/노출 자원 분리를 추가해 승패 이유와 손실 위험을 한눈에 읽히게 하는 것이다.</li>
+  <li><strong>성장과 해금</strong>: 세션 결과가 능력, 카드, 유닛, 건물, 장비, 스테이지 등 다음 플레이의 선택지를 넓힌다.</li>
+  <li><strong>상태별 UX</strong>: 로딩, 빈 상태, 오류, 많은 데이터, 긴 텍스트 상황에서도 레이아웃이 무너지지 않도록 관리한다.</li>
+  <li><strong>실행 안정성</strong>: 테스트와 빌드 산출물을 기준으로 현재 플레이 가능한 범위를 계속 확인한다.</li>
+</ul>
+<hr>
+<h2>게임 구성과 규칙 (GDD 통합)</h2>
+<ul>
+  <li><strong>통합 기준 문서</strong>: <code>15_MD_GDD.html</code>, <code>superpowers/specs/2026-04-30-medieval-rts-design.md</code>, <code>superpowers/specs/2026-05-15-maddragon-mobile-loop-layout-design.md</code></li>
+</ul>
+<h3>화면/플레이 구조</h3>
+<ul>
+  <li><strong>개요</strong>: Medieval RTS — 실시간 전략 · 기지 방어</li>
+  <li><strong>플레이 모드</strong>: 1인 플레이 / 비동기 PvP (예정)</li>
+  <li><strong>진행 구조</strong>: 준비 단계(병력·기지 구성) → 전투 → 결과 → 반복</li>
+  <li><strong>실험 구조</strong>: 내가 만든 수비 기지를 공격 모드로 직접 공략해볼 수 있음</li>
+</ul>
+<h3>유닛 스탯 (훈련소 Lv0 기준)</h3>
+<table>
+  <thead><tr><th>이름</th><th>역할</th><th>HP</th><th>데미지</th><th>사거리</th><th>속도</th><th>쿨다운</th><th>비용</th><th>건물 배율</th><th>해금 조건</th></tr></thead>
+  <tbody>
+    <tr><td>기사</td><td>근접 탱커</td><td>-</td><td>-</td><td>1.8m</td><td>-</td><td>2.5s</td><td>1.0s</td><td>-</td><td>기본 제공</td></tr>
+    <tr><td>궁수</td><td>원거리 딜러</td><td>-</td><td>-</td><td>7.0m</td><td>-</td><td>3.0s</td><td>1.2s</td><td>-</td><td>훈련소 Lv1</td></tr>
+    <tr><td>마법사</td><td>마법 광역</td><td>-</td><td>-</td><td>5.5m</td><td>-</td><td>2.0s</td><td>1.5s</td><td>-</td><td>훈련소 Lv2</td></tr>
+  </tbody>
+</table>
+<p>훈련소 업그레이드 시 HP·데미지에 배율 적용.</p>
+<h3>적 웨이브</h3>
+<table>
+  <thead><tr><th>파수</th><th>대기 시간</th><th>유닛 수</th><th>유닛 범위</th></tr></thead>
+  <tbody>
+    <tr><td>1파</td><td>5초</td><td>5기</td><td>인덱스 0~0 (기사)</td></tr>
+    <tr><td>2파</td><td>25초</td><td>7기</td><td>인덱스 0~1</td></tr>
+    <tr><td>3파</td><td>25초</td><td>9기</td><td>인덱스 0~2</td></tr>
+    <tr><td>4파</td><td>25초</td><td>11기</td><td>인덱스 0~3</td></tr>
+    <tr><td>5파 (최종)</td><td>25초</td><td>13기</td><td>인덱스 0~4</td></tr>
+  </tbody>
+</table>
+<p>5파 전부 격퇴 후 22초 생존 시 승리.</p>
+<h3>Attack Prep UI</h3>
+<ul>
+  <li>유닛: 5개의 분대 슬롯으로 편성 (무제한 구매 버튼 아님)</li>
+  <li>마법: 전투 장착 마법은 2~3개로 제한</li>
+  <li>Intel 패널: 적 위협 요약, 경로 힌트, 추천 카운터 표시</li>
+</ul>
+<hr>
+<h2>조작과 UX 원칙</h2>
+<ul>
+  <li>주요 버튼은 44px 이상으로 유지하고, 화면당 CTA 강조색은 하나만 사용한다.</li>
+  <li>버튼/선택지는 한 번에 5개 이하로 노출해 판단 부담을 줄인다.</li>
+  <li>로딩, 빈 상태, 에러, 많은 데이터, 긴 텍스트 상태를 각각 별도 화면/컴포넌트로 확인한다.</li>
+  <li>HUD 동일 레이어 요소는 겹치지 않게 배치하고, 겹침이 필요한 효과는 별도 depth/z-order를 쓴다.</li>
+  <li>400ms 이내 모든 선택에 시각적 피드백을 제공한다.</li>
+</ul>
+<hr>
+<h2>기술 스택</h2>
+<table>
+  <thead><tr><th>항목</th><th>선택</th></tr></thead>
+  <tbody>
+    <tr><td>Unity 버전</td><td>Unity 2022.3.62f3 LTS (현재) / Unity 6 LTS (목표)</td></tr>
+    <tr><td>Render Pipeline</td><td>URP (Universal Render Pipeline)</td></tr>
+    <tr><td>Input System</td><td>New Input System (터치 + 마우스)</td></tr>
+    <tr><td>언어</td><td>C# / MonoBehaviour</td></tr>
+    <tr><td>빌드 타겟</td><td>Windows Standalone, Android, WebGL</td></tr>
+    <tr><td>테스트</td><td>NUnit (편집 모드 테스트)</td></tr>
+  </tbody>
+</table>
+<hr>
+<h2>현재 개발 상태 (2026-07-02 기준)</h2>
+<table>
+  <thead><tr><th>항목</th><th>체감도</th></tr></thead>
+  <tbody>
+    <tr><td>완성 목표 대비 구현</td><td>약 57%</td></tr>
+    <tr><td>첫 세션 핵심 루프 전달 가능성</td><td>약 63%</td></tr>
+    <tr><td>UI/리소스 일관성</td><td>약 53%</td></tr>
+    <tr><td>콘텐츠와 반복 플레이 분량</td><td>약 53%</td></tr>
+    <tr><td>빌드/실행 안정성</td><td>약 67%</td></tr>
+  </tbody>
+</table>
+<blockquote>
+<p>실제 플레이 테스트 후 ±15%p 보정 예정.</p>
+</blockquote>
+<p>레이드/기지 방어 가독성 현재 상태:</p>
+<ul>
+  <li>구현 확인: <code>RaidLossCalculator</code>, <code>RaidForecast</code>, <code>ResourceStorageSystem</code>이 저장 자원/보유 지갑 손실과 보호율을 계산한다.</li>
+  <li>UI 확인: 캠페인 허브와 기지 관리 화면이 저장 골드, 지갑 골드, 본부 레벨, 저장 한도, 예상 약탈 손실을 표시한다.</li>
+  <li>테스트 근거: <code>RaidLossCalculatorTests</code>, <code>ResourceStorageSystemTests</code>, <code>CampaignHubScreenTests</code>가 손실률, 보호율, 저장/수거, 허브 버튼 흐름을 검증한다.</li>
+  <li>남은 공백: 공격 결과 화면의 공격력/방어력/마진/레이드 티어, 보호 자원/노출 자원 분리, 최근 자원 변화 로그는 아직 명확한 완성 UI로 확인되지 않았다.</li>
+</ul>
+<hr>
+<h2>남은 리스크와 다음 우선순위</h2>
+<ul>
+  <li>첫 화면에서 게임의 목표와 다음 행동이 5초 안에 보이는지 확인한다.</li>
+  <li>주요 선택의 결과 예측과 실제 결과가 어긋나는 지점을 플레이 테스트로 수집한다.</li>
+  <li>레이드 결과 패널에 공격력, 방어력, 마진, 승패, 레이드 티어, 획득/놓친 자원을 한 줄 요약으로 추가한다.</li>
+  <li>기지 관리/공격 준비 흐름에서 보호된 자원, 노출된 자원, 예상 손실, 손실 감소 행동을 분리해 보여준다.</li>
+  <li>자원 변화는 before/delta/after 또는 최근 이벤트 목록으로 감사 가능하게 만들어 손실 후 납득도를 높인다.</li>
+  <li>기획서에 남아 있던 변경 이력성 내용은 업데이트 내역서로 계속 이동해 소개 문서의 밀도를 유지한다.</li>
+</ul>
+<hr>
+<h2>AI 생성 에셋 목록</h2>
+<table>
+  <thead><tr><th>파일명</th><th>용도 추정</th></tr></thead>
+  <tbody>
+    <tr><td>maddragon_building_atlas.png</td><td>건물 스프라이트 아틀라스 (불투명)</td></tr>
+    <tr><td>maddragon_building_atlas_transparent.png</td><td>건물 스프라이트 아틀라스 (투명 배경)</td></tr>
+    <tr><td>maddragon_icon_atlas.png</td><td>UI 아이콘 모음 아틀라스 (불투명)</td></tr>
+    <tr><td>maddragon_icon_atlas_transparent.png</td><td>UI 아이콘 모음 아틀라스 (투명 배경)</td></tr>
+    <tr><td>maddragon_ui_kit_atlas.png</td><td>UI 컴포넌트 키트 아틀라스 (불투명)</td></tr>
+    <tr><td>maddragon_ui_kit_atlas_transparent.png</td><td>UI 컴포넌트 키트 아틀라스 (투명 배경)</td></tr>
+    <tr><td>maddragon_unit_card_atlas.png</td><td>유닛 카드 일러스트 아틀라스 (불투명)</td></tr>
+    <tr><td>maddragon_unit_card_atlas_transparent.png</td><td>유닛 카드 일러스트 아틀라스 (투명 배경)</td></tr>
+  </tbody>
+</table>
+<hr>
+<h2>적용 리소스</h2>
+<ul>
+  <li>런타임에 쓰이는 대표 이미지와 UI 리소스는 <code>Assets/Resources/MadDragonArt/</code> 경로를 기준으로 관리한다.</li>
+  <li>새 이미지가 필요할 때는 프로젝트 접두어 <code>maddragon_</code>을 포함한 lowercase kebab-case 파일명을 사용한다.</li>
+  <li>최종 런타임 비주얼은 PNG/WebP 등 비트맵 자산을 우선 사용하고, SVG 또는 코드 드로잉은 문서/임시 참조로만 남긴다.</li>
+</ul>
+<hr>
+<h2>빌드, 테스트, 릴리스</h2>
+<ul>
+  <li>Unity Editor 빌드 또는 CLI 배치 빌드를 통해 <code>release/MadDragon.exe</code> 생성.</li>
+  <li>빌드 성공 후 <code>MadDragon_v{버전}_portable.exe</code>를 프로젝트 루트에 배치.</li>
+  <li>문서 전용 갱신에서는 실행 파일을 새로 생성하지 않는다.</li>
+  <li>레이드/자원 로직의 가까운 검증 명령은 Unity EditMode 테스트에서 <code>RaidLossCalculatorTests</code>, <code>ResourceStorageSystemTests</code>, <code>CampaignHubScreenTests</code>를 실행하는 것이다.</li>
+</ul>
+<hr>
+<h2>개선 제안</h2>
+<blockquote>
+<p>아래 제안은 현재 기획을 바탕으로 도출한 우선순위별 개선 방향입니다.</p>
+</blockquote>
+<h3>🎮 게임플레이 / 핵심 기능</h3>
+<table>
+  <thead><tr><th>우선순위</th><th>제안</th><th>기대 효과</th></tr></thead>
+  <tbody>
+    <tr><td>높음</td><td>웨이브 시작 전 3초 카운트다운 동안 적 진입 경로를 반투명 화살표로 미리 표시하여 배치 수정 기회 제공</td><td>배치 화면 이탈률 15% 목표 달성 가속, "결과 예측과 실제 결과 어긋남" 리스크 직접 해소</td></tr>
+    <tr><td>높음</td><td>전투 패배 후 결과 화면에서 "이 웨이브를 막으려면 [유닛명] 1개를 [위치]에 배치하면 어땠을까" 형태의 AI 힌트 한 줄 표시</td><td>다음 판 재시작률 상승 (1판 완료 후 재시작률 60% 목표 지원), 전략 학습 곡선 완만화</td></tr>
+    <tr><td>중간</td><td>수비 기지 공략 모드(내 기지를 공격) 완료 시 "방어 취약 구역 히트맵" 제공 — 가장 많이 뚫린 방어선 위치를 색상 강도로 표시</td><td>"내 기지 공략" 이용률 30% 목표 달성, 기지 재설계 동기 유발</td></tr>
+    <tr><td>중간</td><td>5파 도중 특정 조건(예: 마법 3회 사용, 유닛 전멸 없이 3파 통과)을 달성하면 즉시 보너스 보상을 지급하는 도전 목표 시스템</td><td>5파 생존 시도 횟수 70% 유지 목표 지원, 중간 이탈 방지</td></tr>
+    <tr><td>낮음</td><td>3개 이상의 상이한 유닛 조합으로 승리 기록 보관 및 각 조합별 승률 통계 화면 제공</td><td>3판 내 상이한 빌드 선택률 50% 목표 지원, 전략 메타 탐색 동기 부여</td></tr>
+  </tbody>
+</table>
+<h3>🖥️ UX / UI</h3>
+<ul>
+  <li><strong>배치 단계의 정보 과부하</strong>: Intel 패널(적 위협·경로·카운터 추천)과 유닛 슬롯이 동시에 노출되면 시선이 분산된다. Intel 패널을 탭으로 접을 수 있는 토글 버튼을 우상단에 배치하되 첫 3판은 자동 펼침으로 튜토리얼 역할을 겸하게 한다.</li>
+  <li><strong>결과 화면의 정보 밀도</strong>: 패배 후 손실(유닛 수, 피해량)과 획득 보상이 같은 공간에 나열되어 다음 행동 방향이 불명확하다. "다음엔 이렇게 해봐" CTA를 결과 화면 최하단 단독 강조색으로 고정 배치한다.</li>
+  <li><strong>웨이브 진행 중 선택지 제한 위반 리스크</strong>: 전투 중 마법 발동·유닛 추가 등 동시 선택 가능 항목이 5개를 초과할 수 있다. 전투 단계에서는 마법 2~3개 슬롯만 활성화하고 나머지는 비활성 잠금 처리하여 Hick's Law 기준을 유지한다.</li>
+</ul>
+<h3>💰 수익화 전략</h3>
+<ul>
+  <li><strong>시즌 패스 (배틀패스형)</strong>: 4~6주 단위로 테마별 유닛 스킨·건물 외형 세트를 제공. MadDragon은 세션 반복 구조가 명확하므로 "판 수 달성" 기반 미션 트랙이 일상 접속 동기로 작동한다. 유닛 성능 변화 없는 외형만 보상으로 제한해 과금 강요 이탈 방지.</li>
+  <li><strong>원타임 스타터 팩</strong>: 첫 3판 완료 후 한 번만 노출되는 저가(1,200~2,500원) 팩. 기사·궁수·마법사 스킨 1종 + 훈련소 즉시 업그레이드 1회권 구성. 코어 게이머의 "광고·과금 강요 이탈" 특성을 고려해 팝업이 아닌 결과 화면 내 배너로 노출.</li>
+  <li><strong>광고 선택형 (Rewarded Ad)</strong>: 패배 후 "광고 시청 → 직전 파수부터 재시작" 선택지. 강제 노출 없이 절박한 순간에만 노출해 이탈보다 광고 시청을 선택하게 유도.</li>
+</ul>
+<h3>📦 콘텐츠 확장</h3>
+<ul>
+  <li><strong>단기(1~2개월):</strong> 중세 판타지 테마 적 유닛 2종 추가(트롤 돌격병·흑마법사 원거리) + Intel 패널 카운터 추천 연동. 기존 5파 웨이브 구조를 유지하면서 유닛 범위 인덱스(0~4)를 6~7로 확장해 전략 조합 경우의 수를 2배 이상 확대.</li>
+  <li><strong>중기(3~6개월):</strong> 비동기 PvP 구현 — 상대방이 오프라인일 때 설계한 기지를 공격하고 결과를 다음 접속 시 확인하는 구조. 랭크 점수 시스템과 주간 리더보드를 연동해 D7 리텐션 기반을 형성.</li>
+  <li><strong>장기(6개월+):</strong> 중세 세계관 챕터 스토리 캠페인(10~15스테이지) 추가. 각 스테이지에서 보스 웨이브 전용 특수 지형(성벽 파괴, 좁은 협곡)을 도입해 기지 배치 전략에 새로운 제약과 쾌감을 부여.</li>
+</ul>
+<h3>⚙️ 기술적 개선</h3>
+<ul>
+  <li><strong>웨이브 데이터 외부화</strong>: 현재 파수별 유닛 수·대기 시간이 코드에 하드코딩되어 있을 가능성이 높다. ScriptableObject 또는 JSON 파일로 외부화하면 콘텐츠 확장 시 재빌드 없이 웨이브 파라미터 조정이 가능해 라이브 밸런싱 속도가 3배 이상 단축된다.</li>
+  <li><strong>Unity Analytics 통합</strong>: Firebase Analytics 또는 Unity Gaming Services Analytics를 조기 연동하여 KPI(재시작률·이탈 화면·빌드 다양성)를 실데이터로 수집한다. 현재 체감도 기반 추정치(±15%p)를 실측 데이터로 대체해 다음 스프린트 우선순위를 객관화한다.</li>
+  <li><strong>NUnit 편집 모드 테스트 확대</strong>: 현재 전투 판정(피해 계산·사거리 판정)이 런타임에서만 검증된다면, MonoBehaviour 의존성을 분리한 순수 C# 전투 로직 클래스를 도입하고 최소 5개 이상의 단위 테스트를 추가한다. 빌드 안정성 67% → 80%+ 개선 목표.</li>
+</ul>
+<hr>
+<h2>2026-06-28 v0.6.1 런타임 성 리소스 갱신</h2>
+<ul>
+  <li>적용 자산: <code>Assets/Resources/MadDragonArt/Buildings/player_castle.png</code></li>
+  <li>적용 범위: <code>GeneratedArtLibrary.LoadSprite("Buildings/player_castle")</code> 경로로 로드되는 플레이어 성/기지 대표 비주얼을 더 밝고 입체적인 418x418 PNG로 교체했다.</li>
+  <li>참조 안정성: 동일 경로 교체로 런타임 로더와 Unity <code>.meta</code>를 유지했고, 원본은 <code>_temp/asset_backups/2026-06-28_player_castle/player_castle.original.png</code>에 보관했다.</li>
+  <li>검증 상태: PNG 크기/해시와 <code>.meta</code> 무변경을 확인했다. Unity 배치 빌드는 라이선스/에디터 상태에 따라 별도 검증한다.</li>
+</ul>
+<hr>
+<h2>평가 결정 (2026-07-01)</h2>
+<p><strong>결정</strong>: 보류</p>
+<p><strong>종합 점수</strong>: 5.5/10</p>
+<h3>핵심 강점</h3>
+<ul>
+  <li>기지 배치 + 웨이브 방어라는 CoC 친숙 구조로 진입 장벽이 낮음</li>
+  <li>v0.6.1까지 아트 리소스가 꾸준히 갱신되고 있어 비주얼 완성도 향상 중</li>
+  <li>비동기 PvP(기지 공격) 계획이 D7 리텐션 기반을 만들 수 있는 구조</li>
+</ul>
+<h3>치명적 약점</h3>
+<ul>
+  <li>CoC와 직접 경쟁 구도이며 차별점(드래곤 MadDragon 테마)이 기획서에 불충분하게 명시됨</li>
+  <li>유닛 수치(공격력·사거리·쿨다운)가 기획서에 미기입 상태 — 밸런싱 기준 없음</li>
+  <li>Unity 에디터 라이선스 문제로 빌드 안정성 67% 수준 유지</li>
+</ul>
+<h3>보류 재착수 조건</h3>
+<ul>
+  <li>유닛 5종 이상의 수치표(공격력·사거리·비용·쿨다운) 완성</li>
+  <li>CoC 대비 차별점 1가지 구체화 (예: "드래곤이 매 파수마다 변형되는 동적 보스" 또는 "기지 공격이 퍼즐 형태로 전개")</li>
+  <li>Unity 빌드 환경 정상화 (에디터 라이선스 확보 또는 빌드 서버 설정)</li>
+  <li>PokerStrike·LotteryFantasy 중 1개 출시 완료 후 재착수</li>
+</ul>
+<hr>
+<h2>포트폴리오 리뷰 개선 계획 (2026-07-01)</h2>
+<p><strong>종합 평가</strong>: 5.5/10 | <strong>결정</strong>: 🔶 보류</p>
+<h3>보류 이유</h3>
+<ul>
+  <li>유닛 HP/데미지 수치 미기입 — 핵심 콘텐츠 미완</li>
+  <li>Clash of Clans 직접 경쟁 → 고유 훅 부재</li>
+</ul>
+<h3>재착수 조건</h3>
+<ul class="checklist">
+  <li>유닛 3종 스탯 수치 전부 확정</li>
+  <li>"안개 전쟁" or "공수 순환" 중 핵심 차별 훅 1개 완성</li>
+  <li>5웨이브 완성 플레이 테스트 통과</li>
+</ul>
+<h2>2026-07-02 레이드 결과 요약 모델</h2>
+<ul>
+  <li>추가 구현: <code>Assets/_Game/Scripts/Economy/RaidResultSummaryModel.cs</code></li>
+  <li>테스트 추가: <code>Assets/_Game/Tests/EditMode/RaidResultSummaryModelTests.cs</code></li>
+  <li>역할: 기존 <code>RaidForecast</code>를 결과 라벨, 본부 보호율, 저장 자원 손실, 지갑 자원 손실, 총 손실, 다음 행동 힌트로 바꿔 결과 화면 연결 전에도 문구 정책을 테스트 가능하게 만든다.</li>
+  <li>검증: Unity 2022.3.62f3 batchmode에서 스크립트 컴파일은 성공했다. 다만 현재 CLI 실행은 테스트 결과 XML을 생성하지 않아 Unity Test Runner 재실행이 필요하다.</li>
+</ul>
+<h2>2026-07-02 실행파일 최신화</h2>
+<ul>
+  <li>이번 배치에서 레이드 결과 요약 런타임 모델을 추가한 뒤 Unity <code>BuildWindows64</code> 배치 빌드를 실행했다.</li>
+  <li>빌드 로그 기준 <code>Build Finished, Result: Success.</code>를 확인했고, <code>release/MadDragon_Data/Managed/MedievalRTS.Runtime.dll</code>이 새 런타임 모델을 포함한 크기 131,584바이트로 갱신됐다.</li>
+  <li><code>MadDragon_v0.6.1_portable.exe</code>와 <code>MadDragon_v0.6.1_portable_Data</code>를 프로젝트 루트와 <code>release/</code>에 재배치했고, Google Drive 실행파일 폴더의 <code>15_MadDragon_v0.6.1_portable.exe</code>도 교체했다.</li>
+  <li>제한: Unity <code>-runTests</code>는 이번 CLI 세션에서 결과 XML을 생성하지 않아 EditMode 테스트 최종 인증은 Unity Test Runner 재실행이 필요하다.</li>
+</ul>
 
-<h3>플레이 미리보기</h3>
-<img src="./MadDragon_gameplay_preview.png" alt="플레이 미리보기" style="max-width:100%;border-radius:8px;margin:12px 0;">
-
-<h2>핵심 콘셉트</h2>
-    <p>MadDragon은 공격과 방어가 번갈아 성장하는 모바일 RTS 캠페인이다. 플레이어는 적 요새를 공격해 자원을 벌고, 본부와 방어 시설을 강화하며, 자동 생산되는 자원을 수거하고, 침공 방어에 실패하면 자원을 약탈당한다.</p>
-  </section>
-
-  <h2>핵심 루프</h2>
-  <pre>캠페인 허브
--> 공격 준비
--> 요새 공격
--> 보상 정산
--> 기지 정비
--> 침공 방어 또는 다음 공격</pre>
-
-  <div class="grid">
-    <section class="card">
-      <h3>공격</h3>
-      <p>정찰로 약점을 확인하고, 제한된 병력 슬롯과 장착 마법으로 적 요새를 뚫는 퍼즐이다.</p>
-    </section>
-    <section class="card">
-      <h3>방어</h3>
-      <p>본부와 생산 자원을 지키는 경제 압박이다. 실패하면 미수거 자원과 보유 자원의 일부를 약탈당한다.</p>
-    </section>
-  </div>
-
-  <h2>자원 생산과 약탈</h2>
-  <p>대부분의 생산 건물은 시간이 지나며 자원을 만든다. 본부는 생산된 자원을 저장하고, 본부 레벨은 저장량과 보호율을 높인다.</p>
-  <p><span class="tag">미수거/저장 자원</span><span class="tag">보유 자원</span><span class="tag">본부 보호율</span><span class="tag">예상 약탈량</span></p>
-  <pre>방어 성공: 손실 없음, 방어 보상 획득
-아슬아슬한 실패: 미수거 자원 30%, 보유 자원 5% 손실
-완전 패배: 미수거 자원 70%, 보유 자원 15% 손실
-본부 파괴: 미수거 자원 100%, 보유 자원 20% 손실</pre>
-  <p class="risk">UI에는 항상 예상 약탈량과 보호율을 표시한다.</p>
-  <pre>예상 약탈: 저장 골드 1,200 중 840 / 보유 골드 8,000 중 400
-보호율: 35%
-위험도: 높음</pre>
-
-  <h2>자원 역할</h2>
-  <ul>
-    <li><strong>골드:</strong> 병력, 마법, 건물 배치, 수리 등 즉시 소비.</li>
-    <li><strong>명예:</strong> 유닛 해금, 특수 건물 업그레이드, 패시브 성장.</li>
-    <li><strong>별:</strong> 캠페인 진행도와 보상 해금 조건.</li>
-  </ul>
-
-  <h2>모바일 레이아웃 원칙</h2>
-  <ul>
-    <li>전장은 최대한 넓게 보여주고, UI는 필요한 순간에만 하단 시트로 연다.</li>
-    <li>상단 바는 시간, 목표 HP, 자원, 위험도처럼 핵심 상태만 표시한다.</li>
-    <li>하단 탭은 병력, 마법, 정보, 건설, 주둔, 강화처럼 화면별 작업 전환에 사용한다.</li>
-    <li>전투 퀵바는 선택 병력, 집결, 공격, 후퇴/대기, 장착 마법으로 압축한다.</li>
-    <li>한 화면에는 하나의 주요 행동만 크게 표시한다.</li>
-  </ul>
-
-  <h2>화면 구성</h2>
-  <div class="grid">
-    <section class="card"><h3>캠페인 허브</h3><p>챕터, 골드, 명예, 별, 저장 자원, 침공 위험도를 표시하고 다음 공격 또는 기지 정비로 안내한다.</p></section>
-    <section class="card"><h3>공격 준비</h3><p>병력, 마법, 정보 탭으로 구성한다. 병력은 출전 슬롯, 마법은 2~3개 장착 중심이다.</p></section>
-    <section class="card"><h3>요새 공격</h3><p>상단 상태와 하단 퀵바만 유지하고, 라인 선택은 전장 터치로 해결한다.</p></section>
-    <section class="card"><h3>기지 정비</h3><p>저장 자원, 보유 자원, 저장 한도, 예상 약탈량을 보여주고 수거/건설/주둔/강화 탭을 제공한다.</p></section>
-    <section class="card"><h3>침공 방어</h3><p>본부 HP, 침공 타이머, 보호 자원을 표시하고 방어 결과에서 지킨 자원과 잃은 자원을 명확히 보여준다.</p></section>
-    <section class="card"><h3>결과</h3><p>승패, 별, 획득/약탈 자원, 해금을 보여주며 다음 행동은 기지 정비 또는 수리/보강으로 유도한다.</p></section>
-  </div>
-
-  <h2>구현 상태</h2>
-  <section class="card">
-    <h3>v0.6 구현 요약</h3>
-    <ul>
-      <li><code>MobileBattleHud</code>의 하단 퀵바를 실제 버튼형 명령 슬롯으로 개선했다.</li>
-      <li>퀵바는 <code>Rally</code>, <code>Attack</code>, <code>Hold</code>, <code>Spells</code> 4개 명령으로 구성해 5개 이하 주요 선택지와 44px 이상 터치 타깃 원칙을 지킨다.</li>
-      <li>전투 중 상단 상태는 남은 시간, 목표 HP, 획득 골드/명예만 압축 표시해 플레이 예시 화면의 상단 정보 구조에 더 가까워졌다.</li>
-      <li><code>TestBootstrap</code>은 새 모바일 HUD 명령을 기존 병력 선택, 우선 공격 대상, 대기 명령, 마법 시전 준비 흐름에 연결한다.</li>
-      <li><code>MobileBattleHudTests</code>를 추가해 버튼 존재, 터치 크기, 명령 콜백, 압축 상태 텍스트를 EditMode 테스트로 검증했다.</li>
-    </ul>
-  </section>
-  <section class="card">
-    <h3>v0.5 구현 요약</h3>
-    <ul>
-      <li>자원 생산 건물, 본부 저장, 모두 수거, 본부 보호율을 구현했다.</li>
-      <li>방어 실패 단계에 따라 미수거 자원과 보유 자원의 예상 약탈량을 계산한다.</li>
-      <li>캠페인 허브, 기지 정비, 공격 준비, 전투 HUD의 모바일 우선 프로토타입 화면을 추가했다.</li>
-      <li>Clash-like 비주얼 방향을 위해 카메라, 조명, 진영 색상, 지형/석재/골드 팔레트를 공통 스타일로 분리했다.</li>
-    </ul>
-  </section>
-  <section class="card">
-    <h3>v0.5 Task 1 - 자원 생산/저장 로직</h3>
-    <ul>
-      <li><code>ResourceWallet</code>로 골드, 명예, 별 같은 자원을 보관하고 추가/소비/제거/복사할 수 있게 했다.</li>
-      <li><code>ResourceProductionBuilding</code>으로 생산 건물의 초당 생산량과 개별 저장 한도를 표현한다.</li>
-      <li><code>ResourceStorageSystem</code>으로 본부 레벨, 저장 자원, 생산 누적, 모두 수거, 본부 저장 한도, 보호율을 계산한다.</li>
-      <li>같은 자원을 생산하는 건물이 여러 개 있을 때 자원별 총 생산 한도와 본부 저장 한도를 함께 적용한다.</li>
-      <li>EditMode 테스트에 생산 누적, 생산 건물 한도, 다중 생산 건물 총량, 본부 저장 한도, 모두 수거, 보호율 상한, 본부 레벨 최소값, null 생산 건물 방어 케이스를 추가했다.</li>
-    </ul>
-  </section>
-  <section class="card">
-    <h3>v0.5 Task 2 - 약탈 손실 계산</h3>
-    <ul>
-      <li><code>RaidLossCalculator</code>로 방어 결과별 예상 약탈 손실과 실제 자원 차감을 계산한다.</li>
-      <li>보호율은 0%~75% 범위로 보정하고, 예측 결과에도 보정된 보호율을 표시한다.</li>
-      <li>골드, 명예, 별 모두에 저장 자원 손실과 보유 자원 손실을 동일한 규칙으로 적용한다.</li>
-    </ul>
-  </section>
-  <section class="card">
-    <h3>v0.5 Task 3 - 세이브 데이터 통합</h3>
-    <ul>
-      <li><code>SaveData</code>에 보유 자원, 저장 자원, 본부 레벨, 마지막 수거 시각을 저장하는 경제 상태 필드를 추가했다.</li>
-      <li><code>SaveSystem.Load</code>는 오래된 세이브의 null 딕셔너리/지갑과 지갑 내부 수량 딕셔너리를 기본값으로 보정하고, 본부 레벨이 0 이하이면 1로 복구한다.</li>
-      <li>EditMode 테스트에 저장 후 불러오기에서 보유/저장 골드, 명예, 별, 본부 레벨, 마지막 수거 시각이 유지되고 오래된 경제 필드가 기본값으로 보정되는 케이스를 추가했다.</li>
-    </ul>
-  </section>
-  <section class="card">
-    <h3>v0.5 Task 4 - 모바일 UI 기반</h3>
-    <ul>
-      <li><code>MobileHudTheme</code>에 모바일 HUD 패널, 강조 패널, 골드/명예/위험/긍정 색상, 주요/보조 버튼 색상, 폰트 크기, 하단 시트 높이, 주요 버튼 크기 상수를 추가했다.</li>
-      <li><code>MobileUiFactory</code>로 UGUI 패널, 라벨, 버튼 생성과 <code>RectTransform</code> 배치를 재사용할 수 있게 분리했다.</li>
-    </ul>
-  </section>
-  <section class="card">
-    <h3>v0.5 Task 5 - 캠페인 허브/기지 정비 프로토타입</h3>
-    <ul>
-      <li><code>CampaignHubScreen</code>으로 보유 자원, 저장 자원, 예상 약탈 손실을 첫 화면에서 확인하고 <code>Play</code>로 즉시 전투를 시작하거나 <code>Prep</code>/<code>Base</code>로 준비와 기지 정비를 선택할 수 있게 했다.</li>
-      <li><code>BaseManagementScreen</code>으로 본부 레벨, 저장 한도, 저장 골드, 예상 손실을 표시하고 <code>Collect</code> 버튼으로 미수거 자원을 보유 자원으로 옮길 수 있게 했다.</li>
-      <li><code>TestBootstrap</code>에 자원 생산 틱, 현재 약탈 예측, 허브의 즉시 전투 시작, 기지/기존 공격 준비 화면 전환을 연결해 자동 생산 자원을 자주 챙기는 루프를 프로토타입 화면에 반영했다.</li>
-      <li>기존 공격 준비 화면에서도 <code>Hub</code>/<code>Base</code> 버튼으로 돌아갈 수 있어, 병력 구매 전후에 저장 자원 수거와 약탈 위험 확인을 다시 할 수 있다.</li>
-    </ul>
-  </section>
-  <section class="card">
-    <h3>v0.5 Task 6 - 공격 준비 화면</h3>
-    <ul>
-      <li><code>AttackPrepScreen</code>으로 편성 병력, 마법 슬롯, 정찰 정보를 한 화면에 요약해 출전 직전 확인 흐름을 추가했다.</li>
-      <li><code>Army</code> 버튼은 기존 병력/마법 구매 화면으로 이어지고, <code>Start</code>는 기존 전투 진입 로직을 호출해 현재 프로토타입 전투 흐름을 유지한다.</li>
-      <li>공격 준비 화면에서도 <code>Hub</code>와 <code>Base</code>로 돌아갈 수 있어, 출전 직전에 저장 자원 수거와 약탈 위험 확인을 반복할 수 있다.</li>
-      <li>테스트 편의를 위해 공격 병력이 비어 있을 때 허브의 <code>Play</code> 또는 공격 준비 화면의 <code>Start</code>를 누르면 기본 기사 3명을 자동 편성하고 전투를 시작한다.</li>
-    </ul>
-  </section>
-  <section class="card">
-    <h3>v0.5 Task 7 - 모바일 전투 HUD</h3>
-    <ul>
-      <li><code>MobileBattleHud</code>를 추가해 전투 중 남은 시간, 목표 HP, 획득 골드/명예를 상단에 압축 표시한다.</li>
-      <li>하단 퀵바는 집결, 공격, 대기, 마법 같은 모바일 전투 명령 위치를 먼저 잡아두는 프로토타입 UI로 연결했다.</li>
-      <li>기존 전투 HUD는 아직 유지해 입력 기능을 보존하고, 새 HUD는 다음 단계에서 점진적으로 주 HUD가 되도록 병행 표시한다.</li>
-    </ul>
-  </section>
-  <section class="card">
-    <h3>v0.5 Task 8 - 모바일 비주얼 스타일 기반</h3>
-    <ul>
-      <li><code>MobileVisualStyle</code>로 카메라, 조명, 하늘색, 잔디, 진영 색상, 석재, 골드 포인트 색상을 한곳에서 관리한다.</li>
-      <li>프로토타입 월드의 카메라 시야각과 조명을 모바일에서 읽기 쉬운 밝고 장난감 같은 톤으로 조정했다.</li>
-      <li>적 건물, 플레이어 건물, 성벽, 게이트, 지면 색상을 공통 팔레트로 연결해 이후 Clash-like 퀄리티 업그레이드의 기준점을 만들었다.</li>
-      <li>밝은 레퍼런스 이미지 방향에 맞춰 잔디/길/돌/목재/횃불 팔레트를 보강하고, 성/타워/마법탑/자원 건물에 지붕, 금색 트림, 문, 배너, 광원 장식을 추가했다.</li>
-      <li>전장 가장자리에 나무와 바위 클러스터를 배치하고 중앙 경로를 추가해 평면 primitive 전장이 모바일 전략 게임처럼 읽히도록 밀도를 높였다.</li>
-      <li>생성 이미지 리소스를 <code>Resources/MadDragonArt</code>로 분할 배치하고, 월드 건물 파사드와 병력/마법 구매 버튼 썸네일에 실제로 연결했다.</li>
-      <li>Asset Store의 <code>Natural Environment (Mobile)</code> 방향을 검토했으며, 에셋스토어 인증 다운로드 전까지 프로젝트 내 <code>SimpleNaturePack</code>/절차적 장식으로 숲 가장자리, 풀밭, 바위, 꽃, 물길, 배경 능선을 전장에 적용했다.</li>
-      <li>배경 장식은 충돌체를 제거한 비전투 오브젝트로 구성해 유닛 이동, 공격 판정, 플레이 버튼 전투 진입 안정성에 영향을 주지 않도록 했다.</li>
-      <li>포터블 실행 시 구형 <code>01_MainMenu</code>의 미연결 버튼으로 시작하던 문제를 수정해, 빌드 첫 씬을 최신 캠페인 허브/전투 루프가 붙은 <code>05_TestBattle</code>로 변경했다.</li>
-      <li><code>GameManager</code>의 씬 전환명도 실제 빌드 씬 파일명(<code>01_MainMenu</code>, <code>02_BaseBuilder</code>, <code>05_TestBattle</code>, <code>04_Result</code>)에 맞춰 수정했다.</li>
-      <li><code>ToonyTinyPeople/TT_RTS/TT_RTS_Standard</code> 에셋을 런타임 매니페스트로 묶고, 유닛/공성기/주요 건물/성벽/배너 장식에 Toony RTS 실제 모델 비주얼 레이어를 적용했다.</li>
-      <li>Toony 비주얼은 기존 HP, AI, 콜라이더 루트의 자식으로만 붙이고 자체 콜라이더와 Rigidbody를 제거해 전투 안정성을 유지한다.</li>
-      <li>건물은 Toony FBX/프리팹 모델을 우선 사용하고, 모델 로드에 실패한 경우에만 생성 이미지 파사드를 fallback으로 만든다.</li>
-      <li>Toony 건물 모델은 각 건물의 게임플레이 바닥 크기에 맞춰 렌더러 bounds를 기준으로 자동 스케일링하고, 모델 하단을 지면에 정렬한다.</li>
-      <li>공격 모드 시야 시스템은 기존 적 은폐 로직 위에 어두운 반투명 FOW 비주얼 레이어를 추가해, 미탐색 지역은 짙은 안개로 가리고 탐색 완료/현재 시야 밖 지역은 옅은 안개로 남긴다.</li>
-    </ul>
-  </section>
-
-  <h2>구현 방향</h2>
-  <p>1차 구현은 현재 프로토타입 기능을 살리되 모바일 UI 구조로 재배치한다. 이후 자원 저장/약탈 계산과 UI 화면 생성은 별도 클래스로 분리한다.</p>
-  <p><span class="tag">CampaignHubScreen</span><span class="tag">AttackPrepScreen</span><span class="tag">BattleHud</span><span class="tag">BaseManagementScreen</span><span class="tag">DefenseSetupHud</span><span class="tag">ResultScreen</span><span class="tag">ResourceStorageSystem</span><span class="tag">RaidLossCalculator</span></p>
-
-  <h2>검증</h2>
-  <ul>
-    <li>자원 생산 누적, 모두 수거, 본부 저장 한도, 약탈 손실 계산, 보호율 보정은 EditMode 테스트로 검증한다.</li>
-    <li>모바일 비율, 터치 영역, 텍스트 겹침, 하단 시트와 전장 가시성은 Unity 실행 화면으로 검증한다.</li>
-  </ul>
-</main>
-<!-- APPLIED_RESOURCES_START -->
-<section class="applied-resources">
-  <h2>적용 리소스</h2>
-  <p>자동 갱신: 2026-06-04. 코드, 씬, 프리팹, 설정 파일에서 참조가 확인된 리소스 기준입니다.</p>
-  <ul>
-    <li><strong>이미지/스프라이트</strong>: <code>Assets/SimpleNaturePack/Textures/NaturePackLite_Texture_01.png</code></li>
-    <li><strong>Unity/프리팹</strong>: <code>Assets/_Game/Materials/Archer_Mat.mat</code>, <code>Assets/_Game/Materials/ArcherTower_Mat.mat</code>, <code>Assets/_Game/Materials/Barracks_Mat.mat</code>, <code>Assets/_Game/Materials/CannonTower_Mat.mat</code>, <code>Assets/_Game/Materials/Castle_Mat.mat</code>, <code>Assets/_Game/Materials/Catapult_Mat.mat</code>, <code>Assets/_Game/Materials/GoldMine_Mat.mat</code>, <code>Assets/_Game/Materials/Mage_Mat.mat</code>, <code>Assets/_Game/Materials/Scout_Mat.mat</code>, <code>Assets/_Game/Materials/Wall_Mat.mat</code>, <code>Assets/_Game/Prefabs/Buildings/ArcherTower.prefab</code>, <code>Assets/_Game/Prefabs/Buildings/Barracks.prefab</code> 외 52개</li>
-  </ul>
-  <p><strong>메모:</strong></p><ul><li>리소스 후보 116개 중 자동 참조 확인 65개.</li></ul>
-</section>
-<!-- APPLIED_RESOURCES_END -->
-
-<!-- RESOURCE_PREVIEWS_START -->
-<section class="resource-previews">
-  <h2>공유용 이미지 미리보기</h2>
-  <p>자동 갱신: 2026-06-04. 공유 시 문서와 함께 아래 이미지 경로가 포함되어야 합니다.</p>
-  <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;">
-<figure style="margin:12px 0;padding:12px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;">
-  <img src="../Assets/SimpleNaturePack/Textures/NaturePackLite_Texture_01.png" alt="15_MD NaturePackLite_Texture_01" style="max-width:220px;max-height:160px;width:auto;height:auto;object-fit:contain;display:block;" />
-  <figcaption style="margin-top:8px;font-size:13px;color:#4b5563;"><code>Assets/SimpleNaturePack/Textures/NaturePackLite_Texture_01.png</code></figcaption>
-</figure>
-  </div>
-</section>
-<!-- RESOURCE_PREVIEWS_END -->
 </body>
 </html>

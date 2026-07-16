@@ -1594,13 +1594,19 @@ namespace MedievalRTS.Testing
             SetFogVisualLayerVisible(false);
             Time.timeScale = 0.25f;
             _resultPanel.SetActive(true);
-            _resultText.text  = victory ? $"승리!\n{reason}" : $"패배\n{reason}";
+            var raidSummary = RaidResultSummaryModel.Create(BuildCurrentRaidForecast());
+            var resultText = RaidResultPanelText.Create(
+                victory,
+                reason,
+                _destroyedBuildings,
+                _earnedGold,
+                _earnedValor,
+                raidSummary);
+
+            _resultText.text = resultText.Title;
             _resultText.color = victory ? Color.yellow : Color.red;
             if (_resultStatsText != null)
-                _resultStatsText.text =
-                    $"파괴 건물: {_destroyedBuildings}개\n" +
-                    $"획득 골드: +{_earnedGold}G\n" +
-                    $"획득 무공: +{_earnedValor}";
+                _resultStatsText.text = resultText.Body;
         }
 
         // ═══════════════════════════════════════════════════════

@@ -1,0 +1,32 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>MadDragon 업데이트 내역서</title>
+  <style>
+    body{font-family:Segoe UI,Arial,sans-serif;line-height:1.62;max-width:980px;margin:32px auto;padding:0 24px;color:#20242a;background:#f7f4ef}
+    h1{font-size:30px;margin-bottom:20px;color:#251912}
+    h2{font-size:20px;margin-top:28px;border-top:1px solid #d8c9b4;padding-top:18px;color:#64351f}
+    li{margin:6px 0}
+    code{background:#ece4d7;padding:2px 5px;border-radius:4px}
+  </style>
+</head>
+<body>
+  <h1>MadDragon 업데이트 내역서</h1>
+  <h2>2026-07-03 / v0.6.2 Result Panel Raid Feedback</h2>
+  <ul>
+    <li>프로토타입 결과 패널에 레이드 손실 요약과 다음 행동 힌트를 연결했다.</li>
+    <li><code>RaidResultPanelText</code>를 추가해 결과 화면 문구를 Unity UI와 분리했다.</li>
+    <li><code>TestBootstrap.EndGame</code>은 현재 레이드 예측을 요약 모델과 패널 텍스트 모델로 전달한다.</li>
+    <li>본문에는 파괴 건물 수, 획득 골드, 획득 무공, 저장/지갑 자원 손실, 총 손실, 다음 방어 힌트가 표시된다.</li>
+    <li><code>RaidResultPanelTextTests</code>를 추가했고, 프로젝트 버전을 <code>0.6.2</code>로 올려 Windows portable 산출물을 갱신했다.</li>
+  </ul>
+  <h2>2026-07-03 / Raid Summary Independent Logic Check</h2>
+  <ul>
+    <li>Unity Test Runner XML 생성은 여전히 실패했지만, Unity batchmode 컴파일과 Windows 빌드는 return code 0으로 종료했다.</li>
+    <li>대체 검증: <code>_temp/raid_summary_logic_check_20260703</code> 독립 .NET 콘솔 프로젝트 4개 시나리오 통과.</li>
+  </ul>
+  <h2>2026-07-02 / Raid Result Summary Model</h2>
+  <ul><li><code>RaidResultSummaryModel</code>과 관련 테스트를 추가해 방어 성공/침투/본진 파괴 결과 문구를 고정했다.</li></ul>
+</body>
+</html>
