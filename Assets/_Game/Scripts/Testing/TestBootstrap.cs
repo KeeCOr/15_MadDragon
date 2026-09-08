@@ -1842,7 +1842,8 @@ namespace MedievalRTS.Testing
                 new Vector2(480, 52), "⚔  전투 준비", 36, Color.white);
 
             _prepGoldText = Lbl(_prepPanel, "Gold", a, new Vector2(0, -100),
-                new Vector2(260, 38), $"골드: {_gold}", 24, Color.yellow);
+                new Vector2(260, 38), $"{_gold}", 24, Color.yellow);
+            AddLabelArt(_prepGoldText, "Icons/gold", new Vector2(-48f, 0f), new Vector2(30f, 30f));
 
             // 공격/수비 모드 토글
             _modeToggleBtn = Btn(_prepPanel, "ModeToggle", a, new Vector2(0, -138),
@@ -1950,7 +1951,7 @@ namespace MedievalRTS.Testing
         private void RefreshPrepGold()
         {
             SyncOwnedResources();
-            if (_prepGoldText != null) _prepGoldText.text = $"골드: {_gold}";
+            if (_prepGoldText != null) _prepGoldText.text = $"{_gold}";
             RefreshMobileLoopScreens();
         }
 
@@ -2497,6 +2498,25 @@ namespace MedievalRTS.Testing
             }
         }
 
+        private void AddLabelArt(Text label, string artKey, Vector2 anchoredPosition, Vector2 size)
+        {
+            if (label == null) return;
+            var sprite = GeneratedArtLibrary.LoadSprite(artKey, 160f);
+            if (sprite == null) return;
+
+            var go = new GameObject("ResourceIcon");
+            go.transform.SetParent(label.transform, false);
+            var image = go.AddComponent<Image>();
+            image.sprite = sprite;
+            image.preserveAspect = true;
+            image.raycastTarget = false;
+
+            var rt = image.rectTransform;
+            rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.anchoredPosition = anchoredPosition;
+            rt.sizeDelta = size;
+        }
+
         private void AddButtonArt(Button button, string artKey, Vector2 anchoredPosition, Vector2 size, bool reserveLeftTextSpace)
         {
             if (button == null) return;
@@ -2574,7 +2594,8 @@ namespace MedievalRTS.Testing
             Lbl(left, "Title", a, new Vector2(0f, -16f), new Vector2(212f, 28f),
                 "수비 진형 구성", 16, Color.white);
             _dsGoldText = Lbl(left, "Gold", a, new Vector2(0f, -44f), new Vector2(212f, 22f),
-                $"골드: {_gold}", 14, Color.yellow);
+                $"{_gold}", 14, Color.yellow);
+            AddLabelArt(_dsGoldText, "Icons/gold", new Vector2(-36f, 0f), new Vector2(22f, 22f));
 
             // 건물 배치 팔레트
             Lbl(left, "BldgHdr", a, new Vector2(0f, -72f), new Vector2(212f, 18f),
@@ -2730,7 +2751,7 @@ namespace MedievalRTS.Testing
 
         private void RefreshDsGold()
         {
-            if (_dsGoldText != null) _dsGoldText.text = $"골드: {_gold}";
+            if (_dsGoldText != null) _dsGoldText.text = $"{_gold}";
         }
 
         private void RefreshDsUnitBtns()

@@ -76,6 +76,9 @@ namespace MedievalRTS.Battle
         {
             if (!_active) return;
             _active = false;
+            RuntimeAudioDirector.PlayCue(victory
+                ? RuntimeAudioDirector.CueResultSuccess
+                : RuntimeAudioDirector.CueResultFailure);
             var stats = new BattleStats
             {
                 Victory = victory,

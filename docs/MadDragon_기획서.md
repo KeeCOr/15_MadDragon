@@ -347,3 +347,17 @@ MadDragon의 핵심 매력은 한 번의 선택이 다음 장면의 위험도, �
 - 빌드 로그 기준 `Build Finished, Result: Success.`를 확인했고, `release/MadDragon_Data/Managed/MedievalRTS.Runtime.dll`이 새 런타임 모델을 포함한 크기 131,584바이트로 갱신됐다.
 - `MadDragon_v0.6.1_portable.exe`와 `MadDragon_v0.6.1_portable_Data`를 프로젝트 루트와 `release/`에 재배치했고, Google Drive 실행파일 폴더의 `15_MadDragon_v0.6.1_portable.exe`도 교체했다.
 - 제한: Unity `-runTests`는 이번 CLI 세션에서 결과 XML을 생성하지 않아 EditMode 테스트 최종 인증은 Unity Test Runner 재실행이 필요하다.
+
+
+## 2026-09-07 · 자원 HUD 아이콘화 (v0.7.0)
+
+텍스트로 표시하던 골드·재료 자원명을 이미지 생성 기반 전용 아이콘으로 교체하고, HUD는 아이콘과 숫자만 빠르게 읽히도록 정리했다. 작은 화면에서도 자원 종류를 즉시 구분할 수 있도록 아이콘 비율과 숫자 간격을 통일했다.
+
+## 오디오 시스템 (2026-09-08 업데이트)
+
+- **BGM**: Kenney Music Loops의 CC0 OGG 루프 1곡
+- **SFX**: 자체 제작한 결정론적 CC0 WAV 6종으로 입력·액션·위험·전환·성공·실패 구분
+- **설정**: BGM과 SFX 볼륨 및 음소거 상태를 분리 저장
+- **재생**: 브라우저는 사용자 제스처 이후 시작하며 Unity는 Resources 기반 AudioSource로 로드
+- **권장 믹스**: BGM 0.28, SFX 0.70
+- **라이선스**: 각 오디오 자산 폴더에 CC0 고지 보관
