@@ -32,3 +32,11 @@ sysinfo.txt
 
 # Local git worktrees
 .worktrees/
+
+# Unity build output
+release/
+*.exe
+MadDragon_*/
+MonoBleedingEdge/
+UnityCrashHandler64.exe
+UnityPlayer.dll
