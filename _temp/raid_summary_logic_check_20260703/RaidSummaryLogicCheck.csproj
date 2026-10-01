@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Assets\_Game\Scripts\Economy\ResourceType.cs" Link="ResourceType.cs" />
+    <Compile Include="..\..\Assets\_Game\Scripts\Economy\ResourceWallet.cs" Link="ResourceWallet.cs" />
+    <Compile Include="..\..\Assets\_Game\Scripts\Economy\RaidOutcome.cs" Link="RaidOutcome.cs" />
+    <Compile Include="..\..\Assets\_Game\Scripts\Economy\RaidForecast.cs" Link="RaidForecast.cs" />
+    <Compile Include="..\..\Assets\_Game\Scripts\Economy\RaidLossCalculator.cs" Link="RaidLossCalculator.cs" />
+    <Compile Include="..\..\Assets\_Game\Scripts\Economy\RaidResultSummaryModel.cs" Link="RaidResultSummaryModel.cs" />
+    <Compile Include="..\..\Assets\_Game\Scripts\Economy\RaidResultPanelText.cs" Link="RaidResultPanelText.cs" />
+  </ItemGroup>
+</Project>
