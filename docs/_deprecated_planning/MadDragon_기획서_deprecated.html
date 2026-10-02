@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MadDragon 기획서</title>
+  <style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.65;max-width:1040px;margin:0 auto;padding:40px 24px;color:#20242a;background:#fafafa}h1{font-size:34px;margin:0 0 20px}h2{font-size:24px;margin-top:34px;border-bottom:1px solid #ddd;padding-bottom:6px}h3{font-size:18px;margin-top:24px;color:#32435f}p,li,td,th{font-size:15px}li{margin:5px 0}code{background:#fff;border:1px solid #ddd;border-radius:4px;padding:1px 4px}pre{white-space:pre-wrap;background:#fff;border:1px solid #ddd;border-radius:8px;padding:10px 12px;overflow:auto}pre code{border:0;padding:0;background:transparent}table{border-collapse:collapse;width:100%;background:#fff;margin:12px 0}td,th{border:1px solid #ddd;padding:8px;text-align:left;vertical-align:top}figure{margin:18px 0;background:#fff;border:1px solid #ddd;border-radius:8px;padding:12px}img{max-width:100%;height:auto;display:block;border-radius:6px}figcaption{font-size:13px;color:#626b76;margin-top:8px}</style>
+</head>
+<body>
+<h1>MadDragon 기획서</h1>
+<p>문제 정의: 기지를 키우는 플레이어가 방치 생산과 침공 리스크 사이에서 더 선명한 의사결정을 원한다.</p>
+<h2>게임 소개</h2>
+<p>공격과 방어, 자원 약탈을 순환시키는 모바일 전략 게임.</p>
+<p>MadDragon의 핵심 매력은 한 번의 선택이 다음 장면의 위험도, 보상, 성장 방향으로 이어지는 구조다. 이 문서는 처음 보는 사람에게 게임의 재미와 현재 방향을 빠르게 소개하기 위한 단일 기획서이며, 세부 변경 이력은 별도 업데이트 내역서에서 관리한다.</p>
+<h2>한 줄 소개</h2>
+<p>공격과 방어, 자원 약탈을 순환시키는 모바일 전략 게임.</p>
+<h2>핵심 루프</h2>
+<p>유저가 현재 전장의 정보를 읽고 선택을 하면 전투/운영 결과가 갱신되고, 그 보상과 손실 때문에 다시 다음 선택을 준비한다.</p>
+<h2>게임 플레이 예시</h2>
+<ul>
+<li>1단계: 플레이어가 MadDragon의 현재 목표, 보유 자원, 즉시 대응해야 할 위험을 확인한다.</li>
+<li>2단계: 카드, 유닛, 배치, 명령, 이동 중 현재 상황에 맞는 핵심 행동을 선택한다.</li>
+<li>3단계: 선택 결과가 전투, 운영, 보상, 손실로 즉시 갱신되고 다음 판단의 근거가 된다.</li>
+<li>4단계: 획득한 보상이나 변화한 상태를 바탕으로 다음 선택을 준비하며 핵심 루프를 반복한다.</li>
+<li>플레이 감각: 짧은 세션 안에서 상황 파악, 의미 있는 선택, 즉각적인 피드백, 다음 목표 제시가 끊기지 않는 흐름을 지향한다.</li>
+</ul>
+<h2>핵심 재미</h2>
+<ul>
+<li>읽기 쉬운 상황 판단: 지금 위험한 요소와 얻을 수 있는 보상이 한눈에 들어온다.</li>
+<li>직접적인 선택 피드백: 선택 직후 전투, 점수, 자원, 성장 상태가 변해 손맛을 만든다.</li>
+<li>누적되는 성장감: 반복 플레이가 단순 재시작이 아니라 다음 전략의 재료로 이어진다.</li>
+</ul>
+<h2>주요 시스템</h2>
+<ul>
+<li>핵심 선택 시스템: 현재 국면에서 가능한 행동을 5개 이하의 명확한 선택지로 제시한다.</li>
+<li>위험/보상 피드백: 행동 전후의 이득, 손실, 위협 변화를 빠르게 보여준다.</li>
+<li>성장과 해금: 세션 결과가 능력, 카드, 유닛, 건물, 장비, 스테이지 등 다음 플레이의 선택지를 넓힌다.</li>
+<li>상태별 UX: 로딩, 빈 상태, 오류, 많은 데이터, 긴 텍스트 상황에서도 레이아웃이 무너지지 않도록 관리한다.</li>
+<li>실행 안정성: 테스트와 빌드 산출물을 기준으로 현재 플레이 가능한 범위를 계속 확인한다.</li>
+</ul>
+<h2>게임 구성과 규칙 (GDD 통합)</h2>
+<ul>
+<li>통합 기준 문서: <code>15_MD_GDD.html</code>, <code>superpowers/specs/2026-04-30-medieval-rts-design.md</code>, <code>superpowers/specs/2026-05-15-maddragon-mobile-loop-layout-design.md</code></li>
+<li>작성 기준: 16_PokerStrike_GDD처럼 화면 구조, 핵심 시스템, 진행/승패 규칙, UI/HUD, 미결 항목을 한 문서에서 바로 읽을 수 있게 정리한다.</li>
+</ul>
+<h3>화면/플레이 구조</h3>
+<ul>
+<li><strong>개요</strong> (15_MD_GDD.html)</li>
+</ul>
+<p>  - Medieval RTS — 게임 기획서 v0.4</p>
+<ul>
+<li><strong>목차</strong> (15_MD_GDD.html)</li>
+</ul>
+<p>  1. 게임 개요</p>
+<p>  2. 씬 흐름 및 모드</p>
+<p>  3. 유닛</p>
+<p>  4. 마법</p>
+<p>  5. 특수 건물 (수비)</p>
+<p>  6. 전투 시스템</p>
+<p>  7. 안개 전쟁 (FOW)</p>
+<ul>
+<li><strong>⚔ 1. 게임 개요</strong> (15_MD_GDD.html)</li>
+</ul>
+<p>  - 실시간 전략 · 기지 방어</p>
+<p>  - 1인 플레이 / 비동기 PvP (예정)</p>
+<p>  - 준비 단계(병력·기지 구성) → 전투 → 결과 → 반복</p>
+<p>  - 내가 만든 수비 기지를 공격 모드로 직접 공략해볼 수 있는 실험 구조</p>
+<p>  - Mad Rocket: Fog of War</p>
+<p>  - ← 중세 판타지로 재해석</p>
+<h3>핵심 시스템</h3>
+<ul>
+<li><strong>🗡 3. 유닛</strong> (15_MD_GDD.html)</li>
+</ul>
+<p>  - 기본 스탯 (훈련소 Lv0 기준). 훈련소 업그레이드 시 HP·데미지에 배율 적용.</p>
+<p>|</p>
+<p>  - 이름 |역할 |HP |데미지 |사거리 |</p>
+<p>  - 속도 |쿨다운 |비용 |건물 배율 |해금 조건 |</p>
+<p>|</p>
+<p>  - 1.8m |2.5 |1.0s |</p>
+<p>|</p>
+<p>  - 7.0m |3.0 |1.2s |</p>
+<p>|</p>
+<p>  - 5.5m |2.0 |1.5s |</p>
+<ul>
+<li><strong>시전 방법</strong> (15_MD_GDD.html)</li>
+</ul>
+<p>  - 하단 마법 바 버튼 클릭</p>
+<p>  - 우클릭 시 시전 취소. 차지 소모 후 버튼 비활성화.</p>
+<ul>
+<li><strong>성벽 슬라이드 이동</strong> (15_MD_GDD.html)</li>
+</ul>
+<p>  - 유닛은 물리 기반이 아닌 transform.position 직접 이동. SphereCast로 수직 장애물 감지 → 법선 벡터에 투영해 슬라이드. 문(Gate) 구간은 콜라이더 없음 → 자유 통과.</p>
+<ul>
+<li><strong>적 웨이브</strong> (15_MD_GDD.html)</li>
+</ul>
+<table>
+<tr><th>파수</th><th>대기 시간</th><th>유닛 수</th><th>유닛 범위</th></tr>
+<tr><td>1파</td><td>5초</td><td>5기</td><td>인덱스 0~0 (기사)</td></tr>
+<tr><td>2파</td><td>25초</td><td>7기</td><td>인덱스 0~1</td></tr>
+<tr><td>3파</td><td>25초</td><td>9기</td><td>인덱스 0~2</td></tr>
+<tr><td>4파</td><td>25초</td><td>11기</td><td>인덱스 0~3</td></tr>
+<tr><td>5파 (최종)</td><td>25초</td><td>13기</td><td>인덱스 0~4</td></tr>
+</table>
+<p>  - 5파 전부 격퇴 후 22초 생존 시 승리.</p>
+<h3>진행/승패 규칙</h3>
+<ul>
+<li><strong>진행 규칙</strong> (기획서)</li>
+</ul>
+<p>  - 한 세션은 상황 확인, 선택, 결과 피드백, 보상 또는 손실 반영, 다음 선택 준비의 흐름으로 닫힌다.</p>
+<p>  - 승패나 종료 조건은 실제 구현 상태가 확인될 때 세부 수치와 함께 보강한다.</p>
+<h3>UI/HUD/피드백</h3>
+<ul>
+<li><strong>Attack Prep</strong> (superpowers/specs/2026-05-15-maddragon-mobile-loop-layout-design.md)</li>
+</ul>
+<p>  - Attack prep should focus on loadout, not shopping clutter.</p>
+<p>  - Units.</p>
+<p>  - Spells.</p>
+<p>  - Intel.</p>
+<p>  - Units should use squad slots rather than unlimited purchase buttons. A recommended first version is five deploy slots with adjustable counts or unit type assignment.</p>
+<p>  - Spells should be limited to two or three equipped spells for battle. Extra spells can exist in the economy, but battle quick controls should stay short.</p>
+<p>  - Intel should summarize visible enemy threats, route hints, and recommended counters.</p>
+<h3>구현 메모/미결</h3>
+<ul>
+<li><strong>환경</strong> (15_MD_GDD.html)</li>
+</ul>
+<p>  - Unity 2022.3.62f3 LTS</p>
+<p>  - URP (Universal Render Pipeline)</p>
+<p>  - C# / MonoBehaviour</p>
+<p>  - Windows Standalone</p>
+<p>  - NUnit (편집 모드 테스트)</p>
+<ul>
+<li><strong>8. 기술 스택</strong> (superpowers/specs/2026-04-30-medieval-rts-design.md)</li>
+</ul>
+<table>
+<tr><th>항목</th><th>선택</th></tr>
+<tr><td>Unity 버전</td><td>Unity 6 LTS</td></tr>
+<tr><td>Render Pipeline</td><td>URP</td></tr>
+<tr><td>Input System</td><td>New Input System (터치 + 마우스)</td></tr>
+<tr><td>빌드 타겟</td><td>Android, WebGL</td></tr>
+</table>
+<h2>MVP 가설</h2>
+<table>
+<tr><th>기능</th><th>검증할 가설</th><th>검증 방법</th></tr>
+<tr><td>핵심 전투/운영 루프</td><td>플레이어는 한 판 안에서 선택 결과를 이해하면 다음 판을 자발적으로 시작한다.</td><td>1회 플레이 후 재시작률 60% 이상</td></tr>
+<tr><td>위험/보상 표시</td><td>위험과 보상이 동시에 보이면 선택 시간이 줄고 납득도가 오른다.</td><td>주요 선택 평균 8초 이내, 결과 불만 피드백 20% 이하</td></tr>
+<tr><td>성장 보상</td><td>보상이 다음 전략을 바꾸면 반복 플레이 피로가 낮아진다.</td><td>3판 내 서로 다른 빌드 선택률 50% 이상</td></tr>
+</table>
+<h2>레퍼런스 분석</h2>
+<ul>
+<li>장르 기준 레퍼런스는 한 판 시작까지 3단계 이내, 첫 의미 있는 선택까지 30초 이내가 목표다.</li>
+<li>적용 교훈: 규칙 설명보다 먼저 선택 가능한 상황을 보여주고, 결과 화면에서 다음 판의 개선 포인트를 바로 제안한다.</li>
+</ul>
+<h2>현재 개발 상태 예상 수치</h2>
+<ul>
+<li>완성 목표 대비 구현 체감도: 약 57%</li>
+<li>첫 세션에서 핵심 루프가 전달될 가능성: 약 63%</li>
+<li>UI/리소스 일관성 체감: 약 53%</li>
+<li>콘텐츠와 반복 플레이 분량 충족도: 약 53%</li>
+<li>빌드/실행 안정성 기대치: 약 67%</li>
+<li>해석 기준: 현재 문서, 최근 산출물 기록, 연결된 예시 이미지 유무를 기준으로 한 사전 추정치이며 실제 플레이 테스트 후 ±15%p 정도 보정이 필요하다.</li>
+</ul>
+<ul>
+<li>첫 세션 평균 플레이 시간 8분 이상</li>
+<li>첫 세션 내 2회차 진입률 55% 이상</li>
+<li>핵심 선택 화면에서 무응답/이탈률 15% 이하</li>
+</ul>
+<h2>현재 구현 상태</h2>
+<ul>
+<li>이 문서는 2026-06-24 기준으로 현재 플레이 방향과 구현 체감 상태를 요약한다.</li>
+<li>핵심 루프, 조작 원칙, 리소스 적용 현황, 빌드 기준은 프로젝트별 실제 구현과 산출물 기록을 기준으로 계속 보정한다.</li>
+<li>세부 변경 이력은 별도 업데이트 내역서에서 관리하고, 본 기획서는 처음 보는 사람이 현재 방향을 빠르게 이해하는 공유 문서로 유지한다.</li>
+<li>새 기능, 밸런스 변경, 리소스 교체, UX 개선이 들어가면 본문과 HTML 문서를 함께 갱신한다.</li>
+</ul>
+<h2>조작과 UX 원칙</h2>
+<ul>
+<li>주요 버튼은 44px 이상으로 유지하고, 화면당 CTA 강조색은 하나만 사용한다.</li>
+<li>버튼/선택지는 한 번에 5개 이하로 노출해 판단 부담을 줄인다.</li>
+<li>로딩, 빈 상태, 에러, 많은 데이터, 긴 텍스트 상태를 각각 별도 화면/컴포넌트로 확인한다.</li>
+<li>HUD 동일 레이어 요소는 겹치지 않게 배치하고, 겹침이 필요한 효과는 별도 depth/z-order를 쓴다.</li>
+</ul>
+<h2>적용 리소스</h2>
+<ul>
+<li>런타임에 쓰이는 대표 이미지와 UI 리소스는 프로젝트별 asset/public/Resources 경로를 기준으로 관리한다.</li>
+<li>새 이미지가 필요할 때는 프로젝트 접두어를 포함한 lowercase kebab-case 파일명을 사용한다.</li>
+<li>최종 런타임 비주얼은 PNG/WebP 등 비트맵 자산을 우선 사용하고, SVG 또는 코드 드로잉은 문서/임시 참조로만 남긴다.</li>
+</ul>
+<h2>공유용 이미지 미리보기</h2>
+<figure><img src="archive/MadDragon_gameplay_preview_v1.png" alt="MadDragon 공유용 예시 1"><figcaption>MadDragon 공유용 예시 1</figcaption></figure>
+<figure><img src="MadDragon_01_플레이예시.png" alt="MadDragon 공유용 예시 2"><figcaption>MadDragon 공유용 예시 2</figcaption></figure>
+<figure><img src="MadDragon_레퍼런스_플레이예시_구버전.png" alt="MadDragon 공유용 예시 3"><figcaption>MadDragon 공유용 예시 3</figcaption></figure>
+<ul>
+<li>Assets/Resources/MadDragonArt/Buildings/barracks.png</li>
+<li>Assets/Resources/MadDragonArt/Buildings/elixir_well.png</li>
+<li>Assets/Resources/MadDragonArt/Buildings/enemy_castle.png</li>
+</ul>
+<h2>빌드, 테스트, 릴리스</h2>
+<ul>
+<li>프로젝트별 엔진/에디터 빌드 절차를 따른다.</li>
+<li>문서 전용 갱신에서는 실행 파일을 새로 생성하지 않았다.</li>
+</ul>
+<h2>남은 리스크와 다음 우선순위</h2>
+<ul>
+<li>첫 화면에서 게임의 목표와 다음 행동이 5초 안에 보이는지 확인한다.</li>
+<li>주요 선택의 결과 예측과 실제 결과가 어긋나는 지점을 플레이 테스트로 수집한다.</li>
+<li>기획서에 남아 있던 변경 이력성 내용은 업데이트 내역서로 계속 이동해 소개 문서의 밀도를 유지한다.</li>
+</ul>
+</body>
+</html>
